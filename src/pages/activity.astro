@@ -1,7 +1,7 @@
 ---
 import { createATProtoClient } from '../lib/atproto';
-import { getATProtoConfig, ATPROTO_COLLECTIONS } from '../config/atproto';
-import ActivityFeed from '../components/ActivityFeed.tsx';
+import { getATProtoConfig } from '../config/atproto';
+import ActivitySection from '../components/ActivitySection.tsx';
 import Profile from '../components/Profile.tsx';
 
 // Get AT Protocol configuration
@@ -10,64 +10,14 @@ const config = getATProtoConfig();
 // Initialize AT Protocol client
 const atClient = createATProtoClient(config);
 
-// Fetch data at build time
-let profile = null;
-let recentActivity = [];
-let repositoryStats = null;
-let collections = [];
-
-try {
-  console.log('🚀 Starting concurrent activity data fetch...');
-
-  // Use concurrent requests for better performance
-  const [profileResult, activityResult, statsResult, ...collectionsData] = await Promise.allSettled([
-    atClient.getProfile(),
-    atClient.getRecentActivity(undefined, 20), // For display purposes
-    atClient.getRepositoryStats(), // Get comprehensive repository statistics
-    atClient.getRepositoryRecords(ATPROTO_COLLECTIONS.BLUESKY_POST, undefined, 5),
-    atClient.getRepositoryRecords(ATPROTO_COLLECTIONS.BLUESKY_LIKE, undefined, 5),
-    atClient.getRepositoryRecords(ATPROTO_COLLECTIONS.BLUESKY_REPOST, undefined, 5),
-    atClient.getRepositoryRecords(ATPROTO_COLLECTIONS.BLUESKY_FOLLOW, undefined, 5),
-    atClient.getRepositoryRecords(ATPROTO_COLLECTIONS.WHITEWIND_BLOG, undefined, 5),
-  ]);
-
-  // Handle profile
-  if (profileResult.status === 'fulfilled') {
-    profile = profileResult.value;
-    console.log('✅ Profile loaded');
-  } else {
-    console.error('❌ Profile failed:', profileResult.reason);
-  }
-
-  // Handle recent activity
-  if (activityResult.status === 'fulfilled') {
-    recentActivity = activityResult.value;
-    console.log('✅ Activity loaded:', recentActivity.length);
-  } else {
-    console.error('❌ Activity failed:', activityResult.reason);
-  }
-
-  // Handle repository statistics
-  if (statsResult.status === 'fulfilled') {
-    repositoryStats = statsResult.value;
-    console.log('✅ Repository stats loaded');
-  } else {
-    console.error('❌ Repository stats failed:', statsResult.reason);
-  }
-
-  // Handle collections
-  collections = [
-    { name: 'Posts', records: collectionsData[0].status === 'fulfilled' ? collectionsData[0].value : [] },
-    { name: 'Likes', records: collectionsData[1].status === 'fulfilled' ? collectionsData[1].value : [] },
-    { name: 'Reposts', records: collectionsData[2].status === 'fulfilled' ? collectionsData[2].value : [] },
-    { name: 'Follows', records: collectionsData[3].status === 'fulfilled' ? collectionsData[3].value : [] },
-    { name: 'Blog Posts', records: collectionsData[4].status === 'fulfilled' ? collectionsData[4].value : [] },
-  ];
-
-  console.log('🎉 Activity data fetch completed');
-} catch (error) {
-  console.error('❌ Error fetching activity data:', error);
-}
+// Fetch data at build time using unified approach
+const { profile, recentActivity, repositoryStats, collections } = await atClient.getActivityData({
+  includeBlogPosts: false,
+  includeRepositoryStats: true,
+  activityLimit: 20,
+  blogPostLimit: 0,
+  collectionsLimit: 5,
+});
 
 // Use repository statistics if available, otherwise fallback to recent activity
 const totalActivity = repositoryStats ? repositoryStats.totalRecords : recentActivity.length;
@@ -192,27 +142,15 @@ const activeCollections = repositoryStats ? repositoryStats.activeCollections : 
             </p>
           </div>
 
-          {recentActivity.length > 0 ? (
-            <ActivityFeed records={recentActivity} maxItems={20} compact={false} />
-          ) : (
-            <div class="text-center py-16 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-              <div class="text-6xl mb-4">🔄</div>
-              <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-2">No recent activity</h3>
-              <p class="text-gray-500 dark:text-gray-400 mb-6">
-                Activity from your AT Protocol repository will appear here once you start creating records.
-              </p>
-              <div class="space-y-2 text-sm text-gray-400 dark:text-gray-500">
-                <p>Activities that will appear here:</p>
-                <ul class="list-disc list-inside space-y-1">
-                  <li>Posts on Bluesky</li>
-                  <li>Likes and reposts</li>
-                  <li>New follows</li>
-                  <li>Blog posts via WhiteWind</li>
-                  <li>Profile updates</li>
-                </ul>
-              </div>
-            </div>
-          )}
+          <ActivitySection
+            records={recentActivity}
+            title=""
+            maxItems={20}
+            compact={false}
+            showViewAll={false}
+            emptyMessage="No recent activity"
+            emptySubMessage="Activity from your AT Protocol repository will appear here once you start creating records."
+          />
         </div>
 
         <!-- Sidebar -->

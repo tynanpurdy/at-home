@@ -10,39 +10,14 @@ const config = getATProtoConfig();
 // Initialize AT Protocol client
 const atClient = createATProtoClient(config);
 
-// Fetch data at build time
-let profile = null;
-let blogPosts = [];
-
-try {
-  console.log('🚀 Starting concurrent blog data fetch...');
-
-  // Use concurrent requests for better performance
-  const [profileResult, blogPostsResult] = await Promise.allSettled([
-    atClient.getProfile(),
-    atClient.getWhiteWindPosts(undefined, 20) // Reduced from 50 to 20
-  ]);
-
-  // Handle profile
-  if (profileResult.status === 'fulfilled') {
-    profile = profileResult.value;
-    console.log('✅ Profile loaded');
-  } else {
-    console.error('❌ Profile failed:', profileResult.reason);
-  }
-
-  // Handle blog posts
-  if (blogPostsResult.status === 'fulfilled') {
-    blogPosts = blogPostsResult.value;
-    console.log('✅ Blog posts loaded:', blogPosts.length);
-  } else {
-    console.error('❌ Blog posts failed:', blogPostsResult.reason);
-  }
-
-  console.log('🎉 Blog data fetch completed');
-} catch (error) {
-  console.error('❌ Error fetching blog posts:', error);
-}
+// Fetch data at build time using unified approach
+const { profile, blogPosts } = await atClient.getActivityData({
+  includeBlogPosts: true,
+  includeRepositoryStats: false,
+  activityLimit: 0,
+  blogPostLimit: 20,
+  collectionsLimit: 0,
+});
 ---
 
 <html lang="en">

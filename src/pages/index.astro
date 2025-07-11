@@ -1,8 +1,8 @@
 ---
 import { createATProtoClient } from '../lib/atproto';
-import { getATProtoConfig, ATPROTO_COLLECTIONS } from '../config/atproto';
+import { getATProtoConfig } from '../config/atproto';
 import BlogPost from '../components/BlogPost.tsx';
-import ActivityFeed from '../components/ActivityFeed.tsx';
+import ActivitySection from '../components/ActivitySection.tsx';
 import Profile from '../components/Profile.tsx';
 
 // Get AT Protocol configuration
@@ -11,49 +11,14 @@ const config = getATProtoConfig();
 // Initialize AT Protocol client
 const atClient = createATProtoClient(config);
 
-// Fetch data at build time
-let profile = null;
-let blogPosts = [];
-let recentActivity = [];
-
-try {
-  console.log('🚀 Starting concurrent data fetch...');
-
-  // Use concurrent requests for better performance
-  const [profileResult, blogPostsResult, activityResult] = await Promise.allSettled([
-    atClient.getProfile(),
-    atClient.getWhiteWindPosts(undefined, 3), // Reduced from 5 to 3
-    atClient.getRecentActivity(undefined, 8)   // Reduced from 10 to 8
-  ]);
-
-  // Handle profile
-  if (profileResult.status === 'fulfilled') {
-    profile = profileResult.value;
-    console.log('✅ Profile loaded');
-  } else {
-    console.error('❌ Profile failed:', profileResult.reason);
-  }
-
-  // Handle blog posts
-  if (blogPostsResult.status === 'fulfilled') {
-    blogPosts = blogPostsResult.value;
-    console.log('✅ Blog posts loaded:', blogPosts.length);
-  } else {
-    console.error('❌ Blog posts failed:', blogPostsResult.reason);
-  }
-
-  // Handle activity
-  if (activityResult.status === 'fulfilled') {
-    recentActivity = activityResult.value;
-    console.log('✅ Activity loaded:', recentActivity.length);
-  } else {
-    console.error('❌ Activity failed:', activityResult.reason);
-  }
-
-  console.log('🎉 Data fetch completed');
-} catch (error) {
-  console.error('❌ Error fetching AT Protocol data:', error);
-}
+// Fetch data at build time using unified approach
+const { profile, recentActivity, blogPosts } = await atClient.getActivityData({
+  includeBlogPosts: true,
+  includeRepositoryStats: false,
+  activityLimit: 8,
+  blogPostLimit: 3,
+  collectionsLimit: 5,
+});
 ---
 
 <html lang="en">
@@ -142,25 +107,16 @@ try {
           </section>
 
           <!-- Recent Activity -->
-          <section>
-            <div class="flex items-center justify-between mb-6">
-              <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Recent Activity</h3>
-              <a href="/activity" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
-                View all activity →
-              </a>
-            </div>
-
-            {recentActivity.length > 0 ? (
-              <ActivityFeed records={recentActivity} maxItems={5} compact={true} />
-            ) : (
-              <div class="text-center py-8 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                <p class="text-gray-500 dark:text-gray-400">No recent activity found.</p>
-                <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">
-                  Activity from your AT Protocol repository will appear here.
-                </p>
-              </div>
-            )}
-          </section>
+          <ActivitySection
+            records={recentActivity}
+            title="Recent Activity"
+            maxItems={5}
+            compact={true}
+            showViewAll={true}
+            viewAllHref="/activity"
+            emptyMessage="No recent activity found."
+            emptySubMessage="Activity from your AT Protocol repository will appear here."
+          />
         </div>
 
         <!-- Sidebar -->

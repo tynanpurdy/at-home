@@ -59,6 +59,14 @@ export interface RepositoryStats {
   lastUpdated: string;
 }
 
+export interface ActivityData {
+  profile: any;
+  recentActivity: ATProtoRecord[];
+  repositoryStats?: RepositoryStats;
+  blogPosts: WhiteWindPost[];
+  collections: Array<{ name: string; records: ATProtoRecord[] }>;
+}
+
 export class ATProtoClient {
   private agent: BskyAgent;
   private config: ATProtoConfig;
@@ -577,6 +585,178 @@ export class ATProtoClient {
       return { collections: [], handleIsCorrect: false };
     }
   }
+
+  // Unified data fetching method for pages
+  async getActivityData(
+    options: {
+      includeBlogPosts?: boolean;
+      includeRepositoryStats?: boolean;
+      activityLimit?: number;
+      blogPostLimit?: number;
+      collectionsLimit?: number;
+    } = {},
+  ): Promise<ActivityData> {
+    const {
+      includeBlogPosts = false,
+      includeRepositoryStats = false,
+      activityLimit = 20,
+      blogPostLimit = 5,
+      collectionsLimit = 5,
+    } = options;
+
+    console.log("🚀 Starting unified activity data fetch...");
+
+    const requests = [this.getProfile()];
+
+    // Only add recent activity if activityLimit > 0
+    if (activityLimit > 0) {
+      requests.push(this.getRecentActivity(undefined, activityLimit));
+    }
+
+    if (includeBlogPosts) {
+      requests.push(this.getWhiteWindPosts(undefined, blogPostLimit));
+    }
+
+    if (includeRepositoryStats) {
+      requests.push(this.getRepositoryStats());
+    }
+
+    // Add collection requests only if collectionsLimit > 0
+    if (collectionsLimit > 0) {
+      const collectionRequests = [
+        this.getRepositoryRecords(
+          COLLECTIONS.BLUESKY_POST,
+          undefined,
+          collectionsLimit,
+        ),
+        this.getRepositoryRecords(
+          COLLECTIONS.BLUESKY_LIKE,
+          undefined,
+          collectionsLimit,
+        ),
+        this.getRepositoryRecords(
+          COLLECTIONS.BLUESKY_REPOST,
+          undefined,
+          collectionsLimit,
+        ),
+        this.getRepositoryRecords(
+          COLLECTIONS.BLUESKY_FOLLOW,
+          undefined,
+          collectionsLimit,
+        ),
+        this.getRepositoryRecords(
+          COLLECTIONS.WHITEWIND_BLOG,
+          undefined,
+          collectionsLimit,
+        ),
+      ];
+
+      requests.push(...collectionRequests);
+    }
+
+    try {
+      const results = await Promise.allSettled(requests);
+
+      let resultIndex = 0;
+
+      // Profile
+      const profile =
+        results[resultIndex].status === "fulfilled"
+          ? results[resultIndex].value
+          : null;
+      resultIndex++;
+
+      // Recent activity (only if activityLimit > 0)
+      const recentActivity =
+        activityLimit > 0 && results[resultIndex].status === "fulfilled"
+          ? results[resultIndex].value
+          : [];
+      if (activityLimit > 0) {
+        resultIndex++;
+      }
+
+      // Blog posts (optional)
+      let blogPosts: WhiteWindPost[] = [];
+      if (includeBlogPosts) {
+        blogPosts =
+          results[resultIndex].status === "fulfilled"
+            ? results[resultIndex].value
+            : [];
+        resultIndex++;
+      }
+
+      // Repository stats (optional)
+      let repositoryStats: RepositoryStats | undefined;
+      if (includeRepositoryStats) {
+        repositoryStats =
+          results[resultIndex].status === "fulfilled"
+            ? results[resultIndex].value
+            : undefined;
+        resultIndex++;
+      }
+
+      // Collections (only if collectionsLimit > 0)
+      const collections =
+        collectionsLimit > 0
+          ? [
+              {
+                name: "Posts",
+                records:
+                  results[resultIndex].status === "fulfilled"
+                    ? results[resultIndex].value
+                    : [],
+              },
+              {
+                name: "Likes",
+                records:
+                  results[resultIndex + 1].status === "fulfilled"
+                    ? results[resultIndex + 1].value
+                    : [],
+              },
+              {
+                name: "Reposts",
+                records:
+                  results[resultIndex + 2].status === "fulfilled"
+                    ? results[resultIndex + 2].value
+                    : [],
+              },
+              {
+                name: "Follows",
+                records:
+                  results[resultIndex + 3].status === "fulfilled"
+                    ? results[resultIndex + 3].value
+                    : [],
+              },
+              {
+                name: "Blog Posts",
+                records:
+                  results[resultIndex + 4].status === "fulfilled"
+                    ? results[resultIndex + 4].value
+                    : [],
+              },
+            ]
+          : [];
+
+      console.log("🎉 Unified activity data fetch completed");
+
+      return {
+        profile,
+        recentActivity,
+        repositoryStats,
+        blogPosts,
+        collections,
+      };
+    } catch (error) {
+      console.error("❌ Error in unified activity data fetch:", error);
+      return {
+        profile: null,
+        recentActivity: [],
+        repositoryStats: undefined,
+        blogPosts: [],
+        collections: [],
+      };
+    }
+  }
 }
 
 // Default client instance
@@ -593,6 +773,9 @@ export const COLLECTIONS = {
   BLUESKY_FOLLOW: "app.bsky.graph.follow",
   BLUESKY_PROFILE: "app.bsky.actor.profile",
 } as const;
+
+// Alias for backward compatibility
+export const ATPROTO_COLLECTIONS = COLLECTIONS;
 
 // Type for collection names
 export type CollectionName = (typeof COLLECTIONS)[keyof typeof COLLECTIONS];

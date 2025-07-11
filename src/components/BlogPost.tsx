@@ -139,6 +139,7 @@ export const BlogPost: React.FC<BlogPostProps> = ({
       <div className="prose prose-lg max-w-none dark:prose-invert mb-4">
         {post.record.content ? (
           <div
+            className="text-gray-900 dark:text-gray-100"
             dangerouslySetInnerHTML={{
               __html: post.record.content.replace(/\n/g, "<br>"),
             }}
