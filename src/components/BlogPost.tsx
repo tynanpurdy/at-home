@@ -165,12 +165,12 @@ export const BlogPost: React.FC<BlogPostProps> = ({
 
       <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
         <a
-          href={`https://bsky.app/profile/${post.author.handle}/post/${post.uri.split("/").pop()}`}
+          href={`https://whtwnd.com/${post.author.handle}/${post.uri.split("/").pop()}`}
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
         >
-          View on Bluesky →
+          Read on WhiteWind →
         </a>
       </div>
     </article>
