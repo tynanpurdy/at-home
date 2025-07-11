@@ -1,0 +1,341 @@
+---
+import { createATProtoClient } from '../lib/atproto';
+import { getATProtoConfig } from '../config/atproto';
+import Profile from '../components/Profile.tsx';
+
+// Get AT Protocol configuration
+const config = getATProtoConfig();
+
+// Initialize AT Protocol client
+const atClient = createATProtoClient(config);
+
+// Fetch data at build time
+let profile = null;
+
+try {
+  // Get profile information
+  profile = await atClient.getProfile();
+} catch (error) {
+  console.error('Error fetching profile data:', error);
+}
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>About - {profile?.displayName || profile?.handle || 'AT Home'}</title>
+    <meta name="description" content="Learn more about me and this AT Protocol-powered website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <a href="/" class="text-xl font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              {profile?.displayName || profile?.handle || 'AT Home'}
+            </a>
+          </div>
+          <div class="flex items-center space-x-4">
+            <a href="/" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Home</a>
+            <a href="/blog" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Blog</a>
+            <a href="/activity" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Activity</a>
+            <a href="/about" class="text-blue-600 dark:text-blue-400 font-medium">About</a>
+            {profile && (
+              <a
+                href={`https://bsky.app/profile/${profile.handle}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
+              >
+                Follow on Bluesky
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="text-center">
+          <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">About</h1>
+          <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Learn more about me and this decentralized website powered by the AT Protocol
+          </p>
+        </div>
+      </div>
+
+      <!-- Content Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-8">
+          <!-- Profile Section -->
+          {profile && (
+            <section>
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Profile</h2>
+              <Profile profile={profile} compact={false} />
+            </section>
+          )}
+
+          <!-- About This Site -->
+          <section class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">About This Site</h2>
+            <div class="prose prose-lg max-w-none dark:prose-invert">
+              <p class="text-gray-700 dark:text-gray-300 mb-4">
+                Welcome to my personal corner of the decentralized web! This website is built with
+                <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">Astro</a>
+                and powered by the <a href="https://atproto.com" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">AT Protocol</a>,
+                representing a new approach to personal websites and digital identity.
+              </p>
+
+              <p class="text-gray-700 dark:text-gray-300 mb-4">
+                Instead of relying on traditional databases or content management systems,
+                all content on this site is fetched directly from my AT Protocol repository.
+                This means I truly own my data, and it's stored in a decentralized,
+                interoperable format that can be accessed by any compatible application.
+              </p>
+
+              <p class="text-gray-700 dark:text-gray-300 mb-4">
+                Blog posts are published using the <a href="https://whitewind.app" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">WhiteWind</a>
+                lexicon, which allows for rich, long-form content that's still part of the AT Protocol ecosystem.
+                This creates a seamless bridge between traditional blogging and the decentralized social web.
+              </p>
+            </div>
+          </section>
+
+          <!-- Tech Stack -->
+          <section class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Tech Stack</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Frontend</h3>
+                <div class="space-y-2">
+                  <div class="flex items-center space-x-3">
+                    <span class="text-2xl">🚀</span>
+                    <div>
+                      <p class="font-medium text-gray-900 dark:text-white">Astro</p>
+                      <p class="text-sm text-gray-600 dark:text-gray-300">Static site generator</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <span class="text-2xl">⚛️</span>
+                    <div>
+                      <p class="font-medium text-gray-900 dark:text-white">React</p>
+                      <p class="text-sm text-gray-600 dark:text-gray-300">Interactive components</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <span class="text-2xl">🎨</span>
+                    <div>
+                      <p class="font-medium text-gray-900 dark:text-white">Tailwind CSS</p>
+                      <p class="text-sm text-gray-600 dark:text-gray-300">Utility-first styling</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Backend/Data</h3>
+                <div class="space-y-2">
+                  <div class="flex items-center space-x-3">
+                    <span class="text-2xl">🌐</span>
+                    <div>
+                      <p class="font-medium text-gray-900 dark:text-white">AT Protocol</p>
+                      <p class="text-sm text-gray-600 dark:text-gray-300">Decentralized data layer</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <span class="text-2xl">📝</span>
+                    <div>
+                      <p class="font-medium text-gray-900 dark:text-white">WhiteWind</p>
+                      <p class="text-sm text-gray-600 dark:text-gray-300">Blogging lexicon</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <span class="text-2xl">🐦</span>
+                    <div>
+                      <p class="font-medium text-gray-900 dark:text-white">Bluesky</p>
+                      <p class="text-sm text-gray-600 dark:text-gray-300">Social platform</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Features -->
+          <section class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Features</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-3">
+                <div class="flex items-start space-x-3">
+                  <span class="text-green-500 text-xl">✅</span>
+                  <div>
+                    <p class="font-medium text-gray-900 dark:text-white">Decentralized Content</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">All content fetched from AT Protocol</p>
+                  </div>
+                </div>
+                <div class="flex items-start space-x-3">
+                  <span class="text-green-500 text-xl">✅</span>
+                  <div>
+                    <p class="font-medium text-gray-900 dark:text-white">Real-time Updates</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">Content syncs with your AT Protocol repo</p>
+                  </div>
+                </div>
+                <div class="flex items-start space-x-3">
+                  <span class="text-green-500 text-xl">✅</span>
+                  <div>
+                    <p class="font-medium text-gray-900 dark:text-white">Cross-platform</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">Works with any AT Protocol client</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <div class="flex items-start space-x-3">
+                  <span class="text-green-500 text-xl">✅</span>
+                  <div>
+                    <p class="font-medium text-gray-900 dark:text-white">Own Your Data</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">No vendor lock-in, portable content</p>
+                  </div>
+                </div>
+                <div class="flex items-start space-x-3">
+                  <span class="text-green-500 text-xl">✅</span>
+                  <div>
+                    <p class="font-medium text-gray-900 dark:text-white">Dark Mode</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">Respects system preferences</p>
+                  </div>
+                </div>
+                <div class="flex items-start space-x-3">
+                  <span class="text-green-500 text-xl">✅</span>
+                  <div>
+                    <p class="font-medium text-gray-900 dark:text-white">Responsive Design</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">Works on all devices</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+          <!-- Contact/Links -->
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Connect</h3>
+            <div class="space-y-3">
+              {profile && (
+                <a
+                  href={`https://bsky.app/profile/${profile.handle}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <span class="text-xl">🐦</span>
+                  <div>
+                    <p class="font-medium text-gray-900 dark:text-white">Bluesky</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">@{profile.handle}</p>
+                  </div>
+                </a>
+              )}
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                <span class="text-xl">💻</span>
+                <div>
+                  <p class="font-medium text-gray-900 dark:text-white">GitHub</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-300">View source code</p>
+                </div>
+              </a>
+              <a
+                href="https://atproto.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                <span class="text-xl">🌐</span>
+                <div>
+                  <p class="font-medium text-gray-900 dark:text-white">AT Protocol</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-300">Learn more</p>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <!-- Site Stats -->
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Site Info</h3>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-300">Built with:</span>
+                <span class="text-gray-900 dark:text-white">Astro</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-300">Data source:</span>
+                <span class="text-gray-900 dark:text-white">AT Protocol</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-300">Blog platform:</span>
+                <span class="text-gray-900 dark:text-white">WhiteWind</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-300">Hosting:</span>
+                <span class="text-gray-900 dark:text-white">Static</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Philosophy -->
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Philosophy</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-300">
+              I believe in the importance of owning your digital identity and content.
+              This site represents a step toward a more decentralized, user-controlled internet
+              where your data truly belongs to you.
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div class="text-gray-500 dark:text-gray-400 text-sm">
+            © 2024 {profile?.displayName || profile?.handle || 'AT Home'}. Built with Astro and AT Protocol.
+          </div>
+          <div class="flex items-center space-x-4 mt-4 md:mt-0">
+            <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm">
+              Astro
+            </a>
+            <a href="https://atproto.com" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm">
+              AT Protocol
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Dark mode toggle script -->
+    <script>
+      if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
+  </body>
+</html>

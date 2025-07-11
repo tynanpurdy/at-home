@@ -1,0 +1,90 @@
+---
+import { Image } from 'astro:assets';
+
+export interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  decoding?: 'async' | 'sync' | 'auto';
+  quality?: number;
+  format?: 'webp' | 'avif' | 'jpeg' | 'png' | 'svg';
+  sizes?: string;
+  style?: string;
+  [key: string]: any;
+}
+
+const {
+  src,
+  alt,
+  width = 400,
+  height = 300,
+  class: className = '',
+  loading = 'lazy',
+  decoding = 'async',
+  quality = 80,
+  format = 'webp',
+  sizes,
+  style,
+  ...rest
+} = Astro.props;
+
+// Check if src is a remote URL
+const isRemoteImage = src.startsWith('http') || src.startsWith('//') || src.startsWith('data:');
+
+// If it's a remote image, use regular img tag with optimization attributes
+if (isRemoteImage) {
+  const optimizedSrc = src;
+  const srcSetEntries = [];
+
+  // Generate srcset for different densities
+  if (width && !src.startsWith('data:')) {
+    const densities = [1, 1.5, 2, 3];
+    for (const density of densities) {
+      const scaledWidth = Math.round(width * density);
+      const scaledHeight = height ? Math.round(height * density) : undefined;
+
+      // For external images, we can't generate different sizes, so we use the same src
+      srcSetEntries.push(`${src} ${density}x`);
+    }
+  }
+
+  const srcSet = srcSetEntries.length > 0 ? srcSetEntries.join(', ') : undefined;
+---
+
+<img
+  src={optimizedSrc}
+  alt={alt}
+  width={width}
+  height={height}
+  class={className}
+  loading={loading}
+  decoding={decoding}
+  srcset={srcSet}
+  sizes={sizes}
+  style={style}
+  {...rest}
+/>
+
+} else {
+  // For local images, use Astro's Image component
+---
+
+<Image
+  src={src}
+  alt={alt}
+  width={width}
+  height={height}
+  class={className}
+  loading={loading}
+  decoding={decoding}
+  quality={quality}
+  format={format}
+  sizes={sizes}
+  style={style}
+  {...rest}
+/>
+
+}

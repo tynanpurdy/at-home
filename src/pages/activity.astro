@@ -1,0 +1,351 @@
+---
+import { createATProtoClient } from '../lib/atproto';
+import { getATProtoConfig, ATPROTO_COLLECTIONS } from '../config/atproto';
+import ActivityFeed from '../components/ActivityFeed.tsx';
+import Profile from '../components/Profile.tsx';
+
+// Get AT Protocol configuration
+const config = getATProtoConfig();
+
+// Initialize AT Protocol client
+const atClient = createATProtoClient(config);
+
+// Fetch data at build time
+let profile = null;
+let recentActivity = [];
+let collections = [];
+
+try {
+  console.log('🚀 Starting concurrent activity data fetch...');
+
+  // Use concurrent requests for better performance
+  const [profileResult, activityResult, ...collectionsData] = await Promise.allSettled([
+    atClient.getProfile(),
+    atClient.getRecentActivity(undefined, 20), // Reduced from 30 to 20
+    atClient.getRepositoryRecords(ATPROTO_COLLECTIONS.BLUESKY_POST, undefined, 5),
+    atClient.getRepositoryRecords(ATPROTO_COLLECTIONS.BLUESKY_LIKE, undefined, 5),
+    atClient.getRepositoryRecords(ATPROTO_COLLECTIONS.BLUESKY_REPOST, undefined, 5),
+    atClient.getRepositoryRecords(ATPROTO_COLLECTIONS.BLUESKY_FOLLOW, undefined, 5),
+    atClient.getRepositoryRecords(ATPROTO_COLLECTIONS.WHITEWIND_BLOG, undefined, 5),
+  ]);
+
+  // Handle profile
+  if (profileResult.status === 'fulfilled') {
+    profile = profileResult.value;
+    console.log('✅ Profile loaded');
+  } else {
+    console.error('❌ Profile failed:', profileResult.reason);
+  }
+
+  // Handle recent activity
+  if (activityResult.status === 'fulfilled') {
+    recentActivity = activityResult.value;
+    console.log('✅ Activity loaded:', recentActivity.length);
+  } else {
+    console.error('❌ Activity failed:', activityResult.reason);
+  }
+
+  // Handle collections
+  collections = [
+    { name: 'Posts', records: collectionsData[0].status === 'fulfilled' ? collectionsData[0].value : [] },
+    { name: 'Likes', records: collectionsData[1].status === 'fulfilled' ? collectionsData[1].value : [] },
+    { name: 'Reposts', records: collectionsData[2].status === 'fulfilled' ? collectionsData[2].value : [] },
+    { name: 'Follows', records: collectionsData[3].status === 'fulfilled' ? collectionsData[3].value : [] },
+    { name: 'Blog Posts', records: collectionsData[4].status === 'fulfilled' ? collectionsData[4].value : [] },
+  ];
+
+  console.log('🎉 Activity data fetch completed');
+} catch (error) {
+  console.error('❌ Error fetching activity data:', error);
+}
+
+const totalActivity = recentActivity.length;
+const activityToday = recentActivity.filter(record => {
+  const today = new Date();
+  const recordDate = new Date(record.indexedAt);
+  return recordDate.toDateString() === today.toDateString();
+}).length;
+
+const activityThisWeek = recentActivity.filter(record => {
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  const recordDate = new Date(record.indexedAt);
+  return recordDate >= weekAgo;
+}).length;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Activity - {profile?.displayName || profile?.handle || 'AT Home'}</title>
+    <meta name="description" content="Recent activity from my AT Protocol repository" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <a href="/" class="text-xl font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              {profile?.displayName || profile?.handle || 'AT Home'}
+            </a>
+          </div>
+          <div class="flex items-center space-x-4">
+            <a href="/" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Home</a>
+            <a href="/blog" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Blog</a>
+            <a href="/activity" class="text-blue-600 dark:text-blue-400 font-medium">Activity</a>
+            <a href="/about" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">About</a>
+            {profile && (
+              <a
+                href={`https://bsky.app/profile/${profile.handle}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
+              >
+                Follow on Bluesky
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="text-center">
+          <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">Activity Feed</h1>
+          <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            A comprehensive view of my activity across the AT Protocol ecosystem.
+            This includes posts, likes, reposts, follows, and blog entries.
+          </p>
+        </div>
+      </div>
+
+      <!-- Activity Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 text-center">
+          <div class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+            {totalActivity}
+          </div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">
+            Total Records
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 text-center">
+          <div class="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
+            {activityToday}
+          </div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">
+            Today
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 text-center">
+          <div class="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
+            {activityThisWeek}
+          </div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">
+            This Week
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 text-center">
+          <div class="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
+            {collections.filter(c => c.records.length > 0).length}
+          </div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">
+            Active Collections
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Recent Activity Feed -->
+        <div class="lg:col-span-2">
+          <div class="mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Recent Activity</h2>
+            <p class="text-gray-600 dark:text-gray-300">
+              Latest activity from all collections in my AT Protocol repository
+            </p>
+          </div>
+
+          {recentActivity.length > 0 ? (
+            <ActivityFeed records={recentActivity} maxItems={20} compact={false} />
+          ) : (
+            <div class="text-center py-16 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <div class="text-6xl mb-4">🔄</div>
+              <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-2">No recent activity</h3>
+              <p class="text-gray-500 dark:text-gray-400 mb-6">
+                Activity from your AT Protocol repository will appear here once you start creating records.
+              </p>
+              <div class="space-y-2 text-sm text-gray-400 dark:text-gray-500">
+                <p>Activities that will appear here:</p>
+                <ul class="list-disc list-inside space-y-1">
+                  <li>Posts on Bluesky</li>
+                  <li>Likes and reposts</li>
+                  <li>New follows</li>
+                  <li>Blog posts via WhiteWind</li>
+                  <li>Profile updates</li>
+                </ul>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+          <!-- Profile Card -->
+          {profile && (
+            <div>
+              <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Profile</h3>
+              <Profile profile={profile} compact={true} />
+            </div>
+          )}
+
+          <!-- Activity by Collection -->
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Activity by Type</h3>
+            <div class="space-y-3">
+              {collections.map((collection) => (
+                <div key={collection.name} class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                    <span class="text-sm font-medium text-gray-900 dark:text-white">
+                      {collection.name}
+                    </span>
+                  </div>
+                  <span class="text-sm text-gray-500 dark:text-gray-400">
+                    {collection.records.length}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <!-- AT Protocol Collections Info -->
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">AT Protocol Collections</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+              Your AT Protocol repository contains different types of records organized into collections.
+              Each collection represents a different type of activity or content.
+            </p>
+            <div class="space-y-2 text-sm">
+              <div class="flex items-center text-gray-600 dark:text-gray-300">
+                <span class="text-blue-500 mr-2">📝</span>
+                Posts & Content
+              </div>
+              <div class="flex items-center text-gray-600 dark:text-gray-300">
+                <span class="text-red-500 mr-2">❤️</span>
+                Likes & Reactions
+              </div>
+              <div class="flex items-center text-gray-600 dark:text-gray-300">
+                <span class="text-green-500 mr-2">🔄</span>
+                Shares & Reposts
+              </div>
+              <div class="flex items-center text-gray-600 dark:text-gray-300">
+                <span class="text-purple-500 mr-2">👥</span>
+                Social Connections
+              </div>
+            </div>
+          </div>
+
+          <!-- Real-time Updates Info -->
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Live Updates</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+              This activity feed is updated when the site is rebuilt.
+              For real-time updates, visit your profile on Bluesky.
+            </p>
+            <div class="space-y-2">
+              <a href="/blog" class="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
+                📝 View Blog Posts
+              </a>
+              <a href="/" class="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
+                🏠 Back to Home
+              </a>
+              {profile && (
+                <a
+                  href={`https://bsky.app/profile/${profile.handle}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm"
+                >
+                  🐦 Live on Bluesky
+                </a>
+              )}
+            </div>
+          </div>
+
+          <!-- Repository Info -->
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Your Repository</h3>
+            {profile && (
+              <div class="space-y-2 text-sm">
+                <div class="flex items-center justify-between">
+                  <span class="text-gray-500 dark:text-gray-400">DID:</span>
+                  <code class="text-xs text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                    {profile.did.slice(0, 20)}...
+                  </code>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-gray-500 dark:text-gray-400">Handle:</span>
+                  <span class="text-gray-900 dark:text-white font-medium">
+                    @{profile.handle}
+                  </span>
+                </div>
+              </div>
+            )}
+            <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <a
+                href="https://atproto.com/guides/overview"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
+              >
+                Learn about AT Protocol →
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div class="text-gray-500 dark:text-gray-400 text-sm">
+            © 2024 {profile?.displayName || profile?.handle || 'AT Home'}. Built with Astro and AT Protocol.
+          </div>
+          <div class="flex items-center space-x-4 mt-4 md:mt-0">
+            <a href="https://bsky.app" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm">
+              Bluesky
+            </a>
+            <a href="https://atproto.com" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm">
+              AT Protocol
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Dark mode toggle script -->
+    <script>
+      if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
+  </body>
+</html>

@@ -1,16 +1,273 @@
 ---
+import { createATProtoClient } from '../lib/atproto';
+import { getATProtoConfig, ATPROTO_COLLECTIONS } from '../config/atproto';
+import BlogPost from '../components/BlogPost.tsx';
+import ActivityFeed from '../components/ActivityFeed.tsx';
+import Profile from '../components/Profile.tsx';
 
+// Get AT Protocol configuration
+const config = getATProtoConfig();
+
+// Initialize AT Protocol client
+const atClient = createATProtoClient(config);
+
+// Fetch data at build time
+let profile = null;
+let blogPosts = [];
+let recentActivity = [];
+
+try {
+  console.log('🚀 Starting concurrent data fetch...');
+
+  // Use concurrent requests for better performance
+  const [profileResult, blogPostsResult, activityResult] = await Promise.allSettled([
+    atClient.getProfile(),
+    atClient.getWhiteWindPosts(undefined, 3), // Reduced from 5 to 3
+    atClient.getRecentActivity(undefined, 8)   // Reduced from 10 to 8
+  ]);
+
+  // Handle profile
+  if (profileResult.status === 'fulfilled') {
+    profile = profileResult.value;
+    console.log('✅ Profile loaded');
+  } else {
+    console.error('❌ Profile failed:', profileResult.reason);
+  }
+
+  // Handle blog posts
+  if (blogPostsResult.status === 'fulfilled') {
+    blogPosts = blogPostsResult.value;
+    console.log('✅ Blog posts loaded:', blogPosts.length);
+  } else {
+    console.error('❌ Blog posts failed:', blogPostsResult.reason);
+  }
+
+  // Handle activity
+  if (activityResult.status === 'fulfilled') {
+    recentActivity = activityResult.value;
+    console.log('✅ Activity loaded:', recentActivity.length);
+  } else {
+    console.error('❌ Activity failed:', activityResult.reason);
+  }
+
+  console.log('🎉 Data fetch completed');
+} catch (error) {
+  console.error('❌ Error fetching AT Protocol data:', error);
+}
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{profile?.displayName || profile?.handle || 'AT Home'} - Personal Portfolio & Blog</title>
+    <meta name="description" content="Personal portfolio and blog powered by the AT Protocol" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white">
+              {profile?.displayName || profile?.handle || 'AT Home'}
+            </h1>
+          </div>
+          <div class="flex items-center space-x-4">
+            <a href="/blog" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Blog</a>
+            <a href="/activity" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Activity</a>
+            <a href="/about" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">About</a>
+            {profile && (
+              <a
+                href={`https://bsky.app/profile/${profile.handle}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
+              >
+                Follow on Bluesky
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Hero Section -->
+      <section class="mb-12">
+        <div class="text-center">
+          <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            Welcome to My Digital Home
+          </h2>
+          <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            This is my personal portfolio and blog, powered by the AT Protocol.
+            Here you'll find my thoughts, projects, and activity across the decentralized web.
+          </p>
+        </div>
+      </section>
+
+      <!-- Grid Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content Area -->
+        <div class="lg:col-span-2 space-y-8">
+          <!-- Latest Blog Posts -->
+          <section>
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Latest Blog Posts</h3>
+              <a href="/blog" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
+                View all posts →
+              </a>
+            </div>
+
+            {blogPosts.length > 0 ? (
+              <div class="space-y-6">
+                {blogPosts.map((post) => (
+                  <BlogPost key={post.uri} post={post} compact={true} />
+                ))}
+              </div>
+            ) : (
+              <div class="text-center py-8 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                <p class="text-gray-500 dark:text-gray-400">No blog posts found yet.</p>
+                <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">
+                  Posts will appear here when you publish them using the WhiteWind lexicon.
+                </p>
+              </div>
+            )}
+          </section>
+
+          <!-- Recent Activity -->
+          <section>
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Recent Activity</h3>
+              <a href="/activity" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
+                View all activity →
+              </a>
+            </div>
+
+            {recentActivity.length > 0 ? (
+              <ActivityFeed records={recentActivity} maxItems={5} compact={true} />
+            ) : (
+              <div class="text-center py-8 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                <p class="text-gray-500 dark:text-gray-400">No recent activity found.</p>
+                <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">
+                  Activity from your AT Protocol repository will appear here.
+                </p>
+              </div>
+            )}
+          </section>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+          <!-- Profile Card -->
+          {profile && (
+            <div>
+              <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">About Me</h3>
+              <Profile profile={profile} compact={true} />
+            </div>
+          )}
+
+          <!-- AT Protocol Info -->
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Powered by AT Protocol</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+              This site is built on the AT Protocol, a decentralized social networking protocol.
+              All content is fetched directly from my AT Protocol repository.
+            </p>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-gray-500 dark:text-gray-400">Blog Posts:</span>
+                <span class="text-gray-900 dark:text-white font-medium">WhiteWind</span>
+              </div>
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-gray-500 dark:text-gray-400">Social:</span>
+                <span class="text-gray-900 dark:text-white font-medium">Bluesky</span>
+              </div>
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-gray-500 dark:text-gray-400">Protocol:</span>
+                <span class="text-gray-900 dark:text-white font-medium">AT Protocol</span>
+              </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <a
+                href="https://atproto.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
+              >
+                Learn more about AT Protocol →
+              </a>
+            </div>
+          </div>
+
+          <!-- Quick Links -->
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Links</h3>
+            <div class="space-y-2">
+              <a href="/blog" class="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
+                📝 All Blog Posts
+              </a>
+              <a href="/activity" class="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
+                🔄 Recent Activity
+              </a>
+              <a href="/about" class="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
+                👤 About Me
+              </a>
+              {profile && (
+                <a
+                  href={`https://bsky.app/profile/${profile.handle}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm"
+                >
+                  🐦 Follow on Bluesky
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div class="text-gray-500 dark:text-gray-400 text-sm">
+            © 2024 {profile?.displayName || profile?.handle || 'AT Home'}. Built with Astro and AT Protocol.
+          </div>
+          <div class="flex items-center space-x-4 mt-4 md:mt-0">
+            <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+              <span class="sr-only">Astro</span>
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2L2 7v10l10 5 10-5V7l-10-5zm0 2l8 4v8l-8 4-8-4V8l8-4z"/>
+              </svg>
+            </a>
+            <a href="https://atproto.com" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+              <span class="sr-only">AT Protocol</span>
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Dark mode toggle script -->
+    <script>
+      // Simple dark mode toggle (you can enhance this)
+      if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
+  </body>
 </html>

@@ -1,0 +1,285 @@
+---
+import { createATProtoClient } from '../lib/atproto';
+import { getATProtoConfig } from '../config/atproto';
+
+// Get AT Protocol configuration
+const config = getATProtoConfig();
+
+// Initialize AT Protocol client
+const atClient = createATProtoClient(config);
+
+// Test data
+let debugData = {
+  config: {
+    service: config.service,
+    identifier: config.identifier,
+    handle: config.handle,
+    hasPassword: !!config.password
+  },
+  profile: null,
+  collections: [],
+  whiteWindPosts: [],
+  sampleRecords: {},
+  errors: []
+};
+
+try {
+  console.log('🧪 Starting AT Protocol debug test...');
+
+  // Test profile fetch
+  console.log('👤 Testing profile fetch...');
+  debugData.profile = await atClient.getProfile();
+  console.log('✅ Profile fetched:', debugData.profile.handle);
+
+  // Test collections discovery
+  console.log('📚 Testing collections discovery...');
+  const collectionsResponse = await atClient.agent.api.com.atproto.repo.describeRepo({
+    repo: debugData.profile.did,
+  });
+  debugData.collections = collectionsResponse.data.collections;
+  console.log('✅ Collections found:', debugData.collections.length);
+
+  // Test WhiteWind posts
+  console.log('📝 Testing WhiteWind posts...');
+  debugData.whiteWindPosts = await atClient.getWhiteWindPosts(undefined, 5);
+  console.log('✅ WhiteWind posts found:', debugData.whiteWindPosts.length);
+
+  // Test each collection individually
+  console.log('🔍 Testing individual collections...');
+  const collectionsToTest = [
+    'app.bsky.feed.post',
+    'app.bsky.feed.like',
+    'app.bsky.feed.repost',
+    'app.bsky.graph.follow'
+  ];
+
+  for (const collection of collectionsToTest) {
+    try {
+      console.log(`📂 Testing collection: ${collection}`);
+      const records = await atClient.getRepositoryRecords(collection, undefined, 3);
+      console.log(`   Records found: ${records.length}`);
+
+      debugData.sampleRecords[collection] = {
+        count: records.length,
+        records: records.map(record => ({
+          uri: record.uri,
+          createdAt: record.value.createdAt,
+          valueKeys: Object.keys(record.value),
+          hasText: 'text' in record.value,
+          hasSubject: 'subject' in record.value,
+          hasReason: 'reason' in record.value,
+          textContent: record.value.text ? record.value.text.substring(0, 100) : null,
+          subject: record.value.subject || null,
+          reason: record.value.reason || null,
+          fullValue: record.value
+        }))
+      };
+    } catch (error) {
+      console.log(`❌ Error with ${collection}:`, error.message);
+      debugData.errors.push({
+        collection,
+        error: error.message,
+        status: error.status
+      });
+    }
+  }
+
+  console.log('🎉 Debug test completed successfully!');
+
+} catch (error) {
+  console.error('❌ Debug test failed:', error);
+  debugData.errors.push({
+    general: true,
+    error: error.message,
+    status: error.status,
+    details: error
+  });
+}
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <title>AT Protocol Debug - {debugData.profile?.handle || 'Debug'}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50 dark:bg-gray-900 min-h-screen p-8">
+    <div class="max-w-6xl mx-auto">
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">AT Protocol Debug</h1>
+        <p class="text-gray-600 dark:text-gray-300">Debugging your AT Protocol connection and data</p>
+        <a href="/" class="text-blue-600 dark:text-blue-400 hover:underline">← Back to Home</a>
+      </div>
+
+      <!-- Configuration -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Configuration</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-sm">
+          <div>
+            <strong>Service:</strong> {debugData.config.service}
+          </div>
+          <div>
+            <strong>Identifier:</strong> {debugData.config.identifier}
+          </div>
+          <div>
+            <strong>Handle:</strong> {debugData.config.handle}
+          </div>
+          <div>
+            <strong>Has Password:</strong> {debugData.config.hasPassword ? '✅ Yes' : '❌ No'}
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile -->
+      {debugData.profile && (
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Profile</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <strong>Handle:</strong> {debugData.profile.handle}
+            </div>
+            <div>
+              <strong>Display Name:</strong> {debugData.profile.displayName}
+            </div>
+            <div>
+              <strong>DID:</strong> <code class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-xs">{debugData.profile.did}</code>
+            </div>
+            <div>
+              <strong>Followers:</strong> {debugData.profile.followersCount}
+            </div>
+            <div>
+              <strong>Following:</strong> {debugData.profile.followsCount}
+            </div>
+            <div>
+              <strong>Posts:</strong> {debugData.profile.postsCount}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <!-- Collections -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Available Collections</h2>
+        <div class="space-y-2 text-sm">
+          {debugData.collections.map(collection => (
+            <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
+              <code class="text-xs">{collection}</code>
+              {debugData.sampleRecords[collection] && (
+                <span class="text-xs text-gray-500 dark:text-gray-400">
+                  {debugData.sampleRecords[collection].count} records
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- WhiteWind Posts -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">WhiteWind Posts</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+          Found {debugData.whiteWindPosts.length} WhiteWind blog posts
+        </p>
+        {debugData.whiteWindPosts.length > 0 && (
+          <div class="space-y-4">
+            {debugData.whiteWindPosts.map(post => (
+              <div class="border border-gray-200 dark:border-gray-600 rounded p-4">
+                <h3 class="font-medium text-gray-900 dark:text-white">{post.record.title}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                  {post.record.createdAt} • {post.record.content?.length || 0} characters
+                </p>
+                {post.record.tags && post.record.tags.length > 0 && (
+                  <div class="mt-2 flex flex-wrap gap-1">
+                    {post.record.tags.map(tag => (
+                      <span class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs px-2 py-1 rounded-full">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <!-- Sample Records -->
+      <div class="space-y-6">
+        {Object.entries(debugData.sampleRecords).map(([collection, data]) => (
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              {collection} ({data.count} records)
+            </h2>
+
+            {data.records.length > 0 && (
+              <div class="space-y-4">
+                {data.records.map((record, index) => (
+                  <div class="border border-gray-200 dark:border-gray-600 rounded p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-4">
+                      <div>
+                        <strong>URI:</strong> <code class="text-xs">{record.uri}</code>
+                      </div>
+                      <div>
+                        <strong>Created:</strong> {record.createdAt}
+                      </div>
+                      <div>
+                        <strong>Has Text:</strong> {record.hasText ? '✅' : '❌'}
+                      </div>
+                      <div>
+                        <strong>Has Subject:</strong> {record.hasSubject ? '✅' : '❌'}
+                      </div>
+                    </div>
+
+                    {record.textContent && (
+                      <div class="mb-2">
+                        <strong>Text:</strong> "{record.textContent}..."
+                      </div>
+                    )}
+
+                    {record.subject && (
+                      <div class="mb-2">
+                        <strong>Subject:</strong> {record.subject}
+                      </div>
+                    )}
+
+                    {record.reason && (
+                      <div class="mb-2">
+                        <strong>Reason:</strong> {record.reason}
+                      </div>
+                    )}
+
+                    <details class="mt-4">
+                      <summary class="cursor-pointer text-sm text-blue-600 dark:text-blue-400">
+                        Show Full Record
+                      </summary>
+                      <pre class="mt-2 text-xs bg-gray-100 dark:bg-gray-700 p-2 rounded overflow-x-auto">
+                        {JSON.stringify(record.fullValue, null, 2)}
+                      </pre>
+                    </details>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <!-- Errors -->
+      {debugData.errors.length > 0 && (
+        <div class="bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 rounded-lg p-6 mt-6">
+          <h2 class="text-xl font-semibold text-red-900 dark:text-red-100 mb-4">Errors</h2>
+          <div class="space-y-3">
+            {debugData.errors.map((error, index) => (
+              <div class="text-sm">
+                <strong>{error.collection || 'General'}:</strong> {error.error}
+                {error.status && <span class="text-xs text-red-600 dark:text-red-400 ml-2">(Status: {error.status})</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </body>
+</html>
