@@ -39,6 +39,15 @@ export interface ATProtoRecord {
     avatar?: string;
   };
   indexedAt: string;
+  resolvedSubject?: {
+    uri: string;
+    text?: string;
+    title?: string;
+    author?: {
+      handle: string;
+      displayName?: string;
+    };
+  };
 }
 
 export class ATProtoClient {
@@ -215,8 +224,33 @@ export class ATProtoClient {
       const recordArrays = await Promise.all(recordPromises);
       const allRecords: ATProtoRecord[] = recordArrays.flat();
 
+      // Resolve subjects for likes and reposts (limited to most recent to avoid performance issues)
+      const recordsToResolve = allRecords
+        .filter(
+          (record) =>
+            record.value.subject &&
+            (record.uri.includes("app.bsky.feed.like") ||
+              record.uri.includes("app.bsky.feed.repost")),
+        )
+        .slice(0, 5); // Only resolve first 5 to maintain performance
+
+      const recordsWithSubjectInfo = await Promise.all(
+        allRecords.map(async (record) => {
+          if (recordsToResolve.includes(record)) {
+            const resolvedSubject = await this.resolveSubject(
+              record.value.subject,
+            );
+            return {
+              ...record,
+              resolvedSubject,
+            };
+          }
+          return record;
+        }),
+      );
+
       // Filter out records with invalid timestamps
-      const validRecords = allRecords.filter((record) => {
+      const validRecords = recordsWithSubjectInfo.filter((record) => {
         const timestamp = record.indexedAt;
         if (!timestamp || timestamp === new Date().toISOString()) {
           return false; // Skip records with missing or current timestamps
@@ -247,6 +281,73 @@ export class ATProtoClient {
 
   async getBlogPosts(handle?: string, limit = 10): Promise<WhiteWindPost[]> {
     return this.getWhiteWindPosts(handle, limit);
+  }
+
+  async resolveSubject(subjectRef: any): Promise<any> {
+    if (!subjectRef) return null;
+
+    try {
+      const uri = typeof subjectRef === "string" ? subjectRef : subjectRef.uri;
+      if (!uri) return null;
+
+      // Parse the AT-URI to get repo and rkey
+      const parts = uri.split("/");
+      if (parts.length < 5) return null;
+
+      const repo = parts[2];
+      const collection = parts[3];
+      const rkey = parts[4];
+
+      // Only resolve posts for now
+      if (collection !== "app.bsky.feed.post") {
+        return null;
+      }
+
+      // Fetch the record
+      const response = await this.agent.api.com.atproto.repo.getRecord({
+        repo,
+        collection,
+        rkey,
+      });
+
+      if (!response.data) return null;
+
+      // Get author info - try to resolve handle from repo
+      let authorInfo = null;
+      try {
+        if (repo.includes(".")) {
+          // It's already a handle
+          authorInfo = {
+            handle: repo,
+            displayName: repo.split(".")[0],
+          };
+        } else {
+          // It's a DID, try to resolve it
+          const profile = await this.agent.getProfile({ actor: repo });
+          authorInfo = {
+            handle: profile.data.handle,
+            displayName: profile.data.displayName || profile.data.handle,
+          };
+        }
+      } catch (error) {
+        console.warn("Could not resolve author for subject:", error);
+        authorInfo = {
+          handle: "unknown",
+          displayName: "Unknown User",
+        };
+      }
+
+      return {
+        uri,
+        text: response.data.value.text || "No content",
+        title: response.data.value.title,
+        content: response.data.value.content,
+        author: authorInfo,
+      };
+    } catch (error) {
+      console.warn("Could not resolve subject:", error);
+      return null;
+    }
   }
 
   // Helper method to parse AT-URI

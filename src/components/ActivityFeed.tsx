@@ -84,26 +84,19 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
     // Handle profile updates
     if (value.displayName) return `Updated profile: ${value.displayName}`;
 
-    // Handle likes
-    if (record.uri.includes("app.bsky.feed.like") && value.subject) {
-      const subjectUri =
-        typeof value.subject === "string" ? value.subject : value.subject.uri;
-      if (subjectUri) {
-        const postId = subjectUri.split("/").pop();
-        return `Liked a post (${postId})`;
+    // Handle likes and reposts - show actual post content if available
+    if (record.uri.includes("app.bsky.feed.like")) {
+      if (record.resolvedSubject?.text) {
+        return record.resolvedSubject.text;
       }
-      return "Liked a post";
+      return "❤️ Liked a post";
     }
 
-    // Handle reposts
-    if (record.uri.includes("app.bsky.feed.repost") && value.subject) {
-      const subjectUri =
-        typeof value.subject === "string" ? value.subject : value.subject.uri;
-      if (subjectUri) {
-        const postId = subjectUri.split("/").pop();
-        return `Reposted a post (${postId})`;
+    if (record.uri.includes("app.bsky.feed.repost")) {
+      if (record.resolvedSubject?.text) {
+        return record.resolvedSubject.text;
       }
-      return "Reposted a post";
+      return "🔄 Reposted a post";
     }
 
     // Handle follows
@@ -129,6 +122,48 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
     }
 
     return "No content available";
+  };
+
+  const getActivityDescription = (record: ATProtoRecord): string => {
+    if (
+      record.uri.includes("app.bsky.feed.like") &&
+      record.resolvedSubject?.author
+    ) {
+      return `❤️ Liked a post by ${record.resolvedSubject.author.displayName || record.resolvedSubject.author.handle}`;
+    }
+
+    if (
+      record.uri.includes("app.bsky.feed.repost") &&
+      record.resolvedSubject?.author
+    ) {
+      return `🔄 Reposted a post by ${record.resolvedSubject.author.displayName || record.resolvedSubject.author.handle}`;
+    }
+
+    return "";
+  };
+
+  const getActivityLink = (record: ATProtoRecord): string => {
+    // For likes and reposts, link to the original post
+    if (
+      record.resolvedSubject?.uri &&
+      (record.uri.includes("app.bsky.feed.like") ||
+        record.uri.includes("app.bsky.feed.repost"))
+    ) {
+      const parts = record.resolvedSubject.uri.split("/");
+      if (parts.length >= 5) {
+        const repo = parts[2];
+        const rkey = parts[4];
+        return `https://bsky.app/profile/${repo}/post/${rkey}`;
+      }
+    }
+
+    // For posts, link to the post
+    if (record.uri.includes("app.bsky.feed.post")) {
+      return `https://bsky.app/profile/${record.author.handle}/post/${record.uri.split("/").pop()}`;
+    }
+
+    // Default to profile
+    return `https://bsky.app/profile/${record.author.handle}`;
   };
 
   const truncateText = (text: string, maxLength: number): string => {
@@ -170,8 +205,17 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
                     {formatRelativeTime(record.indexedAt)}
                   </span>
                 </div>
+                {getActivityDescription(record) && (
+                  <p className="text-xs text-blue-600 dark:text-blue-400 mb-1">
+                    {getActivityDescription(record)}
+                  </p>
+                )}
                 <p className="text-sm text-gray-600 dark:text-gray-300 truncate">
-                  {truncateText(getActivityContent(record), 80)}
+                  {(record.uri.includes("app.bsky.feed.like") ||
+                    record.uri.includes("app.bsky.feed.repost")) &&
+                  record.resolvedSubject?.text
+                    ? `"${truncateText(getActivityContent(record), 80)}"`
+                    : truncateText(getActivityContent(record), 80)}
                 </p>
               </div>
             </div>
@@ -208,15 +252,19 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
                   </span>
                 </div>
 
+                {getActivityDescription(record) && (
+                  <p className="text-sm text-blue-600 dark:text-blue-400 mb-2">
+                    {getActivityDescription(record)}
+                  </p>
+                )}
+
                 {showAuthor && (
                   <div className="flex items-center space-x-2 mb-2">
                     {record.author.avatar && (
-                      <OptimizedImage
+                      <img
                         src={record.author.avatar}
                         alt={record.author.displayName || record.author.handle}
                         className="w-6 h-6 rounded-full"
-                        width={24}
-                        height={24}
                       />
                     )}
                     <span className="text-sm text-gray-600 dark:text-gray-300">
@@ -233,7 +281,11 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
                     <h3 className="font-medium mb-1">{record.value.title}</h3>
                   )}
                   <p className="text-sm">
-                    {truncateText(getActivityContent(record), 200)}
+                    {(record.uri.includes("app.bsky.feed.like") ||
+                      record.uri.includes("app.bsky.feed.repost")) &&
+                    record.resolvedSubject?.text
+                      ? `"${truncateText(getActivityContent(record), 200)}"`
+                      : truncateText(getActivityContent(record), 200)}
                   </p>
                 </div>
 
@@ -258,25 +310,18 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
                 )}
 
                 <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                  {record.uri.includes("app.bsky.feed.post") ? (
-                    <a
-                      href={`https://bsky.app/profile/${record.author.handle}/post/${record.uri.split("/").pop()}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
-                    >
-                      View Post on Bluesky →
-                    </a>
-                  ) : (
-                    <a
-                      href={`https://bsky.app/profile/${record.author.handle}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
-                    >
-                      View Profile on Bluesky →
-                    </a>
-                  )}
+                  <a
+                    href={getActivityLink(record)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
+                  >
+                    {record.uri.includes("app.bsky.feed.post")
+                      ? "View Post on Bluesky →"
+                      : record.resolvedSubject?.uri
+                        ? "View Original Post on Bluesky →"
+                        : "View Profile on Bluesky →"}
+                  </a>
                 </div>
               </div>
             </div>
