@@ -142,6 +142,12 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
   };
 
   const getActivityLink = (record: ATProtoRecord): string => {
+    // For blog posts, link to WhiteWind
+    if (record.uri.includes("com.whtwnd.blog.entry")) {
+      const rkey = record.uri.split("/").pop();
+      return `https://whtwnd.com/${record.author.handle}/${rkey}`;
+    }
+
     // For likes and reposts, link to the original post
     if (
       record.resolvedSubject?.uri &&
@@ -319,11 +325,13 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
                     rel="noopener noreferrer"
                     className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
                   >
-                    {record.uri.includes("app.bsky.feed.post")
-                      ? "View Post on Bluesky →"
-                      : record.resolvedSubject?.uri
-                        ? "View Original Post on Bluesky →"
-                        : "View Profile on Bluesky →"}
+                    {record.uri.includes("com.whtwnd.blog.entry")
+                      ? "Read on WhiteWind →"
+                      : record.uri.includes("app.bsky.feed.post")
+                        ? "View Post on Bluesky →"
+                        : record.resolvedSubject?.uri
+                          ? "View Original Post on Bluesky →"
+                          : "View Profile on Bluesky →"}
                   </a>
                 </div>
               </div>
