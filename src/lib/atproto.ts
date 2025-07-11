@@ -50,6 +50,15 @@ export interface ATProtoRecord {
   };
 }
 
+export interface RepositoryStats {
+  totalRecords: number;
+  recordsToday: number;
+  recordsThisWeek: number;
+  activeCollections: number;
+  collectionCounts: Record<string, number>;
+  lastUpdated: string;
+}
+
 export class ATProtoClient {
   private agent: BskyAgent;
   private config: ATProtoConfig;
@@ -385,6 +394,187 @@ export class ATProtoClient {
       return `${Math.floor(diffInSeconds / 86400)}d ago`;
     } else {
       return this.formatDate(dateString);
+    }
+  }
+
+  // Get comprehensive repository statistics
+  async getRepositoryStats(handle?: string): Promise<RepositoryStats> {
+    await this.ensureAuthenticated();
+    const actor = handle || this.config.handle || this.config.identifier;
+
+    try {
+      console.log("📊 Fetching repository statistics for:", actor);
+
+      const profile = await this.getProfile(actor);
+      const did = profile.did;
+
+      // Discover all collections in the repository
+      const collectionsResponse =
+        await this.agent.api.com.atproto.repo.describeRepo({
+          repo: did,
+        });
+      const collections = collectionsResponse.data.collections;
+
+      console.log("📚 Discovered collections:", collections.length);
+
+      // Get all records from each collection (without limit)
+      const collectionPromises = collections.map(async (collection) => {
+        try {
+          const records = await this.getAllRecordsFromCollection(
+            collection,
+            actor,
+          );
+          return { collection, records };
+        } catch (error) {
+          console.warn(
+            `⚠️ Could not fetch all records from ${collection}:`,
+            error,
+          );
+          return { collection, records: [] };
+        }
+      });
+
+      const collectionResults = await Promise.all(collectionPromises);
+
+      // Calculate statistics
+      const allRecords: ATProtoRecord[] = [];
+      const collectionCounts: Record<string, number> = {};
+
+      for (const { collection, records } of collectionResults) {
+        collectionCounts[collection] = records.length;
+        allRecords.push(...records);
+      }
+
+      // Filter records with valid timestamps
+      const validRecords = allRecords.filter((record) => {
+        const timestamp = record.indexedAt;
+        if (!timestamp) return false;
+
+        const recordDate = new Date(timestamp);
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+        return recordDate > oneYearAgo && recordDate <= new Date();
+      });
+
+      // Calculate time-based statistics
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+      const recordsToday = validRecords.filter((record) => {
+        const recordDate = new Date(record.indexedAt);
+        return recordDate >= today;
+      }).length;
+
+      const recordsThisWeek = validRecords.filter((record) => {
+        const recordDate = new Date(record.indexedAt);
+        return recordDate >= weekAgo;
+      }).length;
+
+      const activeCollections = Object.values(collectionCounts).filter(
+        (count) => count > 0,
+      ).length;
+
+      console.log("📊 Repository stats calculated:", {
+        total: validRecords.length,
+        today: recordsToday,
+        week: recordsThisWeek,
+        collections: activeCollections,
+      });
+
+      return {
+        totalRecords: validRecords.length,
+        recordsToday,
+        recordsThisWeek,
+        activeCollections,
+        collectionCounts,
+        lastUpdated: new Date().toISOString(),
+      };
+    } catch (error) {
+      console.error("❌ Error fetching repository statistics:", error);
+      return {
+        totalRecords: 0,
+        recordsToday: 0,
+        recordsThisWeek: 0,
+        activeCollections: 0,
+        collectionCounts: {},
+        lastUpdated: new Date().toISOString(),
+      };
+    }
+  }
+
+  // Helper method to get all records from a collection
+  async getAllRecordsFromCollection(
+    collection: string,
+    handle?: string,
+    cursor?: string,
+  ): Promise<ATProtoRecord[]> {
+    const actor = handle || this.config.handle || this.config.identifier;
+    const profile = await this.getProfile(actor);
+    const did = profile.did;
+
+    const allRecords: ATProtoRecord[] = [];
+    let currentCursor = cursor;
+
+    try {
+      do {
+        const response = await this.agent.api.com.atproto.repo.listRecords({
+          repo: did,
+          collection,
+          limit: 100, // Max limit per request
+          cursor: currentCursor,
+        });
+
+        const records = response.data.records.map((record: any) => ({
+          uri: record.uri,
+          cid: record.cid,
+          value: record.value,
+          author: {
+            did: did,
+            handle: profile.handle,
+            displayName: profile.displayName,
+            avatar: profile.avatar,
+          },
+          indexedAt: record.value.createdAt || record.value.indexedAt || null,
+        }));
+
+        allRecords.push(...records);
+        currentCursor = response.data.cursor;
+
+        // Safety check to avoid infinite loops
+        if (allRecords.length > 10000) {
+          console.warn(
+            `⚠️ Stopping collection fetch at 10k records for ${collection}`,
+          );
+          break;
+        }
+      } while (currentCursor);
+
+      return allRecords;
+    } catch (error) {
+      console.error(`❌ Error fetching all records from ${collection}:`, error);
+      return [];
+    }
+  }
+
+  // Get repository description with all collections
+  async getRepositoryDescription(handle?: string): Promise<any> {
+    await this.ensureAuthenticated();
+    const actor = handle || this.config.handle || this.config.identifier;
+
+    try {
+      const profile = await this.getProfile(actor);
+      const did = profile.did;
+
+      const response = await this.agent.api.com.atproto.repo.describeRepo({
+        repo: did,
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error("❌ Error fetching repository description:", error);
+      return { collections: [], handleIsCorrect: false };
     }
   }
 }

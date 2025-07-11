@@ -13,15 +13,17 @@ const atClient = createATProtoClient(config);
 // Fetch data at build time
 let profile = null;
 let recentActivity = [];
+let repositoryStats = null;
 let collections = [];
 
 try {
   console.log('🚀 Starting concurrent activity data fetch...');
 
   // Use concurrent requests for better performance
-  const [profileResult, activityResult, ...collectionsData] = await Promise.allSettled([
+  const [profileResult, activityResult, statsResult, ...collectionsData] = await Promise.allSettled([
     atClient.getProfile(),
-    atClient.getRecentActivity(undefined, 20), // Reduced from 30 to 20
+    atClient.getRecentActivity(undefined, 20), // For display purposes
+    atClient.getRepositoryStats(), // Get comprehensive repository statistics
     atClient.getRepositoryRecords(ATPROTO_COLLECTIONS.BLUESKY_POST, undefined, 5),
     atClient.getRepositoryRecords(ATPROTO_COLLECTIONS.BLUESKY_LIKE, undefined, 5),
     atClient.getRepositoryRecords(ATPROTO_COLLECTIONS.BLUESKY_REPOST, undefined, 5),
@@ -45,6 +47,14 @@ try {
     console.error('❌ Activity failed:', activityResult.reason);
   }
 
+  // Handle repository statistics
+  if (statsResult.status === 'fulfilled') {
+    repositoryStats = statsResult.value;
+    console.log('✅ Repository stats loaded');
+  } else {
+    console.error('❌ Repository stats failed:', statsResult.reason);
+  }
+
   // Handle collections
   collections = [
     { name: 'Posts', records: collectionsData[0].status === 'fulfilled' ? collectionsData[0].value : [] },
@@ -59,19 +69,22 @@ try {
   console.error('❌ Error fetching activity data:', error);
 }
 
-const totalActivity = recentActivity.length;
-const activityToday = recentActivity.filter(record => {
+// Use repository statistics if available, otherwise fallback to recent activity
+const totalActivity = repositoryStats ? repositoryStats.totalRecords : recentActivity.length;
+const activityToday = repositoryStats ? repositoryStats.recordsToday : recentActivity.filter(record => {
   const today = new Date();
   const recordDate = new Date(record.indexedAt);
   return recordDate.toDateString() === today.toDateString();
 }).length;
 
-const activityThisWeek = recentActivity.filter(record => {
+const activityThisWeek = repositoryStats ? repositoryStats.recordsThisWeek : recentActivity.filter(record => {
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
   const recordDate = new Date(record.indexedAt);
   return recordDate >= weekAgo;
 }).length;
+
+const activeCollections = repositoryStats ? repositoryStats.activeCollections : collections.filter(c => c.records.length > 0).length;
 ---
 
 <html lang="en">
@@ -160,7 +173,7 @@ const activityThisWeek = recentActivity.filter(record => {
 
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 text-center">
           <div class="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
-            {collections.filter(c => c.records.length > 0).length}
+            {activeCollections}
           </div>
           <div class="text-sm text-gray-500 dark:text-gray-400">
             Active Collections
@@ -216,20 +229,49 @@ const activityThisWeek = recentActivity.filter(record => {
           <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Activity by Type</h3>
             <div class="space-y-3">
-              {collections.map((collection) => (
-                <div key={collection.name} class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <div class="flex items-center space-x-3">
-                    <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
-                    <span class="text-sm font-medium text-gray-900 dark:text-white">
-                      {collection.name}
+              {repositoryStats ? (
+                Object.entries(repositoryStats.collectionCounts).map(([collection, count]) => (
+                  <div key={collection} class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                      <span class="text-sm font-medium text-gray-900 dark:text-white">
+                        {collection.includes('post') ? 'Posts' :
+                         collection.includes('like') ? 'Likes' :
+                         collection.includes('repost') ? 'Reposts' :
+                         collection.includes('follow') ? 'Follows' :
+                         collection.includes('blog') ? 'Blog Posts' :
+                         collection.includes('profile') ? 'Profile Updates' :
+                         'Other'}
+                      </span>
+                    </div>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">
+                      {count}
                     </span>
                   </div>
-                  <span class="text-sm text-gray-500 dark:text-gray-400">
-                    {collection.records.length}
-                  </span>
-                </div>
-              ))}
+                ))
+              ) : (
+                collections.map((collection) => (
+                  <div key={collection.name} class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                      <span class="text-sm font-medium text-gray-900 dark:text-white">
+                        {collection.name}
+                      </span>
+                    </div>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">
+                      {collection.records.length}
+                    </span>
+                  </div>
+                ))
+              )}
             </div>
+            {repositoryStats && (
+              <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                  Statistics updated: {new Date(repositoryStats.lastUpdated).toLocaleString()}
+                </p>
+              </div>
+            )}
           </div>
 
           <!-- AT Protocol Collections Info -->
@@ -261,10 +303,10 @@ const activityThisWeek = recentActivity.filter(record => {
 
           <!-- Real-time Updates Info -->
           <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Live Updates</h3>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Repository Statistics</h3>
             <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
-              This activity feed is updated when the site is rebuilt.
-              For real-time updates, visit your profile on Bluesky.
+              Statistics reflect all records in your AT Protocol repository.
+              The activity feed shows recent items, but stats include everything.
             </p>
             <div class="space-y-2">
               <a href="/blog" class="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
