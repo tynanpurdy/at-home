@@ -1,6 +1,5 @@
 import React from "react";
 import type { ATProtoRecord } from "../lib/atproto";
-import OptimizedImage from "./OptimizedImage";
 
 interface ActivityFeedProps {
   records: ATProtoRecord[];
@@ -265,6 +264,10 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
                         src={record.author.avatar}
                         alt={record.author.displayName || record.author.handle}
                         className="w-6 h-6 rounded-full"
+                        width={24}
+                        height={24}
+                        loading="lazy"
+                        decoding="async"
                       />
                     )}
                     <span className="text-sm text-gray-600 dark:text-gray-300">

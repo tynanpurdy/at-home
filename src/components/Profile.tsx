@@ -1,5 +1,4 @@
 import React from "react";
-import OptimizedImage from "./OptimizedImage";
 
 interface ProfileData {
   did: string;
@@ -48,12 +47,14 @@ export const Profile: React.FC<ProfileProps> = ({
       <div className="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="flex-shrink-0">
           {profile.avatar ? (
-            <OptimizedImage
+            <img
               src={profile.avatar}
               alt={profile.displayName || profile.handle}
               className="w-12 h-12 rounded-full object-cover"
               width={48}
               height={48}
+              loading="lazy"
+              decoding="async"
             />
           ) : (
             <div className="w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
@@ -94,12 +95,14 @@ export const Profile: React.FC<ProfileProps> = ({
       {/* Banner */}
       {profile.banner && (
         <div className="h-32 sm:h-48 bg-gradient-to-r from-blue-400 to-purple-500 relative">
-          <OptimizedImage
+          <img
             src={profile.banner}
             alt="Profile banner"
             className="w-full h-full object-cover"
             width={800}
             height={192}
+            loading="eager"
+            decoding="async"
           />
         </div>
       )}
@@ -112,12 +115,14 @@ export const Profile: React.FC<ProfileProps> = ({
         {/* Avatar */}
         <div className="flex items-end -mt-16 mb-4">
           {profile.avatar ? (
-            <OptimizedImage
+            <img
               src={profile.avatar}
               alt={profile.displayName || profile.handle}
               className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white dark:border-gray-800 bg-white dark:bg-gray-800 object-cover"
               width={128}
               height={128}
+              loading="eager"
+              decoding="async"
             />
           ) : (
             <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white dark:border-gray-800 bg-gray-300 dark:bg-gray-600 flex items-center justify-center">

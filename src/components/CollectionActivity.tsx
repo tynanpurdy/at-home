@@ -1,6 +1,5 @@
 import React from "react";
 import type { ATProtoRecord } from "../lib/atproto";
-import OptimizedImage from "./OptimizedImage";
 
 interface CollectionActivityProps {
   collection: string;
@@ -143,12 +142,14 @@ export const CollectionActivity: React.FC<CollectionActivityProps> = ({
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center space-x-2">
                   {record.author.avatar && (
-                    <OptimizedImage
+                    <img
                       src={record.author.avatar}
                       alt={record.author.displayName || record.author.handle}
                       className="w-6 h-6 rounded-full"
                       width={24}
                       height={24}
+                      loading="lazy"
+                      decoding="async"
                     />
                   )}
                   <div>

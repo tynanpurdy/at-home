@@ -4,73 +4,25 @@ This document explains the image optimization implementation in the AT Protocol 
 
 ## Overview
 
-All images in the project have been updated to use optimized image components that provide:
-- Automatic format conversion (WebP/AVIF when supported)
-- Responsive image generation with srcset
-- Lazy loading by default
-- Error handling with fallback images
-- Loading states and blur placeholders
+All images in the project use standard HTML `<img>` tags with proper optimization attributes. This approach is simple, reliable, and works well with Astro's remote image optimization through the configured `remotePatterns`.
 
-## Components
+## Approach
 
-### OptimizedImage (React Components)
+### For React Components (.tsx files)
 
-Used in `.tsx` React components for dynamic images like avatars and banners.
+React components use standard `<img>` tags with:
+- Proper `width` and `height` attributes to prevent layout shift
+- Descriptive `alt` text for accessibility
+- Semantic CSS classes with Tailwind
+- Loading optimization attributes (`loading="lazy"` or `loading="eager"`)
+- Async decoding (`decoding="async"`)
+- Explicit dimensions for external images
 
-**Location**: `src/components/OptimizedImage.tsx`
+### For Astro Files (.astro files)
 
-**Features**:
-- Automatic srcset generation for different pixel densities
-- Quality optimization (default 80%)
-- Format conversion support
-- Error handling with fallback images
-- Lazy loading by default
-- Full opacity display (no loading state dimming)
-
-**Usage**:
-```tsx
-import OptimizedImage from './OptimizedImage';
-
-<OptimizedImage
-  src={profile.avatar}
-  alt="User avatar"
-  width={64}
-  height={64}
-  className="rounded-full"
-  priority={false} // or true for above-the-fold images
-  fallbackSrc="/default-avatar.png"
-  quality={80}
-  loading="lazy"
-/>
-```
-
-### AstroImage (Astro Files)
-
-Used in `.astro` files for both local and remote images.
-
-**Location**: `src/components/AstroImage.astro`
-
-**Features**:
-- Automatic detection of local vs remote images
-- Uses Astro's built-in Image component for local images
-- Optimized handling of external images
-- Format conversion and quality optimization
-
-**Usage**:
-```astro
----
-import AstroImage from '../components/AstroImage.astro';
----
-
-<AstroImage
-  src="/local-image.jpg"
-  alt="Local image"
-  width={800}
-  height={600}
-  class="rounded-lg"
-  loading="lazy"
-/>
-```
+Astro files can use either:
+- Standard `<img>` tags for external images
+- Astro's `Image` component from `astro:assets` for local images
 
 ## Configuration
 
@@ -101,87 +53,104 @@ image: {
 }
 ```
 
-This allows optimization of images from AT Protocol domains including Bluesky app domains, which is necessary for AT Protocol avatar and banner images.
+This allows optimization of images from AT Protocol domains including Bluesky app domains.
 
 ## Updated Components
 
-The following components have been updated to use optimized images:
+The following components use optimized image tags:
 
 1. **Profile.tsx** - Avatar and banner images
 2. **BlogPost.tsx** - Author avatars
 3. **ActivityFeed.tsx** - User avatars in activity items
 4. **CollectionActivity.tsx** - Author avatars in collection items
 
-## Performance Benefits
-
-- **Reduced bandwidth**: Images are served in optimal formats (WebP/AVIF)
-- **Faster loading**: Lazy loading and responsive images
-- **Better UX**: Error handling with fallback images
-- **SEO friendly**: Proper alt text and semantic markup
-- **Full opacity**: No loading state dimming for immediate visual clarity
-
 ## Best Practices
 
 ### For Profile Images
 ```tsx
-<OptimizedImage
+<img
   src={user.avatar}
   alt={`${user.displayName || user.handle} avatar`}
-  width={64}
-  height={64}
-  className="rounded-full"
-  fallbackSrc="/default-avatar.png"
+  className="w-12 h-12 rounded-full object-cover"
+  width={48}
+  height={48}
+  loading="lazy"
+  decoding="async"
 />
 ```
 
 ### For Banner Images
 ```tsx
-<OptimizedImage
+<img
   src={profile.banner}
   alt="Profile banner"
-  width={800}
-  height={200}
   className="w-full h-full object-cover"
-  priority={true} // Above the fold
+  width={800}
+  height={192}
   loading="eager"
+  decoding="async"
 />
 ```
 
 ### For Content Images
 ```tsx
-<OptimizedImage
+<img
   src={post.image}
   alt={post.imageAlt || "Post image"}
+  className="rounded-lg"
   width={600}
   height={400}
-  className="rounded-lg"
-  sizes="(max-width: 768px) 100vw, 600px"
+  loading="lazy"
+  decoding="async"
 />
 ```
 
-## Error Handling
+## Performance Benefits
 
-All image components include error handling:
+- **Proper sizing**: Images include width/height attributes to prevent layout shift
+- **Lazy loading**: Non-critical images load only when needed
+- **Async decoding**: Images decode asynchronously for better performance
+- **Semantic markup**: Descriptive alt text for accessibility and SEO
+- **CSS optimization**: Tailwind classes for responsive design
+- **External optimization**: Astro's remotePatterns enable optimization of external images
 
-1. **Fallback images**: If primary image fails, fallback is shown
-2. **Graceful degradation**: Failed images don't break layout
-3. **Immediate display**: Images show at full opacity without loading dimming
+## Key Attributes
+
+Every image should include:
+
+1. **`src`** - The image URL
+2. **`alt`** - Descriptive alternative text
+3. **`width`** and **`height`** - Explicit dimensions to prevent layout shift
+4. **`className`** - CSS classes for styling
+5. **`loading`** - Loading behavior (`lazy` for below-fold, `eager` for above-fold)
+6. **`decoding`** - Async decoding for better performance (`async`)
 
 ## Testing
 
 To verify image optimization is working:
 
-1. Check Network tab in browser dev tools
-2. Verify WebP/AVIF formats are being served
-3. Test on different screen densities
-4. Verify lazy loading behavior
+1. Check that all images have proper `width` and `height` attributes
+2. Verify alt text is descriptive and meaningful
+3. Test responsive behavior across different screen sizes
+4. Check for layout shift issues using browser dev tools
+5. Verify lazy loading is working for below-fold images
+6. Check that the Astro audit passes without image warnings
+
+## Error Handling
+
+Images handle errors gracefully through:
+
+1. **Fallback content**: Default avatars or placeholder content when images fail
+2. **Graceful degradation**: Failed images don't break layout
+3. **Semantic markup**: Screen readers can understand image purpose through alt text
+4. **Proper dimensions**: Layout remains stable even if images fail to load
 
 ## Future Enhancements
 
 Potential improvements to consider:
 
-1. **Blur placeholders**: Generate blur data URLs for smoother loading
-2. **Preloading**: Implement image preloading for critical images
-3. **Progressive loading**: Show low-quality images while high-quality loads
-4. **CDN integration**: Use image CDN for additional optimization
-5. **Loading states**: Add optional loading indicators for slow connections
+1. **Responsive images**: Use `srcset` for different screen densities
+2. **Progressive loading**: Show low-quality images while high-quality loads
+3. **CDN integration**: Use image CDN for additional optimization
+4. **Local image optimization**: Use Astro's Image component for local assets
+5. **Preloading**: Preload critical images for faster initial loads

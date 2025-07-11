@@ -1,6 +1,5 @@
 import React from "react";
 import type { WhiteWindPost } from "../lib/atproto";
-import OptimizedImage from "./OptimizedImage";
 
 interface BlogPostProps {
   post: WhiteWindPost;
@@ -47,12 +46,14 @@ export const BlogPost: React.FC<BlogPostProps> = ({
       <article className="border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
         <div className="flex items-start space-x-3">
           {post.author.avatar && (
-            <OptimizedImage
+            <img
               src={post.author.avatar}
               alt={post.author.displayName || post.author.handle}
               className="w-8 h-8 rounded-full"
               width={32}
               height={32}
+              loading="lazy"
+              decoding="async"
             />
           )}
           <div className="flex-1 min-w-0">
@@ -97,12 +98,14 @@ export const BlogPost: React.FC<BlogPostProps> = ({
       <header className="mb-4">
         <div className="flex items-center space-x-3 mb-3">
           {post.author.avatar && (
-            <OptimizedImage
+            <img
               src={post.author.avatar}
               alt={post.author.displayName || post.author.handle}
               className="w-10 h-10 rounded-full"
               width={40}
               height={40}
+              loading="lazy"
+              decoding="async"
             />
           )}
           <div>
