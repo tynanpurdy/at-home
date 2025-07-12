@@ -1,9 +1,5 @@
 import React from "react";
 import type { WhiteWindPost } from "../lib/atproto";
-import {
-  getRecordInternalLink,
-  canViewRecordInternally,
-} from "../lib/lexicons";
 
 interface BlogPostProps {
   post: WhiteWindPost;
@@ -63,16 +59,12 @@ export const BlogPost: React.FC<BlogPostProps> = ({
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2 mb-1">
               <h3 className="font-medium text-gray-900 dark:text-white truncate">
-                {canViewRecordInternally(post) ? (
-                  <a
-                    href={getRecordInternalLink(post)}
-                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                  >
-                    {post.record.title || "Untitled Post"}
-                  </a>
-                ) : (
-                  post.record.title || "Untitled Post"
-                )}
+                <a
+                  href={`/record/${post.uri.split("/").pop()}`}
+                  className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                >
+                  {post.record.title || "Untitled Post"}
+                </a>
               </h3>
               <span className="text-sm text-gray-500 dark:text-gray-400">
                 {formatRelativeTime(post.record.createdAt)}
@@ -133,16 +125,12 @@ export const BlogPost: React.FC<BlogPostProps> = ({
 
         {post.record.title && (
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            {canViewRecordInternally(post) ? (
-              <a
-                href={getRecordInternalLink(post)}
-                className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-              >
-                {post.record.title}
-              </a>
-            ) : (
-              post.record.title
-            )}
+            <a
+              href={`/record/${post.uri.split("/").pop()}`}
+              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              {post.record.title}
+            </a>
           </h1>
         )}
 

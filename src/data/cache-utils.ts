@@ -5,12 +5,14 @@
  * to avoid rate limiting and improve performance.
  */
 
+import type { ATProtoRecord, WhiteWindPost } from "../lib/atproto";
+
 // Default empty data structures for fallbacks
 const DEFAULT_PROFILE = null;
-const DEFAULT_ACTIVITY = [];
-const DEFAULT_BLOG_POSTS = [];
+const DEFAULT_ACTIVITY: ATProtoRecord[] = [];
+const DEFAULT_BLOG_POSTS: WhiteWindPost[] = [];
 const DEFAULT_REPOSITORY_STATS = null;
-const DEFAULT_COLLECTIONS = [];
+const DEFAULT_COLLECTIONS: { name: string; records: ATProtoRecord[] }[] = [];
 const DEFAULT_CACHE_META = { lastUpdated: null, dataCount: {} };
 
 // Import JSON files directly - these are handled by our Vite plugin

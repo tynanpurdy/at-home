@@ -22,7 +22,7 @@ export interface WhiteWindPost {
     createdAt: string;
     title?: string;
     content?: string;
-    visibility?: "public" | "unlisted" | "followers";
+    visibility?: string;
     tags?: string[];
   };
   indexedAt: string;
@@ -680,96 +680,62 @@ export class ATProtoClient {
 
       let resultIndex = 0;
 
-      // Profile
-      const profile =
-        results[resultIndex].status === "fulfilled"
-          ? results[resultIndex].value
-          : null;
-      resultIndex++;
-
-      // Recent activity (only if activityLimit > 0)
-      // Check for fulfillment and ensure the value is an array if expected
-      const recentActivity =
-        activityLimit > 0 &&
-        results[resultIndex].status === "fulfilled" &&
-        Array.isArray(results[resultIndex].value)
-          ? results[resultIndex].value
-          : [];
-      if (activityLimit > 0) {
-        resultIndex++;
-      }
-
-      // Blog posts (optional)
-      let blogPosts: WhiteWindPost[] = [];
-      if (includeBlogPosts) {
-        // Check for fulfillment and ensure the value is an array if expected
-        blogPosts =
-          results[resultIndex].status === "fulfilled" &&
-          Array.isArray(results[resultIndex].value)
-            ? results[resultIndex].value
-            : [];
-        resultIndex++;
-      }
-
-      // Repository stats (optional)
+      let profile: any = null;
+      let recentActivity: any[] = [];
+      let blogPosts: any[] = [];
       let repositoryStats: RepositoryStats | undefined;
-      if (includeRepositoryStats) {
-        // Check for fulfillment and ensure the value is an object if expected
-        repositoryStats =
-          results[resultIndex].status === "fulfilled" &&
-          typeof results[resultIndex].value === "object" &&
-          results[resultIndex].value !== null
-            ? results[resultIndex].value
-            : undefined;
-        resultIndex++;
+      const collections: { name: string; records: any[] }[] = [];
+
+      let currentIndex = 0;
+
+      // Profile
+      if (results[currentIndex]?.status === "fulfilled") {
+        profile = results[currentIndex].value;
+      }
+      currentIndex++;
+
+      // Recent Activity
+      if (activityLimit > 0) {
+        if (results[currentIndex]?.status === "fulfilled") {
+          recentActivity = results[currentIndex].value as any[];
+        }
+        currentIndex++;
       }
 
-      // Collections (only if collectionsLimit > 0)
-      const collections =
-        collectionsLimit > 0
-          ? [
-              {
-                name: "Posts",
-                records:
-                  results[resultIndex].status === "fulfilled" &&
-                  Array.isArray(results[resultIndex].value)
-                    ? results[resultIndex].value
-                    : [],
-              },
-              {
-                name: "Likes",
-                records:
-                  results[resultIndex + 1].status === "fulfilled" &&
-                  Array.isArray(results[resultIndex + 1].value)
-                    ? results[resultIndex + 1].value
-                    : [],
-              },
-              {
-                name: "Reposts",
-                records:
-                  results[resultIndex + 2].status === "fulfilled" &&
-                  Array.isArray(results[resultIndex + 2].value)
-                    ? results[resultIndex + 2].value
-                    : [],
-              },
-              {
-                name: "Follows",
-                records:
-                  results[resultIndex + 3].status === "fulfilled" &&
-                  Array.isArray(results[resultIndex + 3].value)
-                    ? results[resultIndex + 3].value
-                    : [],
-              },
-              {
-                name: "Blog Posts",
-                records:
-                  results[resultIndex + 4].status === "fulfilled" &&
-                  Array.isArray(results[resultIndex + 4].value)
-                    ? results[resultIndex + 4].value
-                    : [],
-              },
-            ]
-          : [];
+      // Blog Posts
+      if (includeBlogPosts) {
+        if (results[currentIndex]?.status === "fulfilled") {
+          blogPosts = results[currentIndex].value as any[];
+        }
+        currentIndex++;
+      }
+
+      // Repository Stats
+      if (includeRepositoryStats) {
+        if (results[currentIndex]?.status === "fulfilled") {
+          repositoryStats = results[currentIndex].value as RepositoryStats;
+        }
+        currentIndex++;
+      }
+
+      // Collections
+      if (collectionsLimit > 0) {
+        const collectionNames = [
+          "Posts",
+          "Likes",
+          "Reposts",
+          "Follows",
+          "Blog Posts",
+        ];
+        for (let i = 0; i < collectionNames.length; i++) {
+          if (results[currentIndex + i]?.status === "fulfilled") {
+            collections.push({
+              name: collectionNames[i],
+              records: results[currentIndex + i].value as any[],
+            });
+          }
+        }
+      }
 
       console.log("🎉 Unified activity data fetch completed");
 

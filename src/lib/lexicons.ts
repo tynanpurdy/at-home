@@ -1,9 +1,18 @@
 import type { ATProtoRecord, WhiteWindPost } from "./atproto";
 
-export interface LexiconRenderer {
-  // Metadata
-  name: string;
-  collection: string;
+// Base properties for any lexicon we handle, conforming to ATProto specs
+export interface BaseLexicon {
+  id: string; // The NSID of the lexicon, e.g., "app.bsky.feed.post"
+  type: "record" | "query" | "procedure";
+  description: string; // A short description of the lexicon
+}
+
+// Extends the base lexicon for record types, adding our UI rendering helpers
+export interface LexiconRenderer extends BaseLexicon {
+  type: "record";
+
+  // UI Presentation
+  name: string; // User-friendly name, e.g., "Post"
   icon: string;
   color: string;
 
@@ -52,8 +61,10 @@ const extractHandleFromDid = (did: string): string => {
 
 // Bluesky Post Lexicon
 const bskyPostLexicon: LexiconRenderer = {
+  id: "app.bsky.feed.post",
+  type: "record",
+  description: "A standard post on the Bluesky social network.",
   name: "Post",
-  collection: "app.bsky.feed.post",
   icon: "📝",
   color: "blue",
 
@@ -85,8 +96,10 @@ const bskyPostLexicon: LexiconRenderer = {
 
 // Bluesky Like Lexicon
 const bskyLikeLexicon: LexiconRenderer = {
+  id: "app.bsky.feed.like",
+  type: "record",
+  description: "A user's 'like' of another record.",
   name: "Like",
-  collection: "app.bsky.feed.like",
   icon: "❤️",
   color: "red",
 
@@ -139,8 +152,10 @@ const bskyLikeLexicon: LexiconRenderer = {
 
 // Bluesky Repost Lexicon
 const bskyRepostLexicon: LexiconRenderer = {
+  id: "app.bsky.feed.repost",
+  type: "record",
+  description: "A user's 'repost' of another record.",
   name: "Repost",
-  collection: "app.bsky.feed.repost",
   icon: "🔄",
   color: "green",
 
@@ -193,8 +208,10 @@ const bskyRepostLexicon: LexiconRenderer = {
 
 // Bluesky Follow Lexicon
 const bskyFollowLexicon: LexiconRenderer = {
+  id: "app.bsky.graph.follow",
+  type: "record",
+  description: "A record of a user following another user.",
   name: "Follow",
-  collection: "app.bsky.graph.follow",
   icon: "👥",
   color: "purple",
 
@@ -231,8 +248,10 @@ const bskyFollowLexicon: LexiconRenderer = {
 
 // WhiteWind Blog Post Lexicon
 const whitewindBlogLexicon: LexiconRenderer = {
+  id: "com.whtwnd.blog.entry",
+  type: "record",
+  description: "A long-form blog post using the WhiteWind lexicon.",
   name: "Blog Post",
-  collection: "com.whtwnd.blog.entry",
   icon: "📰",
   color: "orange",
 
@@ -264,8 +283,10 @@ const whitewindBlogLexicon: LexiconRenderer = {
 
 // Profile Update Lexicon
 const bskyProfileLexicon: LexiconRenderer = {
+  id: "app.bsky.actor.profile",
+  type: "record",
+  description: "A user's profile information.",
   name: "Profile Update",
-  collection: "app.bsky.actor.profile",
   icon: "👤",
   color: "gray",
 
@@ -299,20 +320,20 @@ const bskyProfileLexicon: LexiconRenderer = {
 };
 
 // Register all lexicons
-lexiconRegistry.set(bskyPostLexicon.collection, bskyPostLexicon);
-lexiconRegistry.set(bskyLikeLexicon.collection, bskyLikeLexicon);
-lexiconRegistry.set(bskyRepostLexicon.collection, bskyRepostLexicon);
-lexiconRegistry.set(bskyFollowLexicon.collection, bskyFollowLexicon);
-lexiconRegistry.set(whitewindBlogLexicon.collection, whitewindBlogLexicon);
-lexiconRegistry.set(bskyProfileLexicon.collection, bskyProfileLexicon);
+lexiconRegistry.set(bskyPostLexicon.id, bskyPostLexicon);
+lexiconRegistry.set(bskyLikeLexicon.id, bskyLikeLexicon);
+lexiconRegistry.set(bskyRepostLexicon.id, bskyRepostLexicon);
+lexiconRegistry.set(bskyFollowLexicon.id, bskyFollowLexicon);
+lexiconRegistry.set(whitewindBlogLexicon.id, whitewindBlogLexicon);
+lexiconRegistry.set(bskyProfileLexicon.id, bskyProfileLexicon);
 
 // Registry management functions
 export const registerLexicon = (lexicon: LexiconRenderer): void => {
-  lexiconRegistry.set(lexicon.collection, lexicon);
+  lexiconRegistry.set(lexicon.id, lexicon);
 };
 
-export const getLexicon = (collection: string): LexiconRenderer | undefined => {
-  return lexiconRegistry.get(collection);
+export const getLexicon = (id: string): LexiconRenderer | undefined => {
+  return lexiconRegistry.get(id);
 };
 
 export const getLexiconForRecord = (
@@ -390,10 +411,12 @@ export const getRecordDescription = (record: ATProtoRecord): string => {
   return lexicon?.getDescription(record) || "";
 };
 
-export const getRecordInternalLink = (record: ATProtoRecord): string | null => {
+export const getRecordInternalLink = (
+  record: ATProtoRecord,
+): string | undefined => {
   const lexicon = getLexiconForRecord(record);
   if (!lexicon || !lexicon.supportedViews.includes("full")) {
-    return null;
+    return undefined;
   }
 
   const rkey = record.uri.split("/").pop();

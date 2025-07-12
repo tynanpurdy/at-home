@@ -25,6 +25,74 @@ import {
     Code,
 } from "lucide-react";
 
+interface ATProtoProfile {
+    did: string;
+    handle: string;
+    displayName?: string;
+    description?: string;
+    avatar?: string;
+    banner?: string;
+    followersCount: number;
+    followsCount: number;
+    postsCount: number;
+    indexedAt: string;
+    labels: any[];
+}
+
+interface WhiteWindPost {
+    uri: string;
+    cid: string;
+    author: any;
+    record: {
+        title: string;
+        content: string;
+        tags?: string[];
+        createdAt: string;
+    };
+}
+
+interface SampleRecord {
+    uri: string;
+    createdAt: string;
+    valueKeys: string[];
+    hasText: boolean;
+    hasSubject: boolean;
+    hasReason: boolean;
+    textContent: string | null;
+    subject: any | null;
+    reason: any | null;
+    fullValue: any;
+}
+
+interface SampleRecords {
+    [key: string]: {
+        count: number;
+        records: SampleRecord[];
+    };
+}
+
+interface ErrorInfo {
+    collection?: string;
+    general?: boolean;
+    error: string;
+    status?: any;
+    details?: any;
+}
+
+interface DebugData {
+    config: {
+        service: string;
+        identifier: string;
+        handle: string;
+        hasPassword: boolean;
+    };
+    profile: ATProtoProfile | null;
+    collections: string[];
+    whiteWindPosts: WhiteWindPost[];
+    sampleRecords: SampleRecords;
+    errors: ErrorInfo[];
+}
+
 // Get AT Protocol configuration
 const config = getATProtoConfig();
 
@@ -32,7 +100,7 @@ const config = getATProtoConfig();
 const atClient = createATProtoClient(config);
 
 // Test data
-let debugData = {
+let debugData: DebugData = {
     config: {
         service: config.service,
         identifier: config.identifier,
@@ -142,21 +210,21 @@ try {
 >
     <div class="max-w-6xl mx-auto px-4 py-8">
         <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-foreground mb-4">
+            <h1 className="text-4xl font-bold text-foreground mb-4">
                 AT Protocol Debug
             </h1>
             <p class="text-xl text-muted-foreground max-w-3xl mx-auto">
                 Debugging your AT Protocol connection and data
             </p>
-            <Button variant="link" asChild class="mt-4">
+            <Button variant="link" asChild className="mt-4">
                 <a href="/">← Back to Home</a>
             </Button>
         </div>
 
         <!-- Configuration -->
-        <Card class="mb-6">
+        <Card>
             <CardHeader>
-                <CardTitle class="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2">
                     <Settings className="w-5 h-5" /> Configuration
                 </CardTitle>
                 <CardDescription>
@@ -167,19 +235,19 @@ try {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div class="flex items-center justify-between">
                         <span class="text-muted-foreground">Service:</span>
-                        <Badge variant="outline" class="font-mono text-xs">
+                        <Badge variant="outline">
                             {debugData.config.service}
                         </Badge>
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="text-muted-foreground">Identifier:</span>
-                        <Badge variant="outline" class="font-mono text-xs">
+                        <Badge variant="outline">
                             {debugData.config.identifier}
                         </Badge>
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="text-muted-foreground">Handle:</span>
-                        <Badge variant="outline" class="font-mono text-xs">
+                        <Badge variant="outline">
                             {debugData.config.handle}
                         </Badge>
                     </div>
@@ -200,9 +268,9 @@ try {
         <!-- Profile -->
         {
             debugData.profile && (
-                <Card class="mb-6">
+                <Card>
                     <CardHeader>
-                        <CardTitle class="flex items-center gap-2">
+                        <CardTitle className="flex items-center gap-2">
                             <User className="w-5 h-5" /> Profile
                         </CardTitle>
                         <CardDescription>
@@ -220,7 +288,7 @@ try {
                                 </Badge>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-muted-foreground">
+                                <span className="text-muted-foreground">
                                     Display Name:
                                 </span>
                                 <Badge variant="outline">
@@ -228,16 +296,15 @@ try {
                                 </Badge>
                             </div>
                             <div class="col-span-1 md:col-span-2 flex items-center justify-between">
-                                <span class="text-muted-foreground">DID:</span>
-                                <Badge
-                                    variant="outline"
-                                    class="font-mono text-xs max-w-[calc(100%-80px)] truncate"
-                                >
+                                <span className="text-muted-foreground">
+                                    DID:
+                                </span>
+                                <Badge variant="outline">
                                     {debugData.profile.did}
                                 </Badge>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-muted-foreground">
+                                <span className="text-muted-foreground">
                                     Followers:
                                 </span>
                                 <Badge variant="secondary">
@@ -245,7 +312,7 @@ try {
                                 </Badge>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-muted-foreground">
+                                <span className="text-muted-foreground">
                                     Following:
                                 </span>
                                 <Badge variant="secondary">
@@ -253,7 +320,7 @@ try {
                                 </Badge>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-muted-foreground">
+                                <span className="text-muted-foreground">
                                     Posts:
                                 </span>
                                 <Badge variant="secondary">
@@ -267,9 +334,9 @@ try {
         }
 
         <!-- Collections -->
-        <Card class="mb-6">
+        <Card>
             <CardHeader>
-                <CardTitle class="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2">
                     <List className="w-5 h-5" /> Available Collections
                 </CardTitle>
                 <CardDescription>
@@ -281,14 +348,9 @@ try {
                     {
                         debugData.collections.map((collection) => (
                             <div class="flex items-center justify-between p-2 bg-muted rounded">
-                                <Badge
-                                    variant="outline"
-                                    class="font-mono text-xs"
-                                >
-                                    {collection}
-                                </Badge>
+                                <Badge variant="outline">{collection}</Badge>
                                 {debugData.sampleRecords[collection] && (
-                                    <Badge variant="secondary" class="text-xs">
+                                    <Badge variant="secondary">
                                         {
                                             debugData.sampleRecords[collection]
                                                 .count
@@ -304,9 +366,9 @@ try {
         </Card>
 
         <!-- WhiteWind Posts -->
-        <Card class="mb-6">
+        <Card>
             <CardHeader>
-                <CardTitle class="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2">
                     <ScrollText className="w-5 h-5" /> WhiteWind Posts
                 </CardTitle>
                 <CardDescription>
@@ -337,7 +399,6 @@ try {
                                                     <Badge
                                                         key={tag}
                                                         variant="secondary"
-                                                        class="text-xs"
                                                     >
                                                         #{tag}
                                                     </Badge>
@@ -348,7 +409,7 @@ try {
                                         variant="link"
                                         size="sm"
                                         asChild
-                                        class="mt-2"
+                                        className="mt-2"
                                     >
                                         <a
                                             href={`https://whtwnd.com/${post.author.handle}/${post.uri.split("/").pop()}`}
@@ -374,7 +435,7 @@ try {
                     ([collection, data]) => (
                         <Card key={collection}>
                             <CardHeader>
-                                <CardTitle class="flex items-center gap-2">
+                                <CardTitle className="flex items-center gap-2">
                                     <FlaskConical className="w-5 h-5" />{" "}
                                     {collection} ({data.count} records)
                                 </CardTitle>
@@ -392,10 +453,7 @@ try {
                                                         <span class="text-muted-foreground">
                                                             URI:
                                                         </span>{" "}
-                                                        <Badge
-                                                            variant="outline"
-                                                            class="font-mono text-xs max-w-[calc(100%-60px)] truncate"
-                                                        >
+                                                        <Badge variant="outline">
                                                             {record.uri}
                                                         </Badge>
                                                     </div>
@@ -403,15 +461,12 @@ try {
                                                         <span class="text-muted-foreground">
                                                             Created:
                                                         </span>{" "}
-                                                        <Badge
-                                                            variant="outline"
-                                                            class="text-xs"
-                                                        >
+                                                        <Badge variant="outline">
                                                             {record.createdAt}
                                                         </Badge>
                                                     </div>
                                                     <div class="flex items-center justify-between">
-                                                        <span class="text-muted-foreground">
+                                                        <span className="text-muted-foreground">
                                                             Has Text:
                                                         </span>{" "}
                                                         <Badge
@@ -427,7 +482,7 @@ try {
                                                         </Badge>
                                                     </div>
                                                     <div class="flex items-center justify-between">
-                                                        <span class="text-muted-foreground">
+                                                        <span className="text-muted-foreground">
                                                             Has Subject:
                                                         </span>{" "}
                                                         <Badge
@@ -444,7 +499,7 @@ try {
                                                     </div>
                                                     {record.hasReason && (
                                                         <div class="flex items-center justify-between">
-                                                            <span class="text-muted-foreground">
+                                                            <span className="text-muted-foreground">
                                                                 Has Reason:
                                                             </span>{" "}
                                                             <Badge variant="secondary">
@@ -466,7 +521,7 @@ try {
                                                         <strong>
                                                             Subject:
                                                         </strong>{" "}
-                                                        <code class="bg-muted px-1 rounded text-foreground text-xs">
+                                                        <code className="bg-muted px-1 rounded text-foreground text-xs">
                                                             {JSON.stringify(
                                                                 record.subject,
                                                             )}
@@ -484,12 +539,12 @@ try {
                                                         </code>
                                                     </p>
                                                 )}
-                                                <Separator class="my-4" />
-                                                <details class="text-sm text-muted-foreground">
-                                                    <summary class="cursor-pointer hover:text-foreground">
+                                                <Separator className="my-4" />
+                                                <details className="text-sm text-muted-foreground">
+                                                    <summary className="cursor-pointer hover:text-foreground">
                                                         Show Full Record Value
                                                     </summary>
-                                                    <pre class="mt-2 text-xs bg-muted p-2 rounded overflow-x-auto text-foreground">
+                                                    <pre className="mt-2 text-xs bg-muted p-2 rounded overflow-x-auto text-foreground">
                                                         <code>
                                                             {JSON.stringify(
                                                                 record.fullValue,

@@ -58,9 +58,7 @@ const cacheValid = isCacheValid();
                 <Card>
                     <CardHeader>
                         <div class="flex items-center justify-between">
-                            <CardTitle class="text-2xl"
-                                >Latest Blog Posts</CardTitle
-                            >
+                            <CardTitle>Latest Blog Posts</CardTitle>
                             <Button variant="ghost" asChild>
                                 <a href="/blog"> View all posts → </a>
                             </Button>
@@ -72,7 +70,6 @@ const cacheValid = isCacheValid();
                                 <div class="space-y-6">
                                     {blogPosts.map((post) => (
                                         <BlogPost
-                                            key={post.uri}
                                             client:load
                                             post={post}
                                             variant="compact"
@@ -130,9 +127,7 @@ const cacheValid = isCacheValid();
                 <!-- AT Protocol Info -->
                 <Card>
                     <CardHeader>
-                        <CardTitle class="text-lg"
-                            >Powered by AT Protocol</CardTitle
-                        >
+                        <CardTitle>Powered by AT Protocol</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <p class="text-sm text-muted-foreground mb-4">
@@ -183,44 +178,28 @@ const cacheValid = isCacheValid();
                 <!-- Quick Links -->
                 <Card>
                     <CardHeader>
-                        <CardTitle class="text-lg">Quick Links</CardTitle>
+                        <CardTitle>Quick Links</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div class="space-y-2">
-                            <Button
-                                variant="ghost"
-                                class="w-full justify-start p-0 h-auto"
-                                asChild
-                            >
+                            <Button variant="ghost" asChild>
                                 <a href="/blog" class="block p-2 text-sm">
                                     📝 All Blog Posts
                                 </a>
                             </Button>
-                            <Button
-                                variant="ghost"
-                                class="w-full justify-start p-0 h-auto"
-                                asChild
-                            >
+                            <Button variant="ghost" asChild>
                                 <a href="/activity" class="block p-2 text-sm">
                                     🔄 Recent Activity
                                 </a>
                             </Button>
-                            <Button
-                                variant="ghost"
-                                class="w-full justify-start p-0 h-auto"
-                                asChild
-                            >
+                            <Button variant="ghost" asChild>
                                 <a href="/about" class="block p-2 text-sm">
                                     👤 About Me
                                 </a>
                             </Button>
                             {
                                 profile && (
-                                    <Button
-                                        variant="ghost"
-                                        class="w-full justify-start p-0 h-auto"
-                                        asChild
-                                    >
+                                    <Button variant="ghost" asChild>
                                         <a
                                             href={`https://bsky.app/profile/${profile.handle}`}
                                             target="_blank"
@@ -239,9 +218,7 @@ const cacheValid = isCacheValid();
                 <!-- Component Showcase -->
                 <Card>
                     <CardHeader>
-                        <CardTitle class="text-lg"
-                            >Enhanced Components</CardTitle
-                        >
+                        <CardTitle>Enhanced Components</CardTitle>
                         <CardDescription
                             >Now powered by shadcn/ui</CardDescription
                         >
@@ -274,11 +251,6 @@ const cacheValid = isCacheValid();
                             </div>
                         </div>
                         <Separator class="my-4" />
-                        <Button variant="outline" size="sm" asChild>
-                            <a href="/enhanced-showcase">
-                                View Component Showcase →
-                            </a>
-                        </Button>
                     </CardContent>
                 </Card>
             </div>

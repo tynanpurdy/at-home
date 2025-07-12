@@ -27,20 +27,7 @@ const fetchedBlogPosts = getCachedBlogPosts();
 // Check if cache is valid (this can be used for debugging or fallback strategies)
 const cacheValid = isCacheValid();
 
-// Filter out any invalid blog posts that might be 'true' or not proper objects
-const blogPosts = (fetchedBlogPosts as unknown[]).filter(
-    (post): post is WhiteWindPost =>
-        typeof post === 'object' &&
-        post !== null &&
-        'uri' in post && // Must have a URI
-        'record' in post && // Must have a record object
-        typeof (post as WhiteWindPost).record === 'object' &&
-        (post as WhiteWindPost).record !== null &&
-        'author' in post && // Must have an author object
-        typeof (post as WhiteWindPost).author === 'object' &&
-        (post as WhiteWindPost).author !== null
-) as WhiteWindPost[];
-
+const blogPosts = (fetchedBlogPosts || []) as WhiteWindPost[];
 
 // Function to calculate tag counts for the tag cloud
 const getTagCounts = (posts: typeof blogPosts) => {
@@ -59,6 +46,16 @@ const getTagCounts = (posts: typeof blogPosts) => {
 };
 
 const sortedTags = getTagCounts(blogPosts);
+
+const sortedBlogPosts = blogPosts.sort((a, b) => {
+    const dateA = a.record.createdAt
+        ? new Date(a.record.createdAt).getTime()
+        : 0;
+    const dateB = b.record.createdAt
+        ? new Date(b.record.createdAt).getTime()
+        : 0;
+    return dateB - dateA;
+});
 ---
 
 <BaseLayout
@@ -67,270 +64,47 @@ const sortedTags = getTagCounts(blogPosts);
     currentPage="blog"
     profile={profile}
 >
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header -->
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-foreground mb-4">Blog</h1>
-            <p class="text-xl text-muted-foreground max-w-3xl mx-auto">
+        <div class="text-center mb-12">
+            <h1
+                class="text-5xl font-extrabold text-foreground mb-4 tracking-tight"
+            >
+                Blog
+            </h1>
+            <p class="text-xl text-muted-foreground max-w-2xl mx-auto">
                 My thoughts, ideas, and experiences shared through the
-                decentralized web. All posts are published using the WhiteWind
-                lexicon on the AT Protocol.
+                decentralized web.
             </p>
         </div>
 
-        <!-- Blog Stats -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-            <Card class="p-6 text-center">
-                <CardContent class="p-0">
-                    <div class="text-3xl font-bold text-primary mb-2">
-                        {blogPosts.length}
-                    </div>
-                    <div class="text-sm text-muted-foreground">Total Posts</div>
-                </CardContent>
-            </Card>
-
-            <Card class="p-6 text-center">
-                <CardContent class="p-0">
-                    <div
-                        class="text-3xl font-bold text-green-600 dark:text-green-400 mb-2"
-                    >
-                        <Feather class="inline-block w-8 h-8" />
-                    </div>
-                    <div class="text-sm text-muted-foreground">
-                        WhiteWind Powered
-                    </div>
-                </CardContent>
-            </Card>
-
-            <Card class="p-6 text-center">
-                <CardContent class="p-0">
-                    <div
-                        class="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2"
-                    >
-                        🌐
-                    </div>
-                    <div class="text-sm text-muted-foreground">
-                        Decentralized
-                    </div>
-                </CardContent>
-            </Card>
-        </div>
-
-        <!-- Blog Posts Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Main Content -->
-            <div class="lg:col-span-2">
-                {
-                    blogPosts.length > 0 ? (
-                        <div class="space-y-8">
-                            {blogPosts.map((post) => {
-                                console.log('Debug: post object in map', post); // Add this line
-                                return (
-                                <BlogPost
-                                    key={post.uri}
-                                    post={post}
-                                    variant="default" // Use 'default' for full blog post view
-                                />
-                                );
-                            })}
-                        </div>
-                    ) : (
-                        <Card class="py-16 text-center">
-                            <CardContent>
-                                <div class="text-6xl mb-4">📝</div>
-                                <h3 class="text-xl font-medium text-foreground mb-2">
-                                    No blog posts yet
-                                </h3>
-                                <p class="text-muted-foreground mb-6">
-                                    Blog posts published using the WhiteWind
-                                    lexicon will appear here.
-                                </p>
-                                <div
-                                    class="space-y-2 text-sm text-muted-foreground"
-                                >
-                                    <p>To publish a blog post:</p>
-                                    <ol
-                                        class="list-decimal list-inside space-y-1"
-                                    >
-                                        <li>
-                                            Use a WhiteWind-compatible client
-                                        </li>
-                                        <li>
-                                            Publish using the
-                                            <code
-                                                class="bg-muted px-1 rounded text-foreground"
-                                                >com.whtwnd.blog.entry</code
-                                            >
-                                            lexicon
-                                        </li>
-                                        <li>
-                                            Your posts will automatically appear
-                                            here
-                                        </li>
-                                    </ol>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    )
-                }
-            </div>
-
-            <!-- Sidebar -->
-            <div class="space-y-6">
-                <!-- Profile Card -->
-                {
-                    profile && (
-                        <div>
-                            <h2 class="text-xl font-bold text-foreground mb-4">
-                                About the Author
-                            </h2>
-                            <ProfileCard
-                                client:load
-                                profile={profile}
-                                compact={true}
-                                showActions={false} // Typically, you don't need actions on a compact profile in a sidebar
-                            />
-                        </div>
-                    )
-                }
-
-                <!-- Tag Cloud -->
-                {
-                    sortedTags.length > 0 && (
-                        <Card>
-                            <CardHeader>
-                                <CardTitle class="text-lg flex items-center gap-2">
-                                    <Hash class="w-5 h-5" />
-                                    Popular Tags
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div class="flex flex-wrap gap-2">
-                                    {sortedTags.map(([tag, count]) => (
-                                        <Badge
-                                            key={tag}
-                                            variant="secondary"
-                                            class="cursor-pointer hover:bg-secondary/80 transition-colors"
-                                        >
-                                            #{tag}
-                                            <span
-                                                class="ml-1 text-xs text-secondary-foreground/80"
-                                            >
-                                                ({count})
-                                            </span>
-                                        </Badge>
-                                    ))}
-                                </div>
-                            </CardContent>
-                        </Card>
-                    )
-                }
-
-                <!-- WhiteWind Info -->
-                <Card>
-                    <CardHeader>
-                        <CardTitle class="text-lg flex items-center gap-2">
-                            <BookOpenText class="w-5 h-5" />
-                            About WhiteWind
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p class="text-sm text-muted-foreground mb-4">
-                            WhiteWind is a decentralized blogging platform built
-                            on the AT Protocol. It allows you to publish blog
-                            posts that are stored on your own AT Protocol
-                            repository.
-                        </p>
-                        <ul class="space-y-2 text-sm text-muted-foreground">
-                            <li class="flex items-center">
-                                <Badge variant="secondary" class="mr-2">
-                                    ✓
-                                </Badge>
-                                Own your content
-                            </li>
-                            <li class="flex items-center">
-                                <Badge variant="secondary" class="mr-2">
-                                    ✓
-                                </Badge>
-                                Decentralized hosting
-                            </li>
-                            <li class="flex items-center">
-                                <Badge variant="secondary" class="mr-2">
-                                    ✓
-                                </Badge>
-                                Cross-platform compatible
-                            </li>
-                        </ul>
-                        <Separator class="my-4" />
-                        <Button variant="outline" size="sm" asChild>
-                            <a
-                                href="https://whitewind.app"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                Learn more about WhiteWind →
-                            </a>
-                        </Button>
-                    </CardContent>
-                </Card>
-
-                <!-- Quick Links -->
-                <Card>
-                    <CardHeader>
-                        <CardTitle class="text-lg">Quick Links</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div class="space-y-2">
-                            <Button
-                                variant="ghost"
-                                class="w-full justify-start p-0 h-auto"
-                                asChild
-                            >
-                                <a href="/" class="block p-2 text-sm">
-                                    🏠 Home
-                                </a>
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                class="w-full justify-start p-0 h-auto"
-                                asChild
-                            >
-                                <a href="/activity" class="block p-2 text-sm">
-                                    🔄 Recent Activity
-                                </a>
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                class="w-full justify-start p-0 h-auto"
-                                asChild
-                            >
-                                <a href="/about" class="block p-2 text-sm">
-                                    👤 About
-                                </a>
-                            </Button>
-                            {
-                                profile && (
-                                    <Button
-                                        variant="ghost"
-                                        class="w-full justify-start p-0 h-auto"
-                                        asChild
-                                    >
-                                        <a
-                                            href={`https://bsky.app/profile/${profile.handle}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            class="block p-2 text-sm"
-                                        >
-                                            🐦 Follow on Bluesky
-                                        </a>
-                                    </Button>
-                                )
-                            }
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
+        <!-- Blog Posts List -->
+        <div class="space-y-12">
+            {
+                sortedBlogPosts.length > 0 ? (
+                    sortedBlogPosts.map((post) => (
+                        <BlogPost post={post} variant="default" />
+                    ))
+                ) : (
+                    <Card>
+                        <CardContent>
+                            <div class="text-7xl mb-6">📝</div>
+                            <h3 class="text-2xl font-bold text-foreground mb-3">
+                                No Blog Posts Yet
+                            </h3>
+                            <p class="text-lg text-muted-foreground max-w-md mx-auto">
+                                Once I publish posts using the WhiteWind
+                                lexicon, they will appear here automatically.
+                            </p>
+                            <div class="mt-8">
+                                <Button asChild>
+                                    <a href="/">← Back to Home</a>
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )
+            }
         </div>
     </div>
 </BaseLayout>
-```

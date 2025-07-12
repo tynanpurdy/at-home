@@ -25,22 +25,35 @@ export async function getStaticPaths() {
             blogPosts = freshData.blogPosts;
         }
 
-        // Combine activity and blog posts to ensure we catch all full-page capable records
-        const allRecords = [...recentActivity, ...blogPosts];
-
-        const paths = [];
-
-        // Add blog posts and other full-page records
-        allRecords.forEach((record) => {
-            const lexicon = getLexiconForRecord(record);
-            if (lexicon && lexicon.supportedViews.includes("full")) {
-                const rkey = record.uri.split("/").pop();
-                paths.push({
-                    params: { slug: rkey },
-                    props: { record, profile },
-                });
-            }
+        // Transform blog posts to conform to ATProtoRecord structure for lexicons
+        const transformedBlogPosts = blogPosts.map((post) => {
+            return {
+                ...post,
+                value: {
+                    ...post.record,
+                    $type: "com.whtwnd.blog.entry",
+                },
+            };
         });
+
+        // Combine activity and blog posts to ensure we catch all full-page capable records
+        const allRecords = [...recentActivity, ...transformedBlogPosts];
+
+        const paths = allRecords
+            .map((record) => {
+                const lexicon = getLexiconForRecord(record);
+                if (lexicon && lexicon.supportedViews.includes("full")) {
+                    const rkey = record.uri.split("/").pop();
+                    if (rkey) {
+                        return {
+                            params: { slug: rkey },
+                            props: { record, profile },
+                        };
+                    }
+                }
+                return null;
+            })
+            .filter(Boolean);
 
         return paths;
     } catch (error) {
@@ -70,32 +83,20 @@ const author = lexicon.getAuthor(record);
     description={`${lexicon.name} by ${author.name}`}
     profile={profile}
 >
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div>
         <!-- Breadcrumb -->
-        <nav class="mb-8" aria-label="Breadcrumb">
-            <ol
-                class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400"
-            >
+        <nav aria-label="Breadcrumb">
+            <ol>
                 <li>
-                    <a
-                        href="/"
-                        class="hover:text-gray-700 dark:hover:text-gray-300"
-                        >Home</a
-                    >
+                    <a href="/">Home</a>
                 </li>
-                <li class="flex items-center">
+                <li>
                     <span class="mx-2">/</span>
-                    <a
-                        href="/activity"
-                        class="hover:text-gray-700 dark:hover:text-gray-300"
-                        >Activity</a
-                    >
+                    <a href="/activity">Activity</a>
                 </li>
-                <li class="flex items-center">
+                <li>
                     <span class="mx-2">/</span>
-                    <span class="text-gray-900 dark:text-white font-medium"
-                        >{lexicon.name}</span
-                    >
+                    <span>{lexicon.name}</span>
                 </li>
             </ol>
         </nav>
@@ -104,23 +105,14 @@ const author = lexicon.getAuthor(record);
         <Record record={record} view="full" showAuthor={true} />
 
         <!-- Related Actions -->
-        <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-4">
-                    <a
-                        href="/activity"
-                        class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
-                    >
-                        ← Back to Activity
-                    </a>
+        <div <div>
+            >
+            <div>
+                <div>
+                    <a href="/activity"> ← Back to Activity </a>
                     {
                         lexicon.collection === "com.whtwnd.blog.entry" && (
-                            <a
-                                href="/blog"
-                                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
-                            >
-                                View All Blog Posts
-                            </a>
+                            <a href="/blog">View All Blog Posts</a>
                         )
                     }
                 </div>
@@ -128,7 +120,6 @@ const author = lexicon.getAuthor(record);
                 <!-- Share button (optional) -->
                 <button
                     onclick="navigator.share ? navigator.share({title: document.title, url: window.location.href}) : navigator.clipboard.writeText(window.location.href)"
-                    class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 text-sm"
                     title="Share this record"
                 >
                     Share

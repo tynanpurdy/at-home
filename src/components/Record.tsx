@@ -38,7 +38,7 @@ export const Record: React.FC<RecordProps> = ({
     );
   }
 
-  const formatRelativeTime = (dateString: string): string => {
+  const formatRelativeTime = (dateString: string | undefined): string => {
     if (!dateString || dateString === "null") {
       return "Unknown time";
     }

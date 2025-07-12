@@ -35,44 +35,40 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
   const displayedRecords = records.slice(0, maxItems);
 
   const getActivityIcon = (record: ATProtoRecord) => {
-    if (!record.collection) {
-      return <Clock className="w-4 h-4" />;
-    }
-    if (record.collection.includes("feed.post")) {
+    const uri = record.uri || "";
+    if (uri.includes("app.bsky.feed.post")) {
       return <Activity className="w-4 h-4" />;
     }
-    if (record.collection.includes("feed.like")) {
+    if (uri.includes("app.bsky.feed.like")) {
       return <span className="text-red-500">❤️</span>;
     }
-    if (record.collection.includes("feed.repost")) {
+    if (uri.includes("app.bsky.feed.repost")) {
       return <span className="text-blue-500">🔄</span>;
     }
-    if (record.collection.includes("graph.follow")) {
+    if (uri.includes("app.bsky.graph.follow")) {
       return <User className="w-4 h-4" />;
     }
-    if (record.collection.includes("blog.entry")) {
+    if (uri.includes("com.whtwnd.blog.entry")) {
       return <span className="text-green-500">📝</span>;
     }
     return <Clock className="w-4 h-4" />;
   };
 
   const getActivityDescription = (record: ATProtoRecord) => {
-    if (!record.collection) {
-      return "Activity";
-    }
-    if (record.collection.includes("feed.post")) {
+    const uri = record.uri || "";
+    if (uri.includes("app.bsky.feed.post")) {
       return "Posted";
     }
-    if (record.collection.includes("feed.like")) {
+    if (uri.includes("app.bsky.feed.like")) {
       return "Liked";
     }
-    if (record.collection.includes("feed.repost")) {
+    if (uri.includes("app.bsky.feed.repost")) {
       return "Reposted";
     }
-    if (record.collection.includes("graph.follow")) {
+    if (uri.includes("app.bsky.graph.follow")) {
       return "Followed";
     }
-    if (record.collection.includes("blog.entry")) {
+    if (uri.includes("com.whtwnd.blog.entry")) {
       return "Published blog post";
     }
     return "Activity";
@@ -192,7 +188,7 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
                   )}
                   <div className="flex items-center space-x-2 mt-1">
                     <Badge variant="outline" className="text-xs">
-                      {record.collection?.split(".").pop() || "unknown"}
+                      {record.uri?.split("/")[3]?.split(".").pop() || "unknown"}
                     </Badge>
                   </div>
                 </div>

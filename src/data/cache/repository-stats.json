@@ -1,7 +1,7 @@
 {
-  "totalRecords": 6035,
-  "recordsToday": 5,
-  "recordsThisWeek": 589,
+  "totalRecords": 6062,
+  "recordsToday": 32,
+  "recordsThisWeek": 616,
   "activeCollections": 48,
   "collectionCounts": {
     "app.bsky.actor.profile": 1,
@@ -15,16 +15,16 @@
     "app.bsky.graph.list": 2,
     "app.bsky.graph.listitem": 157,
     "app.bsky.graph.verification": 5,
-    "app.rocksky.album": 336,
-    "app.rocksky.artist": 287,
+    "app.rocksky.album": 339,
+    "app.rocksky.artist": 288,
     "app.rocksky.like": 5,
-    "app.rocksky.scrobble": 636,
-    "app.rocksky.song": 2402,
+    "app.rocksky.scrobble": 648,
+    "app.rocksky.song": 2412,
     "blue.flashes.actor.profile": 1,
     "buzz.bookhive.book": 57,
     "chat.bsky.actor.declaration": 1,
     "chat.roomy.01JPNX7AA9BSM6TY2GWW1TR5V7.catalog": 1,
-    "com.whtwnd.blog.entry": 1,
+    "com.whtwnd.blog.entry": 2,
     "events.smokesignal.app.profile": 1,
     "events.smokesignal.calendar.event": 1,
     "farm.smol.games.skyrdle.score": 16,
@@ -53,5 +53,5 @@
     "social.grain.photo.exif": 25,
     "social.pinksky.app.preference": 1
   },
-  "lastUpdated": "2025-07-12T18:42:37.861Z"
+  "lastUpdated": "2025-07-12T20:07:21.804Z"
 }

@@ -50,7 +50,7 @@ export const Record: React.FC<RecordProps> = ({
     );
   }
 
-  const formatRelativeTime = (dateString: string): string => {
+  const formatRelativeTime = (dateString: string | null): string => {
     if (!dateString || dateString === "null") {
       return "Unknown time";
     }
@@ -118,9 +118,7 @@ export const Record: React.FC<RecordProps> = ({
               </span>
             </div>
             {description && (
-              <p className="text-xs text-primary mb-1">
-                {description}
-              </p>
+              <p className="text-xs text-primary mb-1">{description}</p>
             )}
             <p className="text-sm text-muted-foreground truncate">
               {truncateText(content, 80)}
@@ -154,9 +152,7 @@ export const Record: React.FC<RecordProps> = ({
               </div>
 
               {description && (
-                <p className="text-sm text-primary mb-2">
-                  {description}
-                </p>
+                <p className="text-sm text-primary mb-2">{description}</p>
               )}
 
               {showAuthor && (
@@ -172,9 +168,7 @@ export const Record: React.FC<RecordProps> = ({
                       decoding="async"
                     />
                   )}
-                  <span className="text-sm text-foreground">
-                    {author.name}
-                  </span>
+                  <span className="text-sm text-foreground">{author.name}</span>
                   <span className="text-sm text-muted-foreground">
                     @{author.handle}
                   </span>
@@ -218,11 +212,7 @@ export const Record: React.FC<RecordProps> = ({
 
               <div className="mt-3 pt-3 border-t border-border">
                 <Button variant="ghost" size="sm" asChild>
-                  <a
-                    href={link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                  <a href={link} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="w-4 h-4 mr-2" />
                     {linkText}
                   </a>
@@ -245,18 +235,14 @@ export const Record: React.FC<RecordProps> = ({
             </div>
             <div className="flex-1">
               <div className="flex items-center space-x-2">
-                <CardTitle className="text-xl">
-                  {lexicon.name}
-                </CardTitle>
+                <CardTitle className="text-xl">{lexicon.name}</CardTitle>
                 <span className="text-sm text-muted-foreground flex items-center gap-1">
                   <Clock className="w-4 h-4" />
                   {formatRelativeTime(timestamp)}
                 </span>
               </div>
               {description && (
-                <p className="text-sm text-primary mt-1">
-                  {description}
-                </p>
+                <p className="text-sm text-primary mt-1">{description}</p>
               )}
             </div>
           </div>
@@ -287,22 +273,22 @@ export const Record: React.FC<RecordProps> = ({
           )}
 
           {title && title !== lexicon.name && (
-            <CardTitle className="text-2xl mb-2">
-              {title}
-            </CardTitle>
+            <CardTitle className="text-2xl mb-2">{title}</CardTitle>
           )}
 
           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
-              <time dateTime={timestamp}>
-                {new Date(timestamp).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </time>
-            </div>
+            {timestamp && (
+              <div className="flex items-center gap-1">
+                <Calendar className="w-4 h-4" />
+                <time dateTime={timestamp}>
+                  {new Date(timestamp).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </time>
+              </div>
+            )}
             {metadata.visibility && metadata.visibility !== "public" && (
               <div className="flex items-center gap-1">
                 <Eye className="w-4 h-4" />
@@ -343,11 +329,7 @@ export const Record: React.FC<RecordProps> = ({
 
           <Separator className="mb-4" />
           <Button variant="outline" size="sm" asChild>
-            <a
-              href={link}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href={link} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="w-4 h-4 mr-2" />
               {linkText}
             </a>
