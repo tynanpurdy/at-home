@@ -1,152 +1,221 @@
 ---
 export interface Props {
-  title: string;
-  description?: string;
-  currentPage?: string;
-  profile?: any;
+    title: string;
+    description?: string;
+    currentPage?: string;
+    profile?: any;
 }
 
-const { title, description = "Personal portfolio and blog powered by the AT Protocol", currentPage, profile } = Astro.props;
+const {
+    title,
+    description = "Personal portfolio and blog powered by the AT Protocol",
+    currentPage,
+    profile,
+} = Astro.props;
 ---
 
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  </head>
-  <body class="bg-background text-foreground min-h-screen">
-    <!-- Include global styles -->
-    <style is:global>
-      @import "../styles/globals.css";
-    </style>
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="generator" content={Astro.generator} />
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body class="bg-background text-foreground min-h-screen">
+        <!-- Include global styles -->
+        <style is:global>
+            @import "../styles/globals.css";
+        </style>
 
-    <!-- Navigation -->
-    <nav class="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center py-4">
-          <div class="flex items-center space-x-8">
-            <a href="/" class="text-2xl font-bold text-foreground">
-              {profile?.displayName || profile?.handle || 'AT Home'}
-            </a>
-            <div class="hidden md:flex space-x-6">
-              <a
-                href="/"
-                class={`text-sm font-medium transition-colors hover:text-foreground ${currentPage === 'home' ? 'text-foreground' : 'text-muted-foreground'}`}
-              >
-                Home
-              </a>
-              <a
-                href="/blog"
-                class={`text-sm font-medium transition-colors hover:text-foreground ${currentPage === 'blog' ? 'text-foreground' : 'text-muted-foreground'}`}
-              >
-                Blog
-              </a>
-              <a
-                href="/activity"
-                class={`text-sm font-medium transition-colors hover:text-foreground ${currentPage === 'activity' ? 'text-foreground' : 'text-muted-foreground'}`}
-              >
-                Activity
-              </a>
-              <a
-                href="/about"
-                class={`text-sm font-medium transition-colors hover:text-foreground ${currentPage === 'about' ? 'text-foreground' : 'text-muted-foreground'}`}
-              >
-                About
-              </a>
+        <!-- Navigation -->
+        <nav
+            class="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+        >
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center space-x-8">
+                        <a href="/" class="text-2xl font-bold text-foreground">
+                            {
+                                profile?.displayName ||
+                                    profile?.handle ||
+                                    "AT Home"
+                            }
+                        </a>
+                        <div class="hidden md:flex space-x-6">
+                            <a
+                                href="/"
+                                class={`text-sm font-medium transition-colors hover:text-foreground ${currentPage === "home" ? "text-foreground" : "text-muted-foreground"}`}
+                            >
+                                Home
+                            </a>
+                            <a
+                                href="/blog"
+                                class={`text-sm font-medium transition-colors hover:text-foreground ${currentPage === "blog" ? "text-foreground" : "text-muted-foreground"}`}
+                            >
+                                Blog
+                            </a>
+                            <a
+                                href="/activity"
+                                class={`text-sm font-medium transition-colors hover:text-foreground ${currentPage === "activity" ? "text-foreground" : "text-muted-foreground"}`}
+                            >
+                                Activity
+                            </a>
+                            <a
+                                href="/about"
+                                class={`text-sm font-medium transition-colors hover:text-foreground ${currentPage === "about" ? "text-foreground" : "text-muted-foreground"}`}
+                            >
+                                About
+                            </a>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        {
+                            profile && (
+                                <a
+                                    href={`https://bsky.app/profile/${profile.handle}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                                >
+                                    Follow on Bluesky
+                                </a>
+                            )
+                        }
+                        <button
+                            id="theme-toggle"
+                            class="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                            aria-label="Toggle theme"
+                        >
+                            <svg
+                                class="h-5 w-5 dark:hidden"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                                ></path>
+                            </svg>
+                            <svg
+                                class="h-5 w-5 hidden dark:block"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                                ></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="flex items-center space-x-4">
-            {profile && (
-              <a
-                href={`https://bsky.app/profile/${profile.handle}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Follow on Bluesky
-              </a>
-            )}
-            <button
-              id="theme-toggle"
-              class="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-              aria-label="Toggle theme"
-            >
-              <svg class="h-5 w-5 dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-              </svg>
-              <svg class="h-5 w-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </nav>
+        </nav>
 
-    <!-- Main Content -->
-    <main class="flex-1">
-      <slot />
-    </main>
+        <!-- Main Content -->
+        <main class="flex-1">
+            <slot />
+        </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-border bg-card mt-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="flex flex-col md:flex-row justify-between items-center">
-          <div class="text-muted-foreground text-sm">
-            © 2024 {profile?.displayName || profile?.handle || 'AT Home'}. Built with Astro and AT Protocol.
-          </div>
-          <div class="flex items-center space-x-4 mt-4 md:mt-0">
-            <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="text-muted-foreground hover:text-foreground transition-colors">
-              <span class="sr-only">Astro</span>
-              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L2 7v10l10 5 10-5V7l-10-5zm0 2l8 4v8l-8 4-8-4V8l8-4z"/>
-              </svg>
-            </a>
-            <a href="https://atproto.com" target="_blank" rel="noopener noreferrer" class="text-muted-foreground hover:text-foreground transition-colors">
-              <span class="sr-only">AT Protocol</span>
-              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-    </footer>
+        <!-- Footer -->
+        <footer class="border-t border-border bg-card mt-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div
+                    class="flex flex-col md:flex-row justify-between items-center"
+                >
+                    <div class="text-muted-foreground text-sm">
+                        © 2024 {
+                            profile?.displayName || profile?.handle || "AT Home"
+                        }. Built with Astro and AT Protocol.
+                    </div>
+                    <div class="flex items-center space-x-4 mt-4 md:mt-0">
+                        <a
+                            href="https://astro.build"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                            <span class="sr-only">Astro</span>
+                            <svg
+                                class="h-5 w-5"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    d="M12 2L2 7v10l10 5 10-5V7l-10-5zm0 2l8 4v8l-8 4-8-4V8l8-4z"
+                                ></path>
+                            </svg>
+                        </a>
+                        <a
+                            href="https://atproto.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                            <span class="sr-only">AT Protocol</span>
+                            <svg
+                                class="h-5 w-5"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                                ></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
 
-    <!-- Theme toggle script -->
-    <script>
-      // Initialize theme
-      function initTheme() {
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-      }
+        <!-- Theme toggle script -->
+        <script>
+            // Initialize theme
+            function initTheme() {
+                if (
+                    localStorage.getItem("theme") === "dark" ||
+                    (!("theme" in localStorage) &&
+                        window.matchMedia("(prefers-color-scheme: dark)")
+                            .matches)
+                ) {
+                    document.documentElement.classList.add("dark");
+                } else {
+                    document.documentElement.classList.remove("dark");
+                }
+            }
 
-      // Toggle theme
-      function toggleTheme() {
-        if (document.documentElement.classList.contains('dark')) {
-          document.documentElement.classList.remove('dark');
-          localStorage.setItem('theme', 'light');
-        } else {
-          document.documentElement.classList.add('dark');
-          localStorage.setItem('theme', 'dark');
-        }
-      }
+            // Toggle theme
+            function toggleTheme() {
+                if (document.documentElement.classList.contains("dark")) {
+                    document.documentElement.classList.remove("dark");
+                    localStorage.setItem("theme", "light");
+                } else {
+                    document.documentElement.classList.add("dark");
+                    localStorage.setItem("theme", "dark");
+                }
+            }
 
-      // Initialize on page load
-      initTheme();
+            // Initialize on page load
+            initTheme();
 
-      // Add event listener to toggle button
-      document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
-    </script>
-  </body>
+            // Add event listener to toggle button
+            document
+                .getElementById("theme-toggle")
+                ?.addEventListener("click", toggleTheme);
+        </script>
+    </body>
 </html>

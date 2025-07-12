@@ -1,6 +1,7 @@
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
 import react from "@astrojs/react";
+import atProtoCachePlugin from "./vite-cache-plugin.js";
 
 // https://astro.build/config
 export default defineConfig({
@@ -12,6 +13,14 @@ export default defineConfig({
   ],
   output: "static",
   site: "https://your-domain.com", // Update this with your actual domain
+  vite: {
+    plugins: [atProtoCachePlugin()],
+    build: {
+      rollupOptions: {
+        external: ["fs", "path", "url"],
+      },
+    },
+  },
   image: {
     remotePatterns: [
       {

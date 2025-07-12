@@ -1,0 +1,166 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCachedProfile, getCacheMeta } from "../../data/cache-utils";
+import { CacheManager } from "../../components/ui/cache-manager";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "../../components/ui/card";
+import { Separator } from "../../components/ui/separator";
+import { Button } from "../../components/ui/button";
+import { RefreshCw, Database, Clock, Server } from "lucide-react";
+
+// Load data from cache
+const profile = getCachedProfile();
+const cacheMeta = getCacheMeta();
+
+// Format date for display
+const formatDate = (dateString) => {
+    if (!dateString) return "Never";
+    return new Date(dateString).toLocaleString();
+};
+---
+
+<BaseLayout
+    title="Cache Management - AT Home"
+    description="Manage AT Protocol data cache"
+    currentPage="admin"
+    profile={profile}
+>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-foreground mb-4">
+                Cache Management
+            </h1>
+            <p class="text-xl text-muted-foreground max-w-3xl">
+                Manage your AT Protocol data cache to improve performance and reduce API rate limiting.
+            </p>
+        </div>
+
+        <!-- Cache Info -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <Card class="md:col-span-2">
+                <CardHeader>
+                    <CardTitle class="flex items-center gap-2">
+                        <Database className="w-5 h-5" />
+                        Cache Information
+                    </CardTitle>
+                    <CardDescription>
+                        Current status of your AT Protocol data cache
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-muted p-4 rounded-lg">
+                                <div class="text-sm text-muted-foreground mb-1">Last Updated</div>
+                                <div class="font-medium">
+                                    {formatDate(cacheMeta.lastUpdated)}
+                                </div>
+                            </div>
+                            <div class="bg-muted p-4 rounded-lg">
+                                <div class="text-sm text-muted-foreground mb-1">Cache Status</div>
+                                <div class="font-medium">
+                                    {cacheMeta.lastUpdated
+                                        ? new Date(cacheMeta.lastUpdated) > new Date(Date.now() - 3600000)
+                                            ? "Fresh (< 1 hour old)"
+                                            : "Stale (> 1 hour old)"
+                                        : "Never cached"}
+                                </div>
+                            </div>
+                        </div>
+
+                        <Separator />
+
+                        <div class="space-y-2">
+                            <h3 class="text-lg font-medium">Cached Data</h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                {Object.entries(cacheMeta.dataCount || {}).map(([key, value]) => (
+                                    <div class="bg-muted/50 p-3 rounded-lg">
+                                        <div class="text-sm text-muted-foreground mb-1 capitalize">{key}</div>
+                                        <div class="text-2xl font-bold">{value}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <!-- Client-side Cache Manager -->
+            <div>
+                <CacheManager client:load showDetails={true} />
+            </div>
+        </div>
+
+        <!-- Cache Information -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <Card>
+                <CardHeader>
+                    <CardTitle class="flex items-center gap-2">
+                        <Clock className="w-5 h-5" />
+                        About Caching
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div class="space-y-4">
+                        <p class="text-sm text-muted-foreground">
+                            The AT Protocol data cache stores data fetched from your AT Protocol repository
+                            to improve performance and prevent rate limiting on the API.
+                        </p>
+
+                        <div class="space-y-2">
+                            <h4 class="text-sm font-medium">How caching works:</h4>
+                            <ul class="list-disc list-inside text-sm text-muted-foreground space-y-1">
+                                <li>Data is fetched and cached during the build process</li>
+                                <li>Pages load data from cache instead of making API calls</li>
+                                <li>You can manually refresh the cache using the refresh button</li>
+                                <li>Cache is automatically refreshed on each site build</li>
+                            </ul>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle class="flex items-center gap-2">
+                        <Server className="w-5 h-5" />
+                        Cache Administration
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div class="space-y-4">
+                        <p class="text-sm text-muted-foreground">
+                            You can manage your cache through various methods:
+                        </p>
+
+                        <div class="space-y-2">
+                            <h4 class="text-sm font-medium">Cache Management Options:</h4>
+                            <ul class="list-disc list-inside text-sm text-muted-foreground space-y-1">
+                                <li>Use the Refresh button in the Cache Manager</li>
+                                <li>Run <code class="px-1 py-0.5 bg-muted rounded">npm run refresh-cache</code> from the command line</li>
+                                <li>Cache is automatically refreshed during <code class="px-1 py-0.5 bg-muted rounded">npm run build</code></li>
+                            </ul>
+                        </div>
+                    </div>
+                </CardContent>
+                <CardFooter>
+                    <div class="flex flex-col w-full space-y-2">
+                        <Button variant="outline" class="w-full" asChild>
+                            <a href="/" class="inline-flex items-center">
+                                <Server className="w-4 h-4 mr-2" />
+                                Return to Home
+                            </a>
+                        </Button>
+                    </div>
+                </CardFooter>
+            </Card>
+        </div>
+    </div>
+</BaseLayout>

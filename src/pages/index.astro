@@ -1,7 +1,5 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { createATProtoClient } from "../lib/atproto";
-import { getATProtoConfig } from "../config/atproto";
 import BlogPost from "../components/ui/blog-post";
 import ActivityFeed from "../components/ui/activity-feed";
 import ProfileCard from "../components/ui/profile-card";
@@ -15,21 +13,20 @@ import {
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Separator } from "../components/ui/separator";
+import {
+    getCachedProfile,
+    getLimitedActivity,
+    getLimitedBlogPosts,
+    isCacheValid,
+} from "../data/cache-utils";
 
-// Get AT Protocol configuration
-const config = getATProtoConfig();
+// Load data from cache
+const profile = getCachedProfile();
+const recentActivity = getLimitedActivity(8);
+const blogPosts = getLimitedBlogPosts(3);
 
-// Initialize AT Protocol client
-const atClient = createATProtoClient(config);
-
-// Fetch data at build time using unified approach
-const { profile, recentActivity, blogPosts } = await atClient.getActivityData({
-    includeBlogPosts: true,
-    includeRepositoryStats: false,
-    activityLimit: 8,
-    blogPostLimit: 3,
-    collectionsLimit: 5,
-});
+// Check if cache is valid (this can be used for debugging or fallback strategies)
+const cacheValid = isCacheValid();
 ---
 
 <BaseLayout

@@ -1,8 +1,11 @@
 ---
 import type { WhiteWindPost } from "../lib/atproto"; // Import the type for better filtering
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { createATProtoClient } from "../lib/atproto";
-import { getATProtoConfig } from "../config/atproto";
+import {
+    getCachedProfile,
+    getCachedBlogPosts,
+    isCacheValid,
+} from "../data/cache-utils";
 import BlogPost from "../components/ui/blog-post"; // Use the new enhanced BlogPost
 import ProfileCard from "../components/ui/profile-card"; // Use the new enhanced ProfileCard
 import {
@@ -17,20 +20,12 @@ import { Separator } from "../components/ui/separator";
 import { Button } from "../components/ui/button";
 import { Hash, GitFork, BookOpenText, Feather } from "lucide-react";
 
-// Get AT Protocol configuration
-const config = getATProtoConfig();
+// Load data from cache
+const profile = getCachedProfile();
+const fetchedBlogPosts = getCachedBlogPosts();
 
-// Initialize AT Protocol client
-const atClient = createATProtoClient(config);
-
-// Fetch data at build time using unified approach
-const { profile, blogPosts: fetchedBlogPosts } = await atClient.getActivityData({
-    includeBlogPosts: true,
-    includeRepositoryStats: false,
-    activityLimit: 0,
-    blogPostLimit: 20,
-    collectionsLimit: 0,
-});
+// Check if cache is valid (this can be used for debugging or fallback strategies)
+const cacheValid = isCacheValid();
 
 // Filter out any invalid blog posts that might be 'true' or not proper objects
 const blogPosts = (fetchedBlogPosts as unknown[]).filter(

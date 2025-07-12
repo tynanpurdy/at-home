@@ -1,0 +1,952 @@
+[
+  {
+    "name": "Posts",
+    "records": [
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3ltrphyzh3k2p",
+        "cid": "bafyreihux43ukqgiabnyrcbotin5ndy4pvmpo4p736uijrc45pql5fdpji",
+        "value": {
+          "text": "It honestly looks great",
+          "$type": "app.bsky.feed.post",
+          "langs": [
+            "en"
+          ],
+          "reply": {
+            "root": {
+              "cid": "bafyreig5jne7y7ldgydjr7lup4qxob6sb22ocwsgvg7iyritvql6rfjh5a",
+              "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3ltrnj43nus27"
+            },
+            "parent": {
+              "cid": "bafyreiajuinbsbkt5f5l5qenedb537uyhyxafmmim664jetroxoohdbwra",
+              "uri": "at://did:plc:sfjxpxxyvewb2zlxwoz2vduw/app.bsky.feed.post/3ltro6f7jnk2g"
+            }
+          },
+          "createdAt": "2025-07-12T15:48:34.302Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-12T15:48:34.302Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3ltrnj43nus27",
+        "cid": "bafyreig5jne7y7ldgydjr7lup4qxob6sb22ocwsgvg7iyritvql6rfjh5a",
+        "value": {
+          "text": "welp I decided to switch the ui to shadcn halfway through so now I'm in thisisafucking website limbo",
+          "$type": "app.bsky.feed.post",
+          "embed": {
+            "$type": "app.bsky.embed.images",
+            "images": [
+              {
+                "alt": "A screenshot of a website with no styling at all\n\nTynan Purdy\nHome Blog Activity About\nWelcome to My Digital Home\nThis is my personal portfolio and blog, powered by the AT Protocol. Here you'll find my thoughts, projects, and activity across the decentralized web.\n\nLatest Blog Posts\nView all posts →\nTynan Purdy\nAn ongoing experiment\n18h ago\nI want to own my website. I want it's content to live on the ATProtocol. Claude is giving me a hand with the implementation. Currently the stack uses ...\n\nRecent Activity\nView all activity →\n📝\nPost2h ago\n😂 fair point. I mean is there a lexicon for that purpose (whtwnd is for bloggin...\n\n📝\nPost13h ago\nanthropic seems to have decided that's enough code for today\n\n❤️\nLike13h ago\n❤️ Liked a post by Kronos\n\natproto bot that sends surveys to anyone who follows or unfollows you\n\n📝\nPost13h ago\nis there an ATproto lexicon already out there that is good for displaying projec...",
+                "image": {
+                  "$type": "blob",
+                  "ref": {
+                    "$link": "bafkreidhioofdvurntfwu2o7eqyf6bz3t5imvquwrbxd7c3ygfs7zqgyoe"
+                  },
+                  "mimeType": "image/jpeg",
+                  "size": 399011
+                },
+                "aspectRatio": {
+                  "width": 2000,
+                  "height": 1279
+                }
+              }
+            ]
+          },
+          "langs": [
+            "en"
+          ],
+          "createdAt": "2025-07-12T15:13:23.561Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-12T15:13:23.561Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3ltrfjmoskc27",
+        "cid": "bafyreicz4qk4zucc3ffmgq3dz5hoyjxu2ryelhego6mjxcmiljalbyaa2y",
+        "value": {
+          "text": "😂 fair point. I mean is there a lexicon for that purpose (whtwnd is for blogging, spark is for media, flush is for poops, etc). I'd rather use one that exists before making a new one.",
+          "$type": "app.bsky.feed.post",
+          "langs": [
+            "en"
+          ],
+          "reply": {
+            "root": {
+              "cid": "bafyreif74pk7ibs6l6pwmlgpkwq5oky6frgp6722jf2o2rr6iuqmnxvliq",
+              "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3ltq7k7uikc2o"
+            },
+            "parent": {
+              "cid": "bafyreibm6374lx4zfd3anxcfawuiqop5kogtqy4i2oojlmg6rq6zi43dwi",
+              "uri": "at://did:plc:vmbmkls2n72cmi66y7igy2ew/app.bsky.feed.post/3ltqcbikihk23"
+            }
+          },
+          "createdAt": "2025-07-12T12:50:31.062Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-12T12:50:31.062Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3ltq7pffy3c2o",
+        "cid": "bafyreigzkhy5e2dioumcnsjoxhzhm34mlawsivrri4pepjqa5vrbjue2la",
+        "value": {
+          "text": "anthropic seems to have decided that's enough code for today",
+          "$type": "app.bsky.feed.post",
+          "langs": [
+            "en"
+          ],
+          "createdAt": "2025-07-12T01:33:42.570Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-12T01:33:42.570Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3ltq7k7uikc2o",
+        "cid": "bafyreif74pk7ibs6l6pwmlgpkwq5oky6frgp6722jf2o2rr6iuqmnxvliq",
+        "value": {
+          "text": "is there an ATproto lexicon already out there that is good for displaying projects / portfolio entries?",
+          "$type": "app.bsky.feed.post",
+          "langs": [
+            "en"
+          ],
+          "createdAt": "2025-07-12T01:30:48.980Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-12T01:30:48.980Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3ltpvxyyes22o",
+        "cid": "bafyreihzp5qvrnjp5cri3vbpv7pf5lm2yb4g374jzbo33ut7tbmrijeelu",
+        "value": {
+          "text": "does this happen to anybody else? @jcsalterego.bsky.social @dame.is ?",
+          "$type": "app.bsky.feed.post",
+          "embed": {
+            "$type": "app.bsky.embed.recordWithMedia",
+            "media": {
+              "$type": "app.bsky.embed.images",
+              "images": [
+                {
+                  "alt": "A portrait screenshot of the AT Proto powered personal website that Tynan is definitely not building instead of writing a normal ass blog post.",
+                  "image": {
+                    "$type": "blob",
+                    "ref": {
+                      "$link": "bafkreifkndcfqe24cfussgp37gitcq4p7fnj7tn4x3vb7hgwnulfmynszi"
+                    },
+                    "mimeType": "image/jpeg",
+                    "size": 667038
+                  },
+                  "aspectRatio": {
+                    "width": 2000,
+                    "height": 1279
+                  }
+                }
+              ]
+            },
+            "record": {
+              "$type": "app.bsky.embed.record",
+              "record": {
+                "cid": "bafyreiemkeqm4dhbag53dtfzb755od2kjsf3nl54vddozsmnynnvs3hrzq",
+                "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3ltppwnekps2p"
+              }
+            }
+          },
+          "langs": [
+            "en"
+          ],
+          "facets": [
+            {
+              "$type": "app.bsky.richtext.facet",
+              "index": {
+                "byteEnd": 58,
+                "byteStart": 34
+              },
+              "features": [
+                {
+                  "did": "did:plc:vc7f4oafdgxsihk4cry2xpze",
+                  "$type": "app.bsky.richtext.facet#mention"
+                }
+              ]
+            },
+            {
+              "$type": "app.bsky.richtext.facet",
+              "index": {
+                "byteEnd": 67,
+                "byteStart": 59
+              },
+              "features": [
+                {
+                  "did": "did:plc:gq4fo3u6tqzzdkjlwzpb23tj",
+                  "$type": "app.bsky.richtext.facet#mention"
+                }
+              ]
+            }
+          ],
+          "createdAt": "2025-07-11T22:39:34.079Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-11T22:39:34.079Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3ltpv34ju622p",
+        "cid": "bafyreieophkuonzelia44nqii2ptn36nytve2pc7phalbljt5thqtjerwe",
+        "value": {
+          "text": "ok but honestly it is going quite well...\ntangled.sh/@tynanpurdy....",
+          "$type": "app.bsky.feed.post",
+          "embed": {
+            "$type": "app.bsky.embed.external",
+            "external": {
+              "uri": "https://tangled.sh/@tynanpurdy.com/at-home/",
+              "title": "@tynanpurdy.com/at-home",
+              "description": "A personal website powered by Astro and ATProto"
+            }
+          },
+          "langs": [
+            "en"
+          ],
+          "reply": {
+            "root": {
+              "cid": "bafyreiemkeqm4dhbag53dtfzb755od2kjsf3nl54vddozsmnynnvs3hrzq",
+              "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3ltppwnekps2p"
+            },
+            "parent": {
+              "cid": "bafyreiemkeqm4dhbag53dtfzb755od2kjsf3nl54vddozsmnynnvs3hrzq",
+              "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3ltppwnekps2p"
+            }
+          },
+          "facets": [
+            {
+              "index": {
+                "byteEnd": 68,
+                "byteStart": 42
+              },
+              "features": [
+                {
+                  "uri": "https://tangled.sh/@tynanpurdy.com/at-home/",
+                  "$type": "app.bsky.richtext.facet#link"
+                }
+              ]
+            }
+          ],
+          "createdAt": "2025-07-11T22:23:24.752Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-11T22:23:24.752Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3ltppwnekps2p",
+        "cid": "bafyreiemkeqm4dhbag53dtfzb755od2kjsf3nl54vddozsmnynnvs3hrzq",
+        "value": {
+          "text": "No, I did not sit down to write a blog post and instead start coding an entirely new website. Why the hell would you suggest that?",
+          "$type": "app.bsky.feed.post",
+          "langs": [
+            "en"
+          ],
+          "createdAt": "2025-07-11T20:51:25.920Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-11T20:51:25.920Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3ltpjsmnlzk2w",
+        "cid": "bafyreihc45zsozaky47vjyfhihdz66cirskwcf2nd7iqsd5sc7uuqczahq",
+        "value": {
+          "text": "We need to get off of “works with Bluesky“ as quick as possible.",
+          "$type": "app.bsky.feed.post",
+          "langs": [
+            "en"
+          ],
+          "reply": {
+            "root": {
+              "cid": "bafyreiefalojxirh7jrkys6wf5c44ecsmcjqdrfjxvfqaztirqstdvueqy",
+              "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3ltpjsmn6e22w"
+            },
+            "parent": {
+              "cid": "bafyreiefalojxirh7jrkys6wf5c44ecsmcjqdrfjxvfqaztirqstdvueqy",
+              "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3ltpjsmn6e22w"
+            }
+          },
+          "createdAt": "2025-07-11T19:01:48.488Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-11T19:01:48.488Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3ltpjsmn6e22w",
+        "cid": "bafyreiefalojxirh7jrkys6wf5c44ecsmcjqdrfjxvfqaztirqstdvueqy",
+        "value": {
+          "text": "There should be a universal badge to indicate that a app or website or platform or service or whatever is built on the AT protocol. Just a simple mark, not unlike ♻️, so the average consumer can understand this works with all the other ATProto stuff.",
+          "$type": "app.bsky.feed.post",
+          "langs": [
+            "en"
+          ],
+          "createdAt": "2025-07-11T19:01:48.487Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-11T19:01:48.487Z"
+      }
+    ]
+  },
+  {
+    "name": "Likes",
+    "records": [
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.like/3ltrnjm66n62m",
+        "cid": "bafyreiffmd5nizopwropnkza5uzg5fhsifyzo4sobmfj37wfh2mhz6tmxu",
+        "value": {
+          "via": {
+            "cid": "bafyreie66guny6whbgxer3quepyjt73u7ccte6lwzclkc3mcogb6lketmu",
+            "uri": "at://did:plc:gwuyxh5ulu5wdi2f5ibth533/app.bsky.feed.repost/3ltrdqrigzp23"
+          },
+          "$type": "app.bsky.feed.like",
+          "subject": {
+            "cid": "bafyreif42kilfkxrwvqopd2b4r526pbntzihbbquntn35xxw46hodlcjyu",
+            "uri": "at://did:plc:kcggckk55s6njoewaberea2l/app.bsky.feed.post/3ltrcbn4e322s"
+          },
+          "createdAt": "2025-07-12T15:13:40.262Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-12T15:13:40.262Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.like/3ltq7molpig2i",
+        "cid": "bafyreic23n2pahi7yldwlpa4ijadvhvwyg2w64dpvhjhmglpqgxygfi4kq",
+        "value": {
+          "$type": "app.bsky.feed.like",
+          "subject": {
+            "cid": "bafyreiblsmejoao65uuhdozkyx4424enz5mmiaktfewg3gqhx67ijzr5ou",
+            "uri": "at://did:plc:jxx67pf2gkl44tyfqfi72gqf/app.bsky.feed.post/3ltq7djs2ok24"
+          },
+          "createdAt": "2025-07-12T01:32:11.448Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-12T01:32:11.448Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.like/3ltq6sw52jz2h",
+        "cid": "bafyreig3mw4selqsya7sdbxdh6viqfmdq5mx6oro35rdu43u7eets7vg5u",
+        "value": {
+          "via": {
+            "cid": "bafyreig2zvat3sr3vzmybdwqo5vk37vrzqvzwa2w72np2vjefc4itbnxf4",
+            "uri": "at://did:plc:gq4fo3u6tqzzdkjlwzpb23tj/app.bsky.feed.repost/3ltq4pdfwwt2k"
+          },
+          "$type": "app.bsky.feed.like",
+          "subject": {
+            "cid": "bafyreigftdgyair5be3w6oj5ht76phddkac36v7jhb2jspsoosor2w65uy",
+            "uri": "at://did:plc:uu5axsmbm2or2dngy4gwchec/app.bsky.feed.post/3ltq3kucx7s2a"
+          },
+          "createdAt": "2025-07-12T01:17:46.913Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-12T01:17:46.913Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.like/3ltpwbqdngg2n",
+        "cid": "bafyreidx4djemdxb7ozfhzysqefugrytsiybqaa3phwm6c4wgjepajbjcy",
+        "value": {
+          "$type": "app.bsky.feed.like",
+          "subject": {
+            "cid": "bafyreihpaw453glzhnqmurce7hnwpiojsdbgpgnj2ie4e43ziw46o2brqi",
+            "uri": "at://did:plc:gq4fo3u6tqzzdkjlwzpb23tj/app.bsky.feed.post/3ltpw7vfens2s"
+          },
+          "createdAt": "2025-07-11T22:45:00.559Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-11T22:45:00.559Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.like/3ltpw4xb3pm27",
+        "cid": "bafyreiafci5qzcfrhlmvz2q3ghg2w6b3aek4o7jyt2du35zqim3ileo4r4",
+        "value": {
+          "$type": "app.bsky.feed.like",
+          "subject": {
+            "cid": "bafyreibc673lttf5mynhrd5mnaiaphbjh5gvxa7jemsmp4jbubyyrz2sde",
+            "uri": "at://did:plc:vc7f4oafdgxsihk4cry2xpze/app.bsky.feed.post/3ltpw2ede5s2l"
+          },
+          "createdAt": "2025-07-11T22:42:20.037Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-11T22:42:20.037Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.like/3ltpshkpsdg24",
+        "cid": "bafyreia75b2votdhnxgobtmiu2ac7yh6t6g7nzb6nrpmfb7puqifx7vzum",
+        "value": {
+          "via": {
+            "cid": "bafyreidibd57kfgiehkua5bbamembhat55ostufkbnpjnkvbmua35qrdhm",
+            "uri": "at://did:plc:ubhvakkn4ipu6adbgbi5kh2s/app.bsky.feed.repost/3ltprjyzvcd2u"
+          },
+          "$type": "app.bsky.feed.like",
+          "subject": {
+            "cid": "bafyreidpdgmaa7dyqfzriqunkhnmptcyarjcsn7uru7nzagbblvsjtqlsy",
+            "uri": "at://did:plc:iyz5zf463ic52vqbonyu2ebu/app.bsky.feed.post/3ltpmxyx37c22"
+          },
+          "createdAt": "2025-07-11T21:36:40.906Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-11T21:36:40.906Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.like/3ltps2e47q725",
+        "cid": "bafyreidp7gdmgjszdngybbb57jlvescsx5bcoijxgcarlr7xkuty4jpvmm",
+        "value": {
+          "$type": "app.bsky.feed.like",
+          "subject": {
+            "cid": "bafyreihfatdvmvnnmyo2cbxsv6tc6vci2btrzmq76dqq2e4zx6xjofhcie",
+            "uri": "at://did:plc:gfkpe6ifmgpgzwkoegdouh44/app.bsky.feed.post/3ltprwfweyk26"
+          },
+          "createdAt": "2025-07-11T21:29:17.804Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-11T21:29:17.804Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.like/3ltprzvpkgr2v",
+        "cid": "bafyreicnzdmwdkqfkgfyl46mmvemuj577fnvki3e34aclll3b6vh3xmcsy",
+        "value": {
+          "$type": "app.bsky.feed.like",
+          "subject": {
+            "cid": "bafyreif2oatmhgsesd4fgw7wqxoiz2qntyllst3s4enlap22xovsfr6zxu",
+            "uri": "at://did:plc:v3n5wr27y6flohaycmcgsrij/app.bsky.feed.post/3ltpmvi575s2c"
+          },
+          "createdAt": "2025-07-11T21:29:02.692Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-11T21:29:02.692Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.like/3ltphzxp6id2i",
+        "cid": "bafyreidoprzdx4u4slt5sgfw7cjoenehqt3jfhwjgs2f52oerrer62mcby",
+        "value": {
+          "via": {
+            "cid": "bafyreia64o4hgxxyyvrb27xmqjigolpfwgc3f4uznmbvykdxs6zivg2ioe",
+            "uri": "at://did:plc:btxrwcaeyodrap5mnjw2fvmz/app.bsky.feed.repost/3ltpgypyiri27"
+          },
+          "$type": "app.bsky.feed.like",
+          "subject": {
+            "cid": "bafyreidlbjzq7r7hzsn67ykg2rwmif6taser6u2sfrvtgebv25j2csbfhu",
+            "uri": "at://did:plc:4elz7e5mottrlsuwynirewwh/app.bsky.feed.post/3ltpgfb36ls25"
+          },
+          "createdAt": "2025-07-11T18:30:07.281Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-11T18:30:07.281Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.like/3ltphbq7uh72c",
+        "cid": "bafyreihgn3dhgdtndxr5juozahfqrq2uranluvm7xs4pkz5xhjrvnqzn7u",
+        "value": {
+          "$type": "app.bsky.feed.like",
+          "subject": {
+            "cid": "bafyreihstjyzztz2j2yxtizvrz4kme22axho22mgan3ntbcjs3hn5tic7u",
+            "uri": "at://did:plc:fzu6cqfvkc5rwzdcbsda3lda/app.bsky.feed.post/3ltph6fqg6k22"
+          },
+          "createdAt": "2025-07-11T18:16:34.273Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-11T18:16:34.273Z"
+      }
+    ]
+  },
+  {
+    "name": "Reposts",
+    "records": [
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.repost/3ltp6jalyoz25",
+        "cid": "bafyreibgceor4faidiaas44d2muyia6wl3useuw6ceqvszpfr2dch5f57a",
+        "value": {
+          "via": {
+            "cid": "bafyreic24sxmzyvz6l2qdecz27kdmvokezga34dddbojrimkovt2x4jihe",
+            "uri": "at://did:plc:zisiaxa32xkh3cobfjtlk44h/app.bsky.feed.repost/3ltp4zskpjj2q"
+          },
+          "$type": "app.bsky.feed.repost",
+          "subject": {
+            "cid": "bafyreig7vglu3fzkl2os46ntvvlo676r73q3fgfcya4d34jxdf2vkdhoq4",
+            "uri": "at://did:plc:27fxqfnalyltosz7si3nkjox/app.bsky.feed.post/3ltoy4gfed22d"
+          },
+          "createdAt": "2025-07-11T15:39:42.677Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-11T15:39:42.677Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.repost/3ltoxlvukic2n",
+        "cid": "bafyreie4yw4elg7lrbmnce3x7qyi3dgij54enxpzepd5yfubjtpv445pey",
+        "value": {
+          "via": {
+            "cid": "bafyreiaz3mtloksrwybc64qomaieexgwdargi4b465xeoj4yk3mfqjz55u",
+            "uri": "at://did:plc:sfjxpxxyvewb2zlxwoz2vduw/app.bsky.feed.repost/3ltou3wunsy2e"
+          },
+          "$type": "app.bsky.feed.repost",
+          "subject": {
+            "cid": "bafyreigopdinpaz5g4uirwuk2vw344mykhxx5dk4ehwabircqa64cbn6xu",
+            "uri": "at://did:plc:ch2bm4w2kvliulpivz7l5mlx/app.bsky.feed.post/3ltdh44b5es2n"
+          },
+          "createdAt": "2025-07-11T13:35:55.762Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-11T13:35:55.762Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.repost/3lthi2yuhlv2n",
+        "cid": "bafyreih5ncqk4iajuadt3dcy5mazhb7td5nfz54htfr5ohjxwvuyzauuoi",
+        "value": {
+          "$type": "app.bsky.feed.repost",
+          "subject": {
+            "cid": "bafyreicws2mw6zhhxpzx3dhd74ktd7fohqcyc7nonde5cativkxlveqnnq",
+            "uri": "at://did:plc:txtpgqafbjqkunarvynp4cxk/app.bsky.feed.post/3lthhu65k5k2t"
+          },
+          "createdAt": "2025-07-08T14:09:24.263Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-08T14:09:24.263Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.repost/3lt3a34almr2s",
+        "cid": "bafyreicam44ugj6j2bbkmrbenlqca3lkrwjybq3deue6chuyqwv2km2lhy",
+        "value": {
+          "via": {
+            "cid": "bafyreib2uajgn62geaxecdgtegwcqpgqm3pm2nzf7soydm5b75k2dvmk6a",
+            "uri": "at://did:plc:ybkylffhwhn2an2ic2lxh76k/app.bsky.feed.repost/3lt37nnwi3o2j"
+          },
+          "$type": "app.bsky.feed.repost",
+          "subject": {
+            "cid": "bafyreiesk47t3ps2essb5an5u4qqqk237jrq427ma2amewtqqkhcu5olqa",
+            "uri": "at://did:plc:uqy3ab7c57cafkuzdw3zmne5/app.bsky.feed.post/3lt2xo4cdsk2v"
+          },
+          "createdAt": "2025-07-03T17:14:20.799Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-03T17:14:20.799Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.repost/3lrozkjp3lc26",
+        "cid": "bafyreics7d27ul6roptimwwahlu3jm5ukiqgnzea7rgbpuwpvycshnsubm",
+        "value": {
+          "via": {
+            "cid": "bafyreibqn6eagh3l46wjjqa3hzu6n5qkrdk2kssdods7xw6ualaujqo67y",
+            "uri": "at://did:plc:gotnvwkr56ibs33l4hwgfoet/app.bsky.feed.repost/3lromgi5uya26"
+          },
+          "$type": "app.bsky.feed.repost",
+          "subject": {
+            "cid": "bafyreihjno7udywc3opfsmbxmzsygp2oxf7vrzuggoiqipvvm5j2nd7w3q",
+            "uri": "at://did:plc:ragtjsm2j2vknwkz3zp4oxrd/app.bsky.feed.post/3lrmywynnnc2l"
+          },
+          "createdAt": "2025-06-16T03:20:34.741Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-06-16T03:20:34.741Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.repost/3lrnyl655u627",
+        "cid": "bafyreig4gnw2wgvql7sqjpxaq6yc2ubmnrhw2dl7zey6tikjkejnec553a",
+        "value": {
+          "$type": "app.bsky.feed.repost",
+          "subject": {
+            "cid": "bafyreigtqecueurnifvdpexsefy46tadacwxfd6kkoin5z6yba2vmsdjwe",
+            "uri": "at://did:plc:gsxi2uznl6ihxtjmcjdpsey3/app.bsky.feed.post/3lrnn6xtrrg2j"
+          },
+          "createdAt": "2025-06-15T17:30:21.612Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-06-15T17:30:21.612Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.repost/3lqwsgfdsr425",
+        "cid": "bafyreiasbwfd34lgcbdpni22dg4pmwkvjzfwwohjv367i7tnd4jbgbr224",
+        "value": {
+          "via": {
+            "cid": "bafyreiezn6wxiwwsvf5yp2cnu5qzgpbp4rxza7rwa4np3w7xj7mczek5pa",
+            "uri": "at://did:plc:go53xbllmkjw3vp65vmrcjol/app.bsky.feed.repost/3lqwjebqlj72v"
+          },
+          "$type": "app.bsky.feed.repost",
+          "subject": {
+            "cid": "bafyreiclxzdlnf6ny74cbkejhzi6xz4x4hi4zqappexwwkfunu6mcy7i3i",
+            "uri": "at://did:plc:ddfaoe3f3iv2x2a64dwvmuna/app.bsky.feed.post/3lqwjcwzkqk23"
+          },
+          "createdAt": "2025-06-06T12:09:05.118Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-06-06T12:09:05.118Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.repost/3lqs3xee7et2j",
+        "cid": "bafyreidqdjheyfdxznbza6fwa2du7onnpvysmdhnysxuxhsy3vtupl3wna",
+        "value": {
+          "$type": "app.bsky.feed.repost",
+          "subject": {
+            "cid": "bafyreicnf72xquxgzx63fwekeyu5y2k4vjnesiuznva36jpbpmb47jfbki",
+            "uri": "at://did:plc:cfaqiryvp2b55j5pwpny7cmn/app.bsky.feed.post/3lqs25w6lhc24"
+          },
+          "createdAt": "2025-06-04T15:16:19.323Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-06-04T15:16:19.323Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.repost/3lqpxksxgbx22",
+        "cid": "bafyreiax6kh3fs6kn4lguujizec3mfbf3pa7sr562ivsdwbeuyssi5akgi",
+        "value": {
+          "$type": "app.bsky.feed.repost",
+          "subject": {
+            "cid": "bafyreibnscfit5eg7h4j3lu2birrbsuirsnnyxi4vh5rqb4fmovvnjqdsy",
+            "uri": "at://did:plc:of4tidnqu5eobnxttvklk6dv/app.bsky.feed.post/3lqplevoczc2y"
+          },
+          "createdAt": "2025-06-03T18:52:24.078Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-06-03T18:52:24.078Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.repost/3lqpg3hzcqd2k",
+        "cid": "bafyreibnocuzh7lh5y5h4es5gzqrh5tsliel2yfpbotzt7fva3yf62tlfi",
+        "value": {
+          "$type": "app.bsky.feed.repost",
+          "subject": {
+            "cid": "bafyreidppgxlvjpdiol263abdpcqgo3nvku75pg47sp3s7wtja7ncdktly",
+            "uri": "at://did:plc:kvphkrl2o3rg5nq472mcpaei/app.bsky.feed.post/3lqpearyg2s24"
+          },
+          "createdAt": "2025-06-03T13:39:35.722Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-06-03T13:39:35.722Z"
+      }
+    ]
+  },
+  {
+    "name": "Follows",
+    "records": [
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.graph.follow/3ltq6szyirg2v",
+        "cid": "bafyreidn6iqsfc6ir7fxsh53lvwr3pjyu6liz5lmnhrqazbcqq76quxaba",
+        "value": {
+          "$type": "app.bsky.graph.follow",
+          "subject": "did:plc:uu5axsmbm2or2dngy4gwchec",
+          "createdAt": "2025-07-12T01:17:51.000Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-12T01:17:51.000Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.graph.follow/3ltp6dgajd52f",
+        "cid": "bafyreigxxjbsgwjx7eosmkmavibmyonwjjtjkhrgmvyuwfk5vpyiqsmwiu",
+        "value": {
+          "$type": "app.bsky.graph.follow",
+          "subject": "did:plc:vmbmkls2n72cmi66y7igy2ew",
+          "createdAt": "2025-07-11T15:36:27.211Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-11T15:36:27.211Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.graph.follow/3ltn43a6bjl2m",
+        "cid": "bafyreicyudlkpj3kcpf2ul3i7rko4q2fdlrcnym22savedh5aqvumwntwe",
+        "value": {
+          "$type": "app.bsky.graph.follow",
+          "subject": "did:plc:qntsxa2i4sb24noi45fx4np2",
+          "createdAt": "2025-07-10T19:50:45.500Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-10T19:50:45.500Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.graph.follow/3ltn3ebcwve2p",
+        "cid": "bafyreibtxkaexqpg4kv3sc4mebawazeat2qy4jryu5y7gpgonpkzmfznia",
+        "value": {
+          "$type": "app.bsky.graph.follow",
+          "subject": "did:plc:lcieujcfkv4jx7gehsvok3pr",
+          "createdAt": "2025-07-10T19:37:54.916Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-10T19:37:54.916Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.graph.follow/3lti6ho3xqc2f",
+        "cid": "bafyreifdqn6vtw3g3hbgcwwkwkcljlew3agydcvrdgkhwycxkxdnf3ps6q",
+        "value": {
+          "$type": "app.bsky.graph.follow",
+          "subject": "did:plc:ku63gknnqbkqlgaaw5ix6dip",
+          "createdAt": "2025-07-08T20:50:11.420Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-08T20:50:11.420Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.graph.follow/3lthtlvclti2d",
+        "cid": "bafyreidnwtnzz2osrs25rgvu4tfyykqgqxkdknv7dwtpqe4uckwwhmxyce",
+        "value": {
+          "$type": "app.bsky.graph.follow",
+          "subject": "did:plc:ragtjsm2j2vknwkz3zp4oxrd",
+          "createdAt": "2025-07-08T17:35:42.162Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-08T17:35:42.162Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.graph.follow/3lthqwglm7t2e",
+        "cid": "bafyreidilciivaorio7wyjolz32i3ohvgrjuxvdlhp256nnzatmfaxdqpe",
+        "value": {
+          "$type": "app.bsky.graph.follow",
+          "subject": "did:plc:hg647ce3o7mo6vsvmh74oz2x",
+          "createdAt": "2025-07-08T16:47:54.610Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-08T16:47:54.610Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.graph.follow/3lthluwhzpm2m",
+        "cid": "bafyreib7jnoc3xwg6gewxjeev5np7sb3ai67peygev33erbbjimd4pxfsm",
+        "value": {
+          "$type": "app.bsky.graph.follow",
+          "subject": "did:plc:qed67d2sst5xqsbuveiv7fjp",
+          "createdAt": "2025-07-08T15:17:35.396Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-08T15:17:35.396Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.graph.follow/3lthd26uxht2n",
+        "cid": "bafyreiae7vcdnf6gp47zo2jozkbnxudrgi7fqo2hgba2cmwknpugd6rfca",
+        "value": {
+          "$type": "app.bsky.graph.follow",
+          "subject": "did:plc:gq4fo3u6tqzzdkjlwzpb23tj",
+          "createdAt": "2025-07-08T12:39:28.304Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-08T12:39:28.304Z"
+      },
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.graph.follow/3lthct66tid2n",
+        "cid": "bafyreicfnfzzbzjsyvgclx4rexanmcoi4lnjzho5dthwkanersximpb6t4",
+        "value": {
+          "$type": "app.bsky.graph.follow",
+          "subject": "did:plc:ofrbh253gwicbkc5nktqepol",
+          "createdAt": "2025-07-08T12:35:32.703Z"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-08T12:35:32.703Z"
+      }
+    ]
+  },
+  {
+    "name": "Blog Posts",
+    "records": [
+      {
+        "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/com.whtwnd.blog.entry/3ltpqnkksaj2a",
+        "cid": "bafyreigms3ijvlnzazu5xwy5whl66qzheihexsys2c3gvx4dn6oydbutne",
+        "value": {
+          "$type": "com.whtwnd.blog.entry",
+          "theme": "github-light",
+          "title": "An ongoing experiment",
+          "content": "I want to own my website. I want it's content to live on the ATProtocol. Claude is giving me a hand with the implementation. Currently the stack uses Astro. I need demo content on WhiteWind to test it's ability to display my blog posts. This is the aforementioned demo content.",
+          "createdAt": "2025-07-11T21:04:33.022Z",
+          "visibility": "public"
+        },
+        "author": {
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "handle": "tynanpurdy.com",
+          "displayName": "Tynan Purdy",
+          "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:6ayddqghxhciedbaofoxkcbs/bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe@jpeg"
+        },
+        "indexedAt": "2025-07-11T21:04:33.022Z"
+      }
+    ]
+  }
+]

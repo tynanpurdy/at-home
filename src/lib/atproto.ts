@@ -1,4 +1,4 @@
-import { BskyAgent, AtpAgent } from "@atproto/api";
+import { AtpAgent } from "@atproto/api";
 import { AtUri } from "@atproto/syntax";
 
 export interface ATProtoConfig {
@@ -68,13 +68,15 @@ export interface ActivityData {
 }
 
 export class ATProtoClient {
-  private agent: BskyAgent;
+  private agent: AtpAgent;
   private config: ATProtoConfig;
   private authenticated = false;
+  private delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
 
   constructor(config: ATProtoConfig) {
     this.config = config;
-    this.agent = new BskyAgent({
+    this.agent = new AtpAgent({
       service: config.service,
     });
   }
@@ -85,6 +87,7 @@ export class ATProtoClient {
         `🔐 Authenticating with AT Protocol for identifier: ${this.config.identifier}...`,
       );
       try {
+        await this.delay(100); // Add a small delay before login
         await this.agent.login({
           identifier: this.config.identifier,
           password: this.config.password,
@@ -103,6 +106,7 @@ export class ATProtoClient {
     await this.ensureAuthenticated();
     const actor = handle || this.config.handle || this.config.identifier;
     console.log("👤 Fetching profile for:", actor);
+    await this.delay(100); // Add a small delay before fetching profile
     const response = await this.agent.getProfile({ actor });
     console.log("✅ Profile fetched:", response.data.handle);
     return response.data;
@@ -663,6 +667,9 @@ export class ATProtoClient {
     }
 
     try {
+      // Add a general delay before initiating all requests to reduce initial burst
+      await this.delay(100);
+
       const results = await Promise.allSettled(requests);
 
       results.forEach((result, i) => {

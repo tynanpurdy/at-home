@@ -11,8 +11,7 @@ import {
 import { Badge } from "../components/ui/badge";
 import { Separator } from "../components/ui/separator";
 import { Button } from "../components/ui/button";
-import { createATProtoClient } from "../lib/atproto";
-import { getATProtoConfig } from "../config/atproto";
+import { getCachedProfile } from "../data/cache-utils";
 import {
     LayoutDashboard,
     Atom,
@@ -28,21 +27,8 @@ import {
     MessageCircleMore,
 } from "lucide-react";
 
-// Get AT Protocol configuration
-const config = getATProtoConfig();
-
-// Initialize AT Protocol client
-const atClient = createATProtoClient(config);
-
-// Fetch data at build time
-let profile = null;
-
-try {
-    // Get profile information
-    profile = await atClient.getProfile();
-} catch (error) {
-    console.error("Error fetching profile data:", error);
-}
+// Load profile data from cache
+const profile = getCachedProfile();
 ---
 
 <BaseLayout

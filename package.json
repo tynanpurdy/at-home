@@ -4,10 +4,12 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "node ./src/data/fetch-atproto-data.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "setup": "node setup.js"
+    "setup": "node setup.js",
+    "refresh-cache": "node ./src/data/fetch-atproto-data.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^4.3.0",

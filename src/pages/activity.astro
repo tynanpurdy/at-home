@@ -1,7 +1,5 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { createATProtoClient } from "../lib/atproto";
-import { getATProtoConfig } from "../config/atproto";
 import ActivityFeed from "../components/ui/activity-feed";
 import ProfileCard from "../components/ui/profile-card";
 import {
@@ -22,22 +20,22 @@ import {
     GitFork,
     BookOpenText,
 } from "lucide-react";
+import {
+    getCachedProfile,
+    getCachedActivity,
+    getCachedRepositoryStats,
+    getCachedCollections,
+    isCacheValid,
+} from "../data/cache-utils";
 
-// Get AT Protocol configuration
-const config = getATProtoConfig();
+// Load data from cache
+const profile = getCachedProfile();
+const recentActivity = getCachedActivity();
+const repositoryStats = getCachedRepositoryStats();
+const collections = getCachedCollections();
 
-// Initialize AT Protocol client
-const atClient = createATProtoClient(config);
-
-// Fetch data at build time using unified approach
-const { profile, recentActivity, repositoryStats, collections } =
-    await atClient.getActivityData({
-        includeBlogPosts: false,
-        includeRepositoryStats: true,
-        activityLimit: 20,
-        blogPostLimit: 0,
-        collectionsLimit: 5,
-    });
+// Check if cache is valid (this can be used for debugging or fallback strategies)
+const cacheValid = isCacheValid();
 
 // Use repository statistics if available, otherwise fallback to recent activity
 const totalRecords = repositoryStats

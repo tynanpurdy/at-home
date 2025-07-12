@@ -7,6 +7,7 @@ A modern, decentralized personal website built with Astro and powered by the AT 
 - 🌐 **Decentralized Content**: All content is fetched from your AT Protocol repository
 - 📝 **WhiteWind Blog Integration**: Blog posts using the WhiteWind lexicon
 - 🔄 **Activity Feed**: Display activity from any AT Protocol collections
+- 💾 **Smart Caching**: Build-time caching to reduce API calls and prevent rate limiting
 - 🎨 **Modern Design**: Clean, responsive interface with dark mode support
 - 🚀 **Fast Performance**: Static site generation with Astro
 - 📱 **Mobile Friendly**: Responsive design that works on all devices
@@ -42,7 +43,12 @@ cd at-home
 npm install
 ```
 
-3. Configure your AT Protocol settings:
+3. Set up the cache directory:
+```bash
+mkdir -p src/data/cache
+```
+
+4. Configure your AT Protocol settings:
 
 Edit `src/config/atproto.ts` and update the configuration:
 
@@ -55,7 +61,7 @@ export const DEFAULT_CONFIG: ATProtoConfig = {
 };
 ```
 
-4. Set up environment variables (optional):
+5. Set up environment variables (optional):
 
 Create a `.env` file in the root directory:
 
@@ -66,12 +72,17 @@ ATPROTO_HANDLE=your-handle.bsky.social
 ATPROTO_PASSWORD=your-app-password
 ```
 
-5. Start the development server:
+6. Build the initial cache:
+```bash
+npm run refresh-cache
+```
+
+7. Start the development server:
 ```bash
 npm run dev
 ```
 
-6. Open your browser and navigate to `http://localhost:4321`
+8. Open your browser and navigate to `http://localhost:4321`
 
 ## Configuration
 
@@ -110,7 +121,7 @@ Build the site for production:
 npm run build
 ```
 
-This generates static files in the `dist/` directory.
+This automatically refreshes the cache and generates static files in the `dist/` directory.
 
 ### Hosting Options
 
@@ -147,6 +158,7 @@ Create new AT Protocol-powered components:
 1. **Collections**: Add support for new AT Protocol collections
 2. **Displays**: Create custom ways to display your content
 3. **Interactions**: Add new ways to interact with AT Protocol data
+4. **Caching**: Extend the caching system for new data types
 
 ### Content Customization
 
@@ -180,8 +192,9 @@ To add support for new AT Protocol collections:
 ### Scripts
 
 - `npm run dev` - Start development server
-- `npm run build` - Build for production
+- `npm run build` - Build for production (refreshes cache first)
 - `npm run preview` - Preview production build locally
+- `npm run refresh-cache` - Manually refresh the AT Protocol data cache
 
 ### Project Structure
 
@@ -189,9 +202,15 @@ To add support for new AT Protocol collections:
 at-home/
 ├── src/
 │   ├── components/          # React components
-│   │   ├── BlogPost.tsx     # Blog post display
-│   │   ├── ActivityFeed.tsx # Activity feed
-│   │   └── Profile.tsx      # Profile display
+│   │   ├── ui/              # UI components
+│   │   │   ├── blog-post.tsx # Blog post display
+│   │   │   ├── activity-feed.tsx # Activity feed
+│   │   │   ├── profile-card.tsx # Profile display
+│   │   │   └── cache-manager.tsx # Cache management UI
+│   ├── data/                # Data handling
+│   │   ├── cache/           # Cached AT Protocol data
+│   │   ├── cache-utils.ts   # Cache utility functions
+│   │   └── fetch-atproto-data.mjs # Cache refresh script
 │   ├── lib/                 # Utilities
 │   │   └── atproto.ts       # AT Protocol client
 │   ├── config/              # Configuration
@@ -200,7 +219,9 @@ at-home/
 │       ├── index.astro      # Homepage
 │       ├── blog.astro       # Blog page
 │       ├── activity.astro   # Activity page
-│       └── about.astro      # About page
+│       ├── about.astro      # About page
+│       └── admin/           # Admin pages
+│           └── cache.astro  # Cache management page
 ├── public/                  # Static assets
 └── package.json
 ```
@@ -212,7 +233,9 @@ at-home/
 1. **No content showing**: Check your AT Protocol configuration
 2. **Build errors**: Ensure all dependencies are installed
 3. **Authentication errors**: Verify your app password if using one
-4. **Rate limiting**: Implement proper error handling and retries
+4. **Rate limiting**: Use the caching system to reduce API calls
+5. **Empty cache**: Run `npm run refresh-cache` to populate the cache
+6. **Stale data**: Visit `/admin/cache` to refresh the cache manually
 
 ### Debug Mode
 
@@ -244,6 +267,24 @@ If you have questions or need help:
 1. Check the [AT Protocol documentation](https://atproto.com)
 2. Visit the [Bluesky community](https://bsky.app)
 3. Open an issue in this repository
+4. Visit the `/admin/cache` page to manage your cache
+
+## Caching System
+
+This site uses a build-time caching system to reduce API calls and prevent rate limiting:
+
+### How It Works
+
+1. **Build-time Caching**: During build, data is fetched once and cached as JSON
+2. **Page Load**: Pages load data from cache instead of making API calls
+3. **Cache Refresh**: Cache is refreshed during builds or manually via UI/CLI
+4. **Fallback Mechanism**: Falls back to direct API calls if cache is unavailable
+
+### Managing Cache
+
+- **Admin UI**: Visit `/admin/cache` to view and refresh cache
+- **CLI**: Run `npm run refresh-cache` to refresh cache manually
+- **Build Hook**: Cache is automatically refreshed during builds
 
 ---
 

@@ -1,37 +1,43 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import RecordUI from "../../components/ui/record"; // Using the new enhanced Record component
-import { Button } from "../../components/ui/button"; // For action buttons
-import { Separator } from "../../components/ui/separator"; // For styling
-import { createATProtoClient } from "../../lib/atproto";
-import { getATProtoConfig } from "../../config/atproto";
 import { getLexiconForRecord } from "../../lib/lexicons";
-import { ChevronRight, ArrowLeft, Share2 } from "lucide-react"; // For icons
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Record from "../../components/Record.tsx";
+import {
+    getCachedProfile,
+    getCachedActivity,
+    getCachedBlogPosts,
+} from "../../data/cache-utils";
+import { getDataWithFallback } from "../../data/cache-fallback";
 
 export async function getStaticPaths() {
-    const config = getATProtoConfig();
-    const atClient = createATProtoClient(config);
-
     try {
-        // Get all records that support full page view
-        const { recentActivity } = await atClient.getActivityData({
-            includeBlogPosts: true,
-            includeRepositoryStats: false,
-            activityLimit: 100, // Get more records to find full-page capable ones
-            blogPostLimit: 50,
-            collectionsLimit: 10,
-        });
+        // First try to use cached data
+        let profile = getCachedProfile();
+        let recentActivity = getCachedActivity();
+        let blogPosts = getCachedBlogPosts();
+
+        // If cache is invalid or empty, fall back to direct fetch
+        if (!profile || recentActivity.length === 0) {
+            console.log("Cache invalid or empty, falling back to direct fetch");
+            const freshData = await getDataWithFallback();
+            profile = freshData.profile;
+            recentActivity = freshData.recentActivity;
+            blogPosts = freshData.blogPosts;
+        }
+
+        // Combine activity and blog posts to ensure we catch all full-page capable records
+        const allRecords = [...recentActivity, ...blogPosts];
 
         const paths = [];
 
         // Add blog posts and other full-page records
-        recentActivity.forEach((record) => {
+        allRecords.forEach((record) => {
             const lexicon = getLexiconForRecord(record);
             if (lexicon && lexicon.supportedViews.includes("full")) {
                 const rkey = record.uri.split("/").pop();
                 paths.push({
                     params: { slug: rkey },
-                    props: { record }, // Profile is now handled by BaseLayout
+                    props: { record, profile },
                 });
             }
         });
@@ -44,7 +50,7 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const { record } = Astro.props;
+const { record, profile } = Astro.props;
 
 if (!record) {
     return Astro.redirect("/404");
@@ -57,32 +63,37 @@ if (!lexicon || !lexicon.supportedViews.includes("full")) {
 
 const title = lexicon.getTitle(record);
 const author = lexicon.getAuthor(record);
-const description = `${lexicon.name} by ${author.name}`;
 ---
 
 <BaseLayout
-    title={`${title} - ${author.name}`}
-    description={description}
-    currentPage="activity"
+    title={`${title} - ${profile?.displayName || profile?.handle || "AT Home"}`}
+    description={`${lexicon.name} by ${author.name}`}
+    profile={profile}
 >
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Breadcrumb -->
         <nav class="mb-8" aria-label="Breadcrumb">
             <ol
-                class="flex items-center space-x-2 text-sm text-muted-foreground"
+                class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400"
             >
                 <li>
-                    <a href="/" class="hover:text-foreground">Home</a>
+                    <a
+                        href="/"
+                        class="hover:text-gray-700 dark:hover:text-gray-300"
+                        >Home</a
+                    >
                 </li>
                 <li class="flex items-center">
-                    <ChevronRight class="w-3 h-3 mx-2 text-muted-foreground" />
-                    <a href="/activity" class="hover:text-foreground"
+                    <span class="mx-2">/</span>
+                    <a
+                        href="/activity"
+                        class="hover:text-gray-700 dark:hover:text-gray-300"
                         >Activity</a
                     >
                 </li>
                 <li class="flex items-center">
-                    <ChevronRight class="w-3 h-3 mx-2 text-muted-foreground" />
-                    <span class="font-medium text-foreground"
+                    <span class="mx-2">/</span>
+                    <span class="text-gray-900 dark:text-white font-medium"
                         >{lexicon.name}</span
                     >
                 </li>
@@ -90,41 +101,38 @@ const description = `${lexicon.name} by ${author.name}`;
         </nav>
 
         <!-- Record Content -->
-        <RecordUI client:load record={record} view="full" showAuthor={true} />
+        <Record record={record} view="full" showAuthor={true} />
 
         <!-- Related Actions -->
-        <div class="mt-8 pt-8 border-t border-border">
-            <div
-                class="flex flex-col sm:flex-row items-center justify-between gap-4"
-            >
-                <div class="flex items-center gap-2">
-                    <Button variant="outline" size="sm" asChild>
-                        <a href="/activity">
-                            <ArrowLeft class="w-4 h-4 mr-2" />
-                            Back to Activity
-                        </a>
-                    </Button>
+        <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <a
+                        href="/activity"
+                        class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
+                    >
+                        ← Back to Activity
+                    </a>
                     {
                         lexicon.collection === "com.whtwnd.blog.entry" && (
-                            <Button variant="outline" size="sm" asChild>
-                                <a href="/blog">View All Blog Posts</a>
-                            </Button>
+                            <a
+                                href="/blog"
+                                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
+                            >
+                                View All Blog Posts
+                            </a>
                         )
                     }
                 </div>
 
                 <!-- Share button (optional) -->
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    class="text-muted-foreground hover:text-foreground"
+                <button
                     onclick="navigator.share ? navigator.share({title: document.title, url: window.location.href}) : navigator.clipboard.writeText(window.location.href)"
+                    class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 text-sm"
                     title="Share this record"
-                    client:load
                 >
-                    <Share2 class="w-4 h-4 mr-2" />
                     Share
-                </Button>
+                </button>
             </div>
         </div>
     </div>
