@@ -81,13 +81,21 @@ export class ATProtoClient {
 
   async ensureAuthenticated(): Promise<void> {
     if (!this.authenticated && this.config.password) {
-      console.log("🔐 Authenticating with AT Protocol...");
-      await this.agent.login({
-        identifier: this.config.identifier,
-        password: this.config.password,
-      });
-      this.authenticated = true;
-      console.log("✅ Authentication successful");
+      console.log(
+        `🔐 Authenticating with AT Protocol for identifier: ${this.config.identifier}...`,
+      );
+      try {
+        await this.agent.login({
+          identifier: this.config.identifier,
+          password: this.config.password,
+        });
+        this.authenticated = true;
+        console.log("✅ Authentication successful");
+      } catch (error) {
+        console.error("❌ Authentication failed:", error);
+        this.authenticated = false; // Ensure authenticated flag is false on failure
+        throw error; // Re-throw to propagate the error
+      }
     }
   }
 
@@ -657,6 +665,12 @@ export class ATProtoClient {
     try {
       const results = await Promise.allSettled(requests);
 
+      results.forEach((result, i) => {
+        if (result.status === "rejected") {
+          console.error(`❌ AT Protocol request ${i} failed:`, result.reason);
+        }
+      });
+
       let resultIndex = 0;
 
       // Profile
@@ -667,8 +681,11 @@ export class ATProtoClient {
       resultIndex++;
 
       // Recent activity (only if activityLimit > 0)
+      // Check for fulfillment and ensure the value is an array if expected
       const recentActivity =
-        activityLimit > 0 && results[resultIndex].status === "fulfilled"
+        activityLimit > 0 &&
+        results[resultIndex].status === "fulfilled" &&
+        Array.isArray(results[resultIndex].value)
           ? results[resultIndex].value
           : [];
       if (activityLimit > 0) {
@@ -678,8 +695,10 @@ export class ATProtoClient {
       // Blog posts (optional)
       let blogPosts: WhiteWindPost[] = [];
       if (includeBlogPosts) {
+        // Check for fulfillment and ensure the value is an array if expected
         blogPosts =
-          results[resultIndex].status === "fulfilled"
+          results[resultIndex].status === "fulfilled" &&
+          Array.isArray(results[resultIndex].value)
             ? results[resultIndex].value
             : [];
         resultIndex++;
@@ -688,8 +707,11 @@ export class ATProtoClient {
       // Repository stats (optional)
       let repositoryStats: RepositoryStats | undefined;
       if (includeRepositoryStats) {
+        // Check for fulfillment and ensure the value is an object if expected
         repositoryStats =
-          results[resultIndex].status === "fulfilled"
+          results[resultIndex].status === "fulfilled" &&
+          typeof results[resultIndex].value === "object" &&
+          results[resultIndex].value !== null
             ? results[resultIndex].value
             : undefined;
         resultIndex++;
@@ -702,35 +724,40 @@ export class ATProtoClient {
               {
                 name: "Posts",
                 records:
-                  results[resultIndex].status === "fulfilled"
+                  results[resultIndex].status === "fulfilled" &&
+                  Array.isArray(results[resultIndex].value)
                     ? results[resultIndex].value
                     : [],
               },
               {
                 name: "Likes",
                 records:
-                  results[resultIndex + 1].status === "fulfilled"
+                  results[resultIndex + 1].status === "fulfilled" &&
+                  Array.isArray(results[resultIndex + 1].value)
                     ? results[resultIndex + 1].value
                     : [],
               },
               {
                 name: "Reposts",
                 records:
-                  results[resultIndex + 2].status === "fulfilled"
+                  results[resultIndex + 2].status === "fulfilled" &&
+                  Array.isArray(results[resultIndex + 2].value)
                     ? results[resultIndex + 2].value
                     : [],
               },
               {
                 name: "Follows",
                 records:
-                  results[resultIndex + 3].status === "fulfilled"
+                  results[resultIndex + 3].status === "fulfilled" &&
+                  Array.isArray(results[resultIndex + 3].value)
                     ? results[resultIndex + 3].value
                     : [],
               },
               {
                 name: "Blog Posts",
                 records:
-                  results[resultIndex + 4].status === "fulfilled"
+                  results[resultIndex + 4].status === "fulfilled" &&
+                  Array.isArray(results[resultIndex + 4].value)
                     ? results[resultIndex + 4].value
                     : [],
               },

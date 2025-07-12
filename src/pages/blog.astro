@@ -1,4 +1,5 @@
 ---
+import type { WhiteWindPost } from "../lib/atproto"; // Import the type for better filtering
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { createATProtoClient } from "../lib/atproto";
 import { getATProtoConfig } from "../config/atproto";
@@ -32,17 +33,19 @@ const { profile, blogPosts: fetchedBlogPosts } = await atClient.getActivityData(
 });
 
 // Filter out any invalid blog posts that might be 'true' or not proper objects
-const blogPosts = fetchedBlogPosts.filter(
-    (post) =>
+const blogPosts = (fetchedBlogPosts as unknown[]).filter(
+    (post): post is WhiteWindPost =>
         typeof post === 'object' &&
         post !== null &&
-        'uri' in post &&
-        'record' in post &&
-        typeof post.record === 'object' &&
-        post.record !== null
-);
+        'uri' in post && // Must have a URI
+        'record' in post && // Must have a record object
+        typeof (post as WhiteWindPost).record === 'object' &&
+        (post as WhiteWindPost).record !== null &&
+        'author' in post && // Must have an author object
+        typeof (post as WhiteWindPost).author === 'object' &&
+        (post as WhiteWindPost).author !== null
+) as WhiteWindPost[];
 
-console.log('Debug: blogPosts', blogPosts);
 
 // Function to calculate tag counts for the tag cloud
 const getTagCounts = (posts: typeof blogPosts) => {
@@ -125,14 +128,16 @@ const sortedTags = getTagCounts(blogPosts);
                 {
                     blogPosts.length > 0 ? (
                         <div class="space-y-8">
-                            {blogPosts.map((post) => (
+                            {blogPosts.map((post) => {
+                                console.log('Debug: post object in map', post); // Add this line
+                                return (
                                 <BlogPost
                                     key={post.uri}
-                                    client:load
                                     post={post}
                                     variant="default" // Use 'default' for full blog post view
                                 />
-                            ))}
+                                );
+                            })}
                         </div>
                     ) : (
                         <Card class="py-16 text-center">
@@ -243,21 +248,21 @@ const sortedTags = getTagCounts(blogPosts);
                         </p>
                         <ul class="space-y-2 text-sm text-muted-foreground">
                             <li class="flex items-center">
-                                <Badge variant="secondary" class="mr-2"
-                                    >✓</Badge
-                                >
+                                <Badge variant="secondary" class="mr-2">
+                                    ✓
+                                </Badge>
                                 Own your content
                             </li>
                             <li class="flex items-center">
-                                <Badge variant="secondary" class="mr-2"
-                                    >✓</Badge
-                                >
+                                <Badge variant="secondary" class="mr-2">
+                                    ✓
+                                </Badge>
                                 Decentralized hosting
                             </li>
                             <li class="flex items-center">
-                                <Badge variant="secondary" class="mr-2"
-                                    >✓</Badge
-                                >
+                                <Badge variant="secondary" class="mr-2">
+                                    ✓
+                                </Badge>
                                 Cross-platform compatible
                             </li>
                         </ul>
@@ -333,3 +338,4 @@ const sortedTags = getTagCounts(blogPosts);
         </div>
     </div>
 </BaseLayout>
+```
