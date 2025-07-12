@@ -6,10 +6,7 @@ import { Separator } from "./separator";
 import { cn, formatJoinDate } from "@/lib/utils";
 import { ExternalLink, Calendar, User, Eye } from "lucide-react";
 import type { WhiteWindPost } from "@/lib/atproto";
-import {
-  getRecordInternalLink,
-  canViewRecordInternally,
-} from "@/lib/lexicons";
+import { getRecordInternalLink, canViewRecordInternally } from "@/lib/lexicons";
 
 interface BlogPostProps {
   post: WhiteWindPost;
@@ -26,7 +23,14 @@ export const BlogPost: React.FC<BlogPostProps> = ({
   showExternalLink = true,
   className,
 }) => {
-  const formatDate = (dateString: string): string => {
+  // Add an early return if post or post.record is missing
+  if (!post || !post.record) {
+    console.warn("BlogPost component received invalid post data:", post);
+    return null; // Render nothing if essential data is missing
+  }
+
+  const formatDate = (dateString?: string): string => {
+    if (!dateString) return "Unknown date";
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
@@ -34,12 +38,21 @@ export const BlogPost: React.FC<BlogPostProps> = ({
     });
   };
 
-  const formatRelativeTime = (dateString: string): string => {
+  const formatRelativeTime = (dateString?: string): string => {
+    if (!dateString) return "Unknown time";
+
     const now = new Date();
     const date = new Date(dateString);
+
+    if (isNaN(date.getTime())) {
+      return "Invalid date";
+    }
+
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-    if (diffInSeconds < 60) {
+    if (diffInSeconds < 0) {
+      return "Just now"; // Future date, should not happen for indexedAt
+    } else if (diffInSeconds < 60) {
       return `${diffInSeconds}s ago`;
     } else if (diffInSeconds < 3600) {
       return `${Math.floor(diffInSeconds / 60)}m ago`;
@@ -61,11 +74,11 @@ export const BlogPost: React.FC<BlogPostProps> = ({
     return (
       <Card className={cn("p-4", className)}>
         <div className="flex items-start space-x-3">
-          {showAuthor && post.author.avatar && (
+          {showAuthor && post.author?.avatar && (
             <div className="flex-shrink-0">
               <img
                 src={post.author.avatar}
-                alt={post.author.displayName || post.author.handle}
+                alt={post.author.displayName || post.author.handle || "Author"}
                 className="w-8 h-8 rounded-full object-cover"
                 width={32}
                 height={32}
@@ -82,7 +95,7 @@ export const BlogPost: React.FC<BlogPostProps> = ({
                     href={getRecordInternalLink(post)}
                     className="hover:text-primary transition-colors"
                   >
-                    {post.record.title || "Untitled Post"}
+                    {post.record?.title || "Untitled Post"}
                   </a>
                 ) : (
                   post.record.title || "Untitled Post"
@@ -92,12 +105,12 @@ export const BlogPost: React.FC<BlogPostProps> = ({
                 {formatRelativeTime(post.record.createdAt)}
               </span>
             </div>
-            {post.record.content && (
+            {post.record?.content && (
               <p className="text-sm text-muted-foreground line-clamp-2">
                 {truncateContent(post.record.content, 150)}
               </p>
             )}
-            {post.record.tags && post.record.tags.length > 0 && (
+            {post.record?.tags && post.record.tags.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-2">
                 {post.record.tags.slice(0, 3).map((tag, index) => (
                   <Badge key={index} variant="secondary" className="text-xs">
@@ -120,12 +133,12 @@ export const BlogPost: React.FC<BlogPostProps> = ({
   return (
     <Card className={cn("overflow-hidden", className)}>
       <CardHeader>
-        {showAuthor && (
+        {showAuthor && post.author && (
           <div className="flex items-center space-x-3 mb-3">
             {post.author.avatar && (
               <img
                 src={post.author.avatar}
-                alt={post.author.displayName || post.author.handle}
+                alt={post.author.displayName || post.author.handle || "Author"}
                 className="w-10 h-10 rounded-full object-cover"
                 width={40}
                 height={40}
@@ -136,23 +149,27 @@ export const BlogPost: React.FC<BlogPostProps> = ({
             <div>
               <h3 className="font-medium text-foreground flex items-center gap-2">
                 <User className="w-4 h-4" />
-                {post.author.displayName || post.author.handle}
+                {post.author.displayName ||
+                  post.author.handle ||
+                  "Unknown Author"}
               </h3>
-              <p className="text-sm text-muted-foreground">
-                @{post.author.handle}
-              </p>
+              {post.author.handle && (
+                <p className="text-sm text-muted-foreground">
+                  @{post.author.handle}
+                </p>
+              )}
             </div>
           </div>
         )}
 
-        {post.record.title && (
+        {post.record?.title && (
           <CardTitle className="text-2xl mb-2">
             {canViewRecordInternally(post) ? (
               <a
                 href={getRecordInternalLink(post)}
                 className="hover:text-primary transition-colors"
               >
-                {post.record.title}
+                {post.record?.title}
               </a>
             ) : (
               post.record.title
@@ -180,7 +197,7 @@ export const BlogPost: React.FC<BlogPostProps> = ({
 
       <CardContent>
         <div className="prose prose-lg max-w-none dark:prose-invert mb-4">
-          {post.record.content ? (
+          {post.record?.content ? (
             <div
               className="text-foreground leading-relaxed"
               dangerouslySetInnerHTML={{
@@ -188,13 +205,11 @@ export const BlogPost: React.FC<BlogPostProps> = ({
               }}
             />
           ) : (
-            <p className="text-muted-foreground italic">
-              No content available
-            </p>
+            <p className="text-muted-foreground italic">No content available</p>
           )}
         </div>
 
-        {post.record.tags && post.record.tags.length > 0 && (
+        {post.record?.tags && post.record.tags.length > 0 && (
           <>
             <Separator className="mb-4" />
             <div className="flex flex-wrap gap-2 mb-4">

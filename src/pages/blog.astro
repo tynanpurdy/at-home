@@ -1,9 +1,20 @@
 ---
-import { createATProtoClient } from '../lib/atproto';
-import { getATProtoConfig } from '../config/atproto';
-import BlogPost from '../components/BlogPost.tsx';
-import Profile from '../components/Profile.tsx';
-import Navigation from '../components/Navigation.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { createATProtoClient } from "../lib/atproto";
+import { getATProtoConfig } from "../config/atproto";
+import BlogPost from "../components/ui/blog-post"; // Use the new enhanced BlogPost
+import ProfileCard from "../components/ui/profile-card"; // Use the new enhanced ProfileCard
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Separator } from "../components/ui/separator";
+import { Button } from "../components/ui/button";
+import { Hash, GitFork, BookOpenText, Feather } from "lucide-react";
 
 // Get AT Protocol configuration
 const config = getATProtoConfig();
@@ -12,240 +23,313 @@ const config = getATProtoConfig();
 const atClient = createATProtoClient(config);
 
 // Fetch data at build time using unified approach
-const { profile, blogPosts } = await atClient.getActivityData({
-  includeBlogPosts: true,
-  includeRepositoryStats: false,
-  activityLimit: 0,
-  blogPostLimit: 20,
-  collectionsLimit: 0,
+const { profile, blogPosts: fetchedBlogPosts } = await atClient.getActivityData({
+    includeBlogPosts: true,
+    includeRepositoryStats: false,
+    activityLimit: 0,
+    blogPostLimit: 20,
+    collectionsLimit: 0,
 });
+
+// Filter out any invalid blog posts that might be 'true' or not proper objects
+const blogPosts = fetchedBlogPosts.filter(
+    (post) =>
+        typeof post === 'object' &&
+        post !== null &&
+        'uri' in post &&
+        'record' in post &&
+        typeof post.record === 'object' &&
+        post.record !== null
+);
+
+console.log('Debug: blogPosts', blogPosts);
+
+// Function to calculate tag counts for the tag cloud
+const getTagCounts = (posts: typeof blogPosts) => {
+    const tagCounts: { [key: string]: number } = {};
+    posts.forEach((post) => {
+        // Ensure post.record exists and has tags before accessing
+        if (post.record && post.record.tags) {
+            post.record.tags.forEach((tag) => {
+                tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+            });
+        }
+    });
+    return Object.entries(tagCounts)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 10);
+};
+
+const sortedTags = getTagCounts(blogPosts);
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Blog - {profile?.displayName || profile?.handle || 'AT Home'}</title>
-    <meta name="description" content="Personal blog posts powered by WhiteWind and the AT Protocol" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  </head>
-  <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
-    <!-- Navigation -->
-    <Navigation profile={profile} currentPage="blog" />
-
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Header -->
-      <div class="mb-8">
-        <div class="text-center">
-          <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">Blog</h1>
-          <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            My thoughts, ideas, and experiences shared through the decentralized web.
-            All posts are published using the WhiteWind lexicon on the AT Protocol.
-          </p>
-        </div>
-      </div>
-
-      <!-- Blog Stats -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 text-center">
-          <div class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-            {blogPosts.length}
-          </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">
-            Total Posts
-          </div>
-        </div>
-
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 text-center">
-          <div class="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
-            📝
-          </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">
-            WhiteWind Powered
-          </div>
-        </div>
-
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 text-center">
-          <div class="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
-            🌐
-          </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">
-            Decentralized
-          </div>
-        </div>
-      </div>
-
-      <!-- Blog Posts Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Main Content -->
-        <div class="lg:col-span-2">
-          {blogPosts.length > 0 ? (
-            <div class="space-y-8">
-              {blogPosts.map((post) => (
-                <BlogPost key={post.uri} post={post} compact={false} />
-              ))}
-            </div>
-          ) : (
-            <div class="text-center py-16 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-              <div class="text-6xl mb-4">📝</div>
-              <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-2">No blog posts yet</h3>
-              <p class="text-gray-500 dark:text-gray-400 mb-6">
-                Blog posts published using the WhiteWind lexicon will appear here.
-              </p>
-              <div class="space-y-2 text-sm text-gray-400 dark:text-gray-500">
-                <p>To publish a blog post:</p>
-                <ol class="list-decimal list-inside space-y-1">
-                  <li>Use a WhiteWind-compatible client</li>
-                  <li>Publish using the com.whtwnd.blog.entry lexicon</li>
-                  <li>Your posts will automatically appear here</li>
-                </ol>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <!-- Sidebar -->
-        <div class="space-y-6">
-          <!-- Profile Card -->
-          {profile && (
-            <div>
-              <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">About the Author</h3>
-              <Profile profile={profile} compact={true} />
-            </div>
-          )}
-
-          <!-- Tag Cloud (if we have posts with tags) -->
-          {blogPosts.length > 0 && (
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Popular Tags</h3>
-              {(() => {
-                const tagCounts = {};
-                blogPosts.forEach(post => {
-                  if (post.record.tags) {
-                    post.record.tags.forEach(tag => {
-                      tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-                    });
-                  }
-                });
-
-                const sortedTags = Object.entries(tagCounts)
-                  .sort(([,a], [,b]) => b - a)
-                  .slice(0, 10);
-
-                return sortedTags.length > 0 ? (
-                  <div class="flex flex-wrap gap-2">
-                    {sortedTags.map(([tag, count]) => (
-                      <span
-                        key={tag}
-                        class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200"
-                      >
-                        #{tag}
-                        <span class="ml-1 text-xs text-blue-600 dark:text-blue-300">
-                          {count}
-                        </span>
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <p class="text-gray-500 dark:text-gray-400 text-sm">No tags found</p>
-                );
-              })()}
-            </div>
-          )}
-
-          <!-- WhiteWind Info -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">About WhiteWind</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
-              WhiteWind is a decentralized blogging platform built on the AT Protocol.
-              It allows you to publish blog posts that are stored on your own AT Protocol repository.
+<BaseLayout
+    title={`Blog - ${profile?.displayName || profile?.handle || "AT Home"}`}
+    description="Personal blog posts powered by WhiteWind and the AT Protocol"
+    currentPage="blog"
+    profile={profile}
+>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-foreground mb-4">Blog</h1>
+            <p class="text-xl text-muted-foreground max-w-3xl mx-auto">
+                My thoughts, ideas, and experiences shared through the
+                decentralized web. All posts are published using the WhiteWind
+                lexicon on the AT Protocol.
             </p>
-            <div class="space-y-2 text-sm">
-              <div class="flex items-center text-gray-600 dark:text-gray-300">
-                <span class="text-green-500 mr-2">✓</span>
-                Own your content
-              </div>
-              <div class="flex items-center text-gray-600 dark:text-gray-300">
-                <span class="text-green-500 mr-2">✓</span>
-                Decentralized hosting
-              </div>
-              <div class="flex items-center text-gray-600 dark:text-gray-300">
-                <span class="text-green-500 mr-2">✓</span>
-                Cross-platform compatible
-              </div>
-            </div>
-            <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-              <a
-                href="https://whitewind.app"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
-              >
-                Learn more about WhiteWind →
-              </a>
-            </div>
-          </div>
-
-          <!-- Recent Activity -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Links</h3>
-            <div class="space-y-2">
-              <a href="/" class="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
-                🏠 Home
-              </a>
-              <a href="/activity" class="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
-                🔄 Recent Activity
-              </a>
-              <a href="/about" class="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
-                👤 About
-              </a>
-              {profile && (
-                <a
-                  href={`https://bsky.app/profile/${profile.handle}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm"
-                >
-                  🐦 Follow on Bluesky
-                </a>
-              )}
-            </div>
-          </div>
         </div>
-      </div>
-    </main>
 
-    <!-- Footer -->
-    <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="flex flex-col md:flex-row justify-between items-center">
-          <div class="text-gray-500 dark:text-gray-400 text-sm">
-            © 2024 {profile?.displayName || profile?.handle || 'AT Home'}. Built with Astro and AT Protocol.
-          </div>
-          <div class="flex items-center space-x-4 mt-4 md:mt-0">
-            <a href="https://whitewind.app" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm">
-              WhiteWind
-            </a>
-            <a href="https://atproto.com" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm">
-              AT Protocol
-            </a>
-          </div>
+        <!-- Blog Stats -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+            <Card class="p-6 text-center">
+                <CardContent class="p-0">
+                    <div class="text-3xl font-bold text-primary mb-2">
+                        {blogPosts.length}
+                    </div>
+                    <div class="text-sm text-muted-foreground">Total Posts</div>
+                </CardContent>
+            </Card>
+
+            <Card class="p-6 text-center">
+                <CardContent class="p-0">
+                    <div
+                        class="text-3xl font-bold text-green-600 dark:text-green-400 mb-2"
+                    >
+                        <Feather class="inline-block w-8 h-8" />
+                    </div>
+                    <div class="text-sm text-muted-foreground">
+                        WhiteWind Powered
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card class="p-6 text-center">
+                <CardContent class="p-0">
+                    <div
+                        class="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2"
+                    >
+                        🌐
+                    </div>
+                    <div class="text-sm text-muted-foreground">
+                        Decentralized
+                    </div>
+                </CardContent>
+            </Card>
         </div>
-      </div>
-    </footer>
 
-    <!-- Dark mode toggle script -->
-    <script>
-      if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    </script>
-  </body>
-</html>
+        <!-- Blog Posts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Main Content -->
+            <div class="lg:col-span-2">
+                {
+                    blogPosts.length > 0 ? (
+                        <div class="space-y-8">
+                            {blogPosts.map((post) => (
+                                <BlogPost
+                                    key={post.uri}
+                                    client:load
+                                    post={post}
+                                    variant="default" // Use 'default' for full blog post view
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <Card class="py-16 text-center">
+                            <CardContent>
+                                <div class="text-6xl mb-4">📝</div>
+                                <h3 class="text-xl font-medium text-foreground mb-2">
+                                    No blog posts yet
+                                </h3>
+                                <p class="text-muted-foreground mb-6">
+                                    Blog posts published using the WhiteWind
+                                    lexicon will appear here.
+                                </p>
+                                <div
+                                    class="space-y-2 text-sm text-muted-foreground"
+                                >
+                                    <p>To publish a blog post:</p>
+                                    <ol
+                                        class="list-decimal list-inside space-y-1"
+                                    >
+                                        <li>
+                                            Use a WhiteWind-compatible client
+                                        </li>
+                                        <li>
+                                            Publish using the
+                                            <code
+                                                class="bg-muted px-1 rounded text-foreground"
+                                                >com.whtwnd.blog.entry</code
+                                            >
+                                            lexicon
+                                        </li>
+                                        <li>
+                                            Your posts will automatically appear
+                                            here
+                                        </li>
+                                    </ol>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )
+                }
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Profile Card -->
+                {
+                    profile && (
+                        <div>
+                            <h2 class="text-xl font-bold text-foreground mb-4">
+                                About the Author
+                            </h2>
+                            <ProfileCard
+                                client:load
+                                profile={profile}
+                                compact={true}
+                                showActions={false} // Typically, you don't need actions on a compact profile in a sidebar
+                            />
+                        </div>
+                    )
+                }
+
+                <!-- Tag Cloud -->
+                {
+                    sortedTags.length > 0 && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle class="text-lg flex items-center gap-2">
+                                    <Hash class="w-5 h-5" />
+                                    Popular Tags
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div class="flex flex-wrap gap-2">
+                                    {sortedTags.map(([tag, count]) => (
+                                        <Badge
+                                            key={tag}
+                                            variant="secondary"
+                                            class="cursor-pointer hover:bg-secondary/80 transition-colors"
+                                        >
+                                            #{tag}
+                                            <span
+                                                class="ml-1 text-xs text-secondary-foreground/80"
+                                            >
+                                                ({count})
+                                            </span>
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )
+                }
+
+                <!-- WhiteWind Info -->
+                <Card>
+                    <CardHeader>
+                        <CardTitle class="text-lg flex items-center gap-2">
+                            <BookOpenText class="w-5 h-5" />
+                            About WhiteWind
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p class="text-sm text-muted-foreground mb-4">
+                            WhiteWind is a decentralized blogging platform built
+                            on the AT Protocol. It allows you to publish blog
+                            posts that are stored on your own AT Protocol
+                            repository.
+                        </p>
+                        <ul class="space-y-2 text-sm text-muted-foreground">
+                            <li class="flex items-center">
+                                <Badge variant="secondary" class="mr-2"
+                                    >✓</Badge
+                                >
+                                Own your content
+                            </li>
+                            <li class="flex items-center">
+                                <Badge variant="secondary" class="mr-2"
+                                    >✓</Badge
+                                >
+                                Decentralized hosting
+                            </li>
+                            <li class="flex items-center">
+                                <Badge variant="secondary" class="mr-2"
+                                    >✓</Badge
+                                >
+                                Cross-platform compatible
+                            </li>
+                        </ul>
+                        <Separator class="my-4" />
+                        <Button variant="outline" size="sm" asChild>
+                            <a
+                                href="https://whitewind.app"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Learn more about WhiteWind →
+                            </a>
+                        </Button>
+                    </CardContent>
+                </Card>
+
+                <!-- Quick Links -->
+                <Card>
+                    <CardHeader>
+                        <CardTitle class="text-lg">Quick Links</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div class="space-y-2">
+                            <Button
+                                variant="ghost"
+                                class="w-full justify-start p-0 h-auto"
+                                asChild
+                            >
+                                <a href="/" class="block p-2 text-sm">
+                                    🏠 Home
+                                </a>
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                class="w-full justify-start p-0 h-auto"
+                                asChild
+                            >
+                                <a href="/activity" class="block p-2 text-sm">
+                                    🔄 Recent Activity
+                                </a>
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                class="w-full justify-start p-0 h-auto"
+                                asChild
+                            >
+                                <a href="/about" class="block p-2 text-sm">
+                                    👤 About
+                                </a>
+                            </Button>
+                            {
+                                profile && (
+                                    <Button
+                                        variant="ghost"
+                                        class="w-full justify-start p-0 h-auto"
+                                        asChild
+                                    >
+                                        <a
+                                            href={`https://bsky.app/profile/${profile.handle}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="block p-2 text-sm"
+                                        >
+                                            🐦 Follow on Bluesky
+                                        </a>
+                                    </Button>
+                                )
+                            }
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        </div>
+    </div>
+</BaseLayout>
