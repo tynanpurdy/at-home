@@ -1,10 +1,20 @@
 ---
-import { createATProtoClient } from '../lib/atproto';
-import { getATProtoConfig } from '../config/atproto';
-import BlogPost from '../components/BlogPost.tsx';
-import ActivitySection from '../components/ActivitySection.tsx';
-import Profile from '../components/Profile.tsx';
-import Navigation from '../components/Navigation.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { createATProtoClient } from "../lib/atproto";
+import { getATProtoConfig } from "../config/atproto";
+import BlogPost from "../components/ui/blog-post";
+import ActivityFeed from "../components/ui/activity-feed";
+import ProfileCard from "../components/ui/profile-card";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Separator } from "../components/ui/separator";
 
 // Get AT Protocol configuration
 const config = getATProtoConfig();
@@ -14,192 +24,267 @@ const atClient = createATProtoClient(config);
 
 // Fetch data at build time using unified approach
 const { profile, recentActivity, blogPosts } = await atClient.getActivityData({
-  includeBlogPosts: true,
-  includeRepositoryStats: false,
-  activityLimit: 8,
-  blogPostLimit: 3,
-  collectionsLimit: 5,
+    includeBlogPosts: true,
+    includeRepositoryStats: false,
+    activityLimit: 8,
+    blogPostLimit: 3,
+    collectionsLimit: 5,
 });
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{profile?.displayName || profile?.handle || 'AT Home'} - Personal Portfolio & Blog</title>
-    <meta name="description" content="Personal portfolio and blog powered by the AT Protocol" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  </head>
-  <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
-    <!-- Navigation -->
-    <Navigation profile={profile} currentPage="home" />
-
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Hero Section -->
-      <section class="mb-12">
-        <div class="text-center">
-          <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Welcome to My Digital Home
-          </h2>
-          <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            This is my personal portfolio and blog, powered by the AT Protocol.
-            Here you'll find my thoughts, projects, and activity across the decentralized web.
-          </p>
-        </div>
-      </section>
-
-      <!-- Grid Layout -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Main Content Area -->
-        <div class="lg:col-span-2 space-y-8">
-          <!-- Latest Blog Posts -->
-          <section>
-            <div class="flex items-center justify-between mb-6">
-              <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Latest Blog Posts</h3>
-              <a href="/blog" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
-                View all posts →
-              </a>
-            </div>
-
-            {blogPosts.length > 0 ? (
-              <div class="space-y-6">
-                {blogPosts.map((post) => (
-                  <BlogPost key={post.uri} post={post} compact={true} />
-                ))}
-              </div>
-            ) : (
-              <div class="text-center py-8 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                <p class="text-gray-500 dark:text-gray-400">No blog posts found yet.</p>
-                <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">
-                  Posts will appear here when you publish them using the WhiteWind lexicon.
+<BaseLayout
+    title={`${profile?.displayName || profile?.handle || "AT Home"} - Personal Portfolio & Blog`}
+    description="Personal portfolio and blog powered by the AT Protocol"
+    currentPage="home"
+    profile={profile}
+>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Hero Section -->
+        <section class="mb-12">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold text-foreground mb-4">
+                    Welcome to My Digital Home
+                </h1>
+                <p class="text-xl text-muted-foreground max-w-3xl mx-auto">
+                    This is my personal portfolio and blog, powered by the AT
+                    Protocol. Here you'll find my thoughts, projects, and
+                    activity across the decentralized web.
                 </p>
-              </div>
-            )}
-          </section>
+            </div>
+        </section>
 
-          <!-- Recent Activity -->
-          <ActivitySection
-            records={recentActivity}
-            title="Recent Activity"
-            maxItems={5}
-            compact={true}
-            showViewAll={true}
-            viewAllHref="/activity"
-            emptyMessage="No recent activity found."
-            emptySubMessage="Activity from your AT Protocol repository will appear here."
-          />
+        <!-- Grid Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Main Content Area -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Latest Blog Posts -->
+                <Card>
+                    <CardHeader>
+                        <div class="flex items-center justify-between">
+                            <CardTitle class="text-2xl"
+                                >Latest Blog Posts</CardTitle
+                            >
+                            <Button variant="ghost" asChild>
+                                <a href="/blog"> View all posts → </a>
+                            </Button>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        {
+                            blogPosts.length > 0 ? (
+                                <div class="space-y-6">
+                                    {blogPosts.map((post) => (
+                                        <BlogPost
+                                            key={post.uri}
+                                            client:load
+                                            post={post}
+                                            variant="compact"
+                                        />
+                                    ))}
+                                </div>
+                            ) : (
+                                <div class="text-center py-8">
+                                    <div class="text-6xl mb-4">📝</div>
+                                    <h3 class="text-xl font-medium text-foreground mb-2">
+                                        No blog posts found yet
+                                    </h3>
+                                    <p class="text-muted-foreground">
+                                        Posts will appear here when you publish
+                                        them using the WhiteWind lexicon.
+                                    </p>
+                                </div>
+                            )
+                        }
+                    </CardContent>
+                </Card>
+
+                <!-- Recent Activity -->
+                <ActivityFeed
+                    client:load
+                    records={recentActivity}
+                    title="Recent Activity"
+                    maxItems={5}
+                    variant="default"
+                    showViewAll={true}
+                    viewAllHref="/activity"
+                    emptyMessage="No recent activity found."
+                    emptySubMessage="Activity from your AT Protocol repository will appear here."
+                />
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Profile Card -->
+                {
+                    profile && (
+                        <div>
+                            <h2 class="text-xl font-bold text-foreground mb-4">
+                                About Me
+                            </h2>
+                            <ProfileCard
+                                client:load
+                                profile={profile}
+                                variant="compact"
+                            />
+                        </div>
+                    )
+                }
+
+                <!-- AT Protocol Info -->
+                <Card>
+                    <CardHeader>
+                        <CardTitle class="text-lg"
+                            >Powered by AT Protocol</CardTitle
+                        >
+                    </CardHeader>
+                    <CardContent>
+                        <p class="text-sm text-muted-foreground mb-4">
+                            This site is built on the AT Protocol, a
+                            decentralized social networking protocol. All
+                            content is fetched directly from my AT Protocol
+                            repository.
+                        </p>
+                        <div class="space-y-2">
+                            <div
+                                class="flex items-center justify-between text-sm"
+                            >
+                                <span class="text-muted-foreground"
+                                    >Blog Posts:</span
+                                >
+                                <Badge variant="secondary">WhiteWind</Badge>
+                            </div>
+                            <div
+                                class="flex items-center justify-between text-sm"
+                            >
+                                <span class="text-muted-foreground"
+                                    >Social:</span
+                                >
+                                <Badge variant="secondary">Bluesky</Badge>
+                            </div>
+                            <div
+                                class="flex items-center justify-between text-sm"
+                            >
+                                <span class="text-muted-foreground"
+                                    >Protocol:</span
+                                >
+                                <Badge variant="secondary">AT Protocol</Badge>
+                            </div>
+                        </div>
+                        <Separator class="my-4" />
+                        <Button variant="outline" size="sm" asChild>
+                            <a
+                                href="https://atproto.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Learn more about AT Protocol →
+                            </a>
+                        </Button>
+                    </CardContent>
+                </Card>
+
+                <!-- Quick Links -->
+                <Card>
+                    <CardHeader>
+                        <CardTitle class="text-lg">Quick Links</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div class="space-y-2">
+                            <Button
+                                variant="ghost"
+                                class="w-full justify-start p-0 h-auto"
+                                asChild
+                            >
+                                <a href="/blog" class="block p-2 text-sm">
+                                    📝 All Blog Posts
+                                </a>
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                class="w-full justify-start p-0 h-auto"
+                                asChild
+                            >
+                                <a href="/activity" class="block p-2 text-sm">
+                                    🔄 Recent Activity
+                                </a>
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                class="w-full justify-start p-0 h-auto"
+                                asChild
+                            >
+                                <a href="/about" class="block p-2 text-sm">
+                                    👤 About Me
+                                </a>
+                            </Button>
+                            {
+                                profile && (
+                                    <Button
+                                        variant="ghost"
+                                        class="w-full justify-start p-0 h-auto"
+                                        asChild
+                                    >
+                                        <a
+                                            href={`https://bsky.app/profile/${profile.handle}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="block p-2 text-sm"
+                                        >
+                                            🐦 Follow on Bluesky
+                                        </a>
+                                    </Button>
+                                )
+                            }
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <!-- Component Showcase -->
+                <Card>
+                    <CardHeader>
+                        <CardTitle class="text-lg"
+                            >Enhanced Components</CardTitle
+                        >
+                        <CardDescription
+                            >Now powered by shadcn/ui</CardDescription
+                        >
+                    </CardHeader>
+                    <CardContent>
+                        <div class="space-y-3">
+                            <div class="text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-muted-foreground"
+                                        >Design System:</span
+                                    >
+                                    <Badge variant="outline">shadcn/ui</Badge>
+                                </div>
+                            </div>
+                            <div class="text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-muted-foreground"
+                                        >Accessibility:</span
+                                    >
+                                    <Badge variant="outline">Enhanced</Badge>
+                                </div>
+                            </div>
+                            <div class="text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-muted-foreground"
+                                        >Theme Support:</span
+                                    >
+                                    <Badge variant="outline">Dark/Light</Badge>
+                                </div>
+                            </div>
+                        </div>
+                        <Separator class="my-4" />
+                        <Button variant="outline" size="sm" asChild>
+                            <a href="/enhanced-showcase">
+                                View Component Showcase →
+                            </a>
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
         </div>
-
-        <!-- Sidebar -->
-        <div class="space-y-6">
-          <!-- Profile Card -->
-          {profile && (
-            <div>
-              <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">About Me</h3>
-              <Profile profile={profile} compact={true} />
-            </div>
-          )}
-
-          <!-- AT Protocol Info -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Powered by AT Protocol</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
-              This site is built on the AT Protocol, a decentralized social networking protocol.
-              All content is fetched directly from my AT Protocol repository.
-            </p>
-            <div class="space-y-2">
-              <div class="flex items-center justify-between text-sm">
-                <span class="text-gray-500 dark:text-gray-400">Blog Posts:</span>
-                <span class="text-gray-900 dark:text-white font-medium">WhiteWind</span>
-              </div>
-              <div class="flex items-center justify-between text-sm">
-                <span class="text-gray-500 dark:text-gray-400">Social:</span>
-                <span class="text-gray-900 dark:text-white font-medium">Bluesky</span>
-              </div>
-              <div class="flex items-center justify-between text-sm">
-                <span class="text-gray-500 dark:text-gray-400">Protocol:</span>
-                <span class="text-gray-900 dark:text-white font-medium">AT Protocol</span>
-              </div>
-            </div>
-            <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-              <a
-                href="https://atproto.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
-              >
-                Learn more about AT Protocol →
-              </a>
-            </div>
-          </div>
-
-          <!-- Quick Links -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Links</h3>
-            <div class="space-y-2">
-              <a href="/blog" class="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
-                📝 All Blog Posts
-              </a>
-              <a href="/activity" class="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
-                🔄 Recent Activity
-              </a>
-              <a href="/about" class="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm">
-                👤 About Me
-              </a>
-              {profile && (
-                <a
-                  href={`https://bsky.app/profile/${profile.handle}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm"
-                >
-                  🐦 Follow on Bluesky
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="flex flex-col md:flex-row justify-between items-center">
-          <div class="text-gray-500 dark:text-gray-400 text-sm">
-            © 2024 {profile?.displayName || profile?.handle || 'AT Home'}. Built with Astro and AT Protocol.
-          </div>
-          <div class="flex items-center space-x-4 mt-4 md:mt-0">
-            <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-              <span class="sr-only">Astro</span>
-              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L2 7v10l10 5 10-5V7l-10-5zm0 2l8 4v8l-8 4-8-4V8l8-4z"/>
-              </svg>
-            </a>
-            <a href="https://atproto.com" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-              <span class="sr-only">AT Protocol</span>
-              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-    </footer>
-
-    <!-- Dark mode toggle script -->
-    <script>
-      // Simple dark mode toggle (you can enhance this)
-      if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    </script>
-  </body>
-</html>
+    </div>
+</BaseLayout>

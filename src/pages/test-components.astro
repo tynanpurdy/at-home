@@ -1,0 +1,202 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProfileCard from "../components/ui/profile-card";
+import ActivityFeed from "../components/ui/activity-feed";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { createATProtoClient } from '../lib/atproto';
+import { getATProtoConfig } from '../config/atproto';
+
+// Get AT Protocol configuration
+const config = getATProtoConfig();
+
+// Initialize AT Protocol client
+const atClient = createATProtoClient(config);
+
+// Fetch data at build time
+const { profile, recentActivity } = await atClient.getActivityData({
+  includeBlogPosts: false,
+  includeRepositoryStats: false,
+  activityLimit: 8,
+  blogPostLimit: 0,
+  collectionsLimit: 5,
+});
+---
+
+<BaseLayout title="Enhanced Components Test" description="Testing new shadcn/ui enhanced components">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold mb-4">Enhanced Components Test</h1>
+      <p class="text-muted-foreground">Testing ProfileCard and ActivityFeed with shadcn/ui</p>
+    </div>
+
+    <div class="grid gap-8">
+      <!-- Profile Card Tests -->
+      <Card>
+        <CardHeader>
+          <CardTitle>Profile Card Components</CardTitle>
+          <CardDescription>Testing different variants of the ProfileCard</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div class="grid gap-6">
+            <div>
+              <h3 class="text-lg font-semibold mb-4">Default Profile Card</h3>
+              {profile && (
+                <ProfileCard client:load profile={profile} />
+              )}
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold mb-4">Compact Profile Card</h3>
+              {profile && (
+                <ProfileCard client:load profile={profile} variant="compact" />
+              )}
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold mb-4">Profile Card without Actions</h3>
+              {profile && (
+                <ProfileCard client:load profile={profile} showActions={false} />
+              )}
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold mb-4">Profile Card without Bio</h3>
+              {profile && (
+                <ProfileCard client:load profile={profile} showBio={false} />
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <!-- Activity Feed Tests -->
+      <Card>
+        <CardHeader>
+          <CardTitle>Activity Feed Components</CardTitle>
+          <CardDescription>Testing different variants of the ActivityFeed</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div class="grid gap-6">
+            <div>
+              <h3 class="text-lg font-semibold mb-4">Default Activity Feed</h3>
+              <ActivityFeed
+                client:load
+                records={recentActivity}
+                maxItems={5}
+                showViewAll={true}
+                viewAllHref="/activity"
+              />
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold mb-4">Compact Activity Feed</h3>
+              <ActivityFeed
+                client:load
+                records={recentActivity}
+                variant="compact"
+                maxItems={3}
+                title="Recent Activity (Compact)"
+              />
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold mb-4">Empty Activity Feed</h3>
+              <ActivityFeed
+                client:load
+                records={[]}
+                title="Empty Feed Example"
+                emptyMessage="No activity yet"
+                emptySubMessage="This is how the feed looks when empty."
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <!-- Side by Side Comparison -->
+      <Card>
+        <CardHeader>
+          <CardTitle>Side by Side Comparison</CardTitle>
+          <CardDescription>Comparing old vs new components</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <h3 class="text-lg font-semibold mb-4">New Enhanced Components</h3>
+              <div class="space-y-4">
+                {profile && (
+                  <ProfileCard client:load profile={profile} variant="compact" />
+                )}
+                <ActivityFeed
+                  client:load
+                  records={recentActivity}
+                  variant="compact"
+                  maxItems={3}
+                  title="Recent Activity"
+                />
+              </div>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold mb-4">Features & Benefits</h3>
+              <div class="space-y-4 text-sm">
+                <div class="p-4 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
+                  <h4 class="font-semibold text-green-800 dark:text-green-200 mb-2">✅ Improvements</h4>
+                  <ul class="space-y-1 text-green-700 dark:text-green-300">
+                    <li>• Consistent design system</li>
+                    <li>• Better accessibility</li>
+                    <li>• Theme-aware colors</li>
+                    <li>• Improved typography</li>
+                    <li>• Better mobile responsiveness</li>
+                    <li>• Enhanced hover states</li>
+                  </ul>
+                </div>
+                <div class="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <h4 class="font-semibold text-blue-800 dark:text-blue-200 mb-2">🚀 New Features</h4>
+                  <ul class="space-y-1 text-blue-700 dark:text-blue-300">
+                    <li>• Activity icons and visual hierarchy</li>
+                    <li>• Better empty states</li>
+                    <li>• Enhanced loading states</li>
+                    <li>• Improved time formatting</li>
+                    <li>• More flexible layouts</li>
+                    <li>• Better component composition</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <!-- Usage Examples -->
+      <Card>
+        <CardHeader>
+          <CardTitle>Usage Examples</CardTitle>
+          <CardDescription>How to use these components in your code</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold mb-2">ProfileCard Usage:</h4>
+              <pre class="bg-muted p-4 rounded-lg text-sm overflow-x-auto"><code>{`<ProfileCard
+  profile={profile}
+  variant="compact"
+  showStats={true}
+  showActions={false}
+/>`}</code></pre>
+            </div>
+            <div>
+              <h4 class="font-semibold mb-2">ActivityFeed Usage:</h4>
+              <pre class="bg-muted p-4 rounded-lg text-sm overflow-x-auto"><code>{`<ActivityFeed
+  records={recentActivity}
+  maxItems={5}
+  variant="default"
+  showViewAll={true}
+  viewAllHref="/activity"
+/>`}</code></pre>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  </div>
+</BaseLayout>

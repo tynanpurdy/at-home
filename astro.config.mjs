@@ -4,7 +4,12 @@ import react from "@astrojs/react";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind(), react()],
+  integrations: [
+    tailwind({
+      applyBaseStyles: false,
+    }),
+    react(),
+  ],
   output: "static",
   site: "https://your-domain.com", // Update this with your actual domain
   image: {

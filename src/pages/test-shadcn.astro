@@ -1,0 +1,269 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { Button } from "../components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "../components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import { Badge } from "../components/ui/badge";
+import { Separator } from "../components/ui/separator";
+---
+
+<BaseLayout
+    title="shadcn/ui Test Page"
+    description="Testing shadcn/ui components"
+>
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4">shadcn/ui Component Test</h1>
+            <p class="text-muted-foreground">
+                Testing all the shadcn/ui components we've installed
+            </p>
+        </div>
+
+        <div class="grid gap-6">
+            <!-- Button Tests -->
+            <Card>
+                <CardHeader>
+                    <CardTitle>Button Components</CardTitle>
+                    <CardDescription
+                        >Testing different button variants and sizes</CardDescription
+                    >
+                </CardHeader>
+                <CardContent>
+                    <div class="flex flex-wrap gap-4 mb-4">
+                        <Button client:load>Default</Button>
+                        <Button variant="secondary" client:load
+                            >Secondary</Button
+                        >
+                        <Button variant="destructive" client:load
+                            >Destructive</Button
+                        >
+                        <Button variant="outline" client:load>Outline</Button>
+                        <Button variant="ghost" client:load>Ghost</Button>
+                        <Button variant="link" client:load>Link</Button>
+                    </div>
+                    <div class="flex flex-wrap gap-4">
+                        <Button size="sm" client:load>Small</Button>
+                        <Button size="default" client:load>Default</Button>
+                        <Button size="lg" client:load>Large</Button>
+                        <Button size="icon" client:load>
+                            <svg
+                                class="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <!-- Avatar Tests -->
+            <Card>
+                <CardHeader>
+                    <CardTitle>Avatar Components</CardTitle>
+                    <CardDescription
+                        >Testing avatar with image and fallback</CardDescription
+                    >
+                </CardHeader>
+                <CardContent>
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="flex h-10 w-10 shrink-0 overflow-hidden rounded-full"
+                        >
+                            <img
+                                src="https://github.com/shadcn.png"
+                                alt="@shadcn"
+                                class="aspect-square h-full w-full"
+                            />
+                        </div>
+                        <div
+                            class="flex h-10 w-10 shrink-0 overflow-hidden rounded-full bg-muted items-center justify-center"
+                        >
+                            <span class="text-sm font-medium">FB</span>
+                        </div>
+                        <div
+                            class="flex h-10 w-10 shrink-0 overflow-hidden rounded-full bg-muted items-center justify-center"
+                        >
+                            <span class="text-sm font-medium">JP</span>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <!-- Badge Tests -->
+            <Card>
+                <CardHeader>
+                    <CardTitle>Badge Components</CardTitle>
+                    <CardDescription
+                        >Testing different badge variants</CardDescription
+                    >
+                </CardHeader>
+                <CardContent>
+                    <div class="flex flex-wrap gap-4">
+                        <Badge>Default</Badge>
+                        <Badge variant="secondary">Secondary</Badge>
+                        <Badge variant="destructive">Destructive</Badge>
+                        <Badge variant="outline">Outline</Badge>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <!-- Card Tests -->
+            <Card>
+                <CardHeader>
+                    <CardTitle>Card Components</CardTitle>
+                    <CardDescription
+                        >This is a card with header, content, and description</CardDescription
+                    >
+                </CardHeader>
+                <CardContent>
+                    <p class="text-sm text-muted-foreground">
+                        This is the card content area. Cards are one of the most
+                        important components in shadcn/ui as they provide a
+                        consistent container for content.
+                    </p>
+                </CardContent>
+            </Card>
+
+            <!-- Separator Tests -->
+            <Card>
+                <CardHeader>
+                    <CardTitle>Separator Components</CardTitle>
+                    <CardDescription
+                        >Testing horizontal and vertical separators</CardDescription
+                    >
+                </CardHeader>
+                <CardContent>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-sm">Content above separator</p>
+                            <Separator client:load className="my-4" />
+                            <p class="text-sm">Content below separator</p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <p class="text-sm">Left content</p>
+                            <Separator
+                                client:load
+                                orientation="vertical"
+                                className="h-4"
+                            />
+                            <p class="text-sm">Right content</p>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <!-- Theme Test -->
+            <Card>
+                <CardHeader>
+                    <CardTitle>Theme System</CardTitle>
+                    <CardDescription
+                        >Testing CSS variables and theme colors</CardDescription
+                    >
+                </CardHeader>
+                <CardContent>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <div
+                                class="h-8 bg-primary rounded flex items-center justify-center text-primary-foreground text-sm"
+                            >
+                                Primary
+                            </div>
+                            <div
+                                class="h-8 bg-secondary rounded flex items-center justify-center text-secondary-foreground text-sm"
+                            >
+                                Secondary
+                            </div>
+                            <div
+                                class="h-8 bg-muted rounded flex items-center justify-center text-muted-foreground text-sm"
+                            >
+                                Muted
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div
+                                class="h-8 bg-accent rounded flex items-center justify-center text-accent-foreground text-sm"
+                            >
+                                Accent
+                            </div>
+                            <div
+                                class="h-8 bg-destructive rounded flex items-center justify-center text-destructive-foreground text-sm"
+                            >
+                                Destructive
+                            </div>
+                            <div
+                                class="h-8 bg-card border rounded flex items-center justify-center text-card-foreground text-sm"
+                            >
+                                Card
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <!-- Utility Function Tests -->
+            <Card>
+                <CardHeader>
+                    <CardTitle>Utility Functions</CardTitle>
+                    <CardDescription
+                        >Testing our custom utility functions</CardDescription
+                    >
+                </CardHeader>
+                <CardContent>
+                    <div class="space-y-2 text-sm">
+                        <p>
+                            formatNumber(1234): <code
+                                class="bg-muted px-2 py-1 rounded text-muted-foreground"
+                                >1.2K</code>
+                        </p>
+                        <p>
+                            formatNumber(1234567): <code
+                                class="bg-muted px-2 py-1 rounded text-muted-foreground"
+                                >1.2M</code>
+                        </p>
+                        <p>
+                            generateInitials("John Doe"): <code
+                                class="bg-muted px-2 py-1 rounded text-muted-foreground"
+                                >JD</code>
+                        </p>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <!-- Success Message -->
+            <Card
+                className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950"
+            >
+                <CardHeader>
+                    <CardTitle className="text-green-800 dark:text-green-200"
+                        >🎉 Success!</CardTitle
+                    >
+                    <CardDescription
+                        className="text-green-700 dark:text-green-300"
+                    >
+                        All shadcn/ui components are working properly
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <p class="text-sm text-green-700 dark:text-green-300">
+                        The shadcn/ui integration is complete and functional.
+                        You can now use these components throughout your
+                        application with confidence.
+                    </p>
+                </CardContent>
+            </Card>
+        </div>
+    </div>
+</BaseLayout>
