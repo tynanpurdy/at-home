@@ -2,6 +2,7 @@
 import { createATProtoClient } from '../lib/atproto';
 import { getATProtoConfig } from '../config/atproto';
 import Profile from '../components/Profile.tsx';
+import Navigation from '../components/Navigation.astro';
 
 // Get AT Protocol configuration
 const config = getATProtoConfig();
@@ -34,33 +35,7 @@ try {
   </head>
   <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
     <!-- Navigation -->
-    <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <div class="flex items-center">
-            <a href="/" class="text-xl font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-              {profile?.displayName || profile?.handle || 'AT Home'}
-            </a>
-          </div>
-          <div class="flex items-center space-x-4">
-            <a href="/" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Home</a>
-            <a href="/blog" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Blog</a>
-            <a href="/activity" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Activity</a>
-            <a href="/about" class="text-blue-600 dark:text-blue-400 font-medium">About</a>
-            {profile && (
-              <a
-                href={`https://bsky.app/profile/${profile.handle}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
-              >
-                Follow on Bluesky
-              </a>
-            )}
-          </div>
-        </div>
-      </div>
-    </nav>
+    <Navigation profile={profile} currentPage="about" />
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
