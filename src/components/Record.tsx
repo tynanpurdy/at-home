@@ -1,17 +1,21 @@
 import React from "react";
 import type { ATProtoRecord } from "../lib/atproto";
-import { getLexiconForRecord } from "../lib/lexicons";
+import {
+  getLexiconForRecord,
+  getRecordInternalLink,
+  canViewRecordInternally,
+} from "../lib/lexicons";
 
 interface RecordProps {
   record: ATProtoRecord;
-  view?: 'compact' | 'expanded' | 'full';
+  view?: "compact" | "expanded" | "full";
   showAuthor?: boolean;
   maxContentLength?: number;
 }
 
 export const Record: React.FC<RecordProps> = ({
   record,
-  view = 'expanded',
+  view = "expanded",
   showAuthor = true,
   maxContentLength = 200,
 }) => {
@@ -84,7 +88,7 @@ export const Record: React.FC<RecordProps> = ({
   const description = lexicon.getDescription(record);
   const metadata = lexicon.getMetadata(record);
 
-  if (view === 'compact') {
+  if (view === "compact") {
     return (
       <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
         <span className="text-lg">{lexicon.icon}</span>
@@ -110,7 +114,7 @@ export const Record: React.FC<RecordProps> = ({
     );
   }
 
-  if (view === 'expanded') {
+  if (view === "expanded") {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
         <div className="flex items-start space-x-3">
@@ -158,7 +162,18 @@ export const Record: React.FC<RecordProps> = ({
 
             <div className="text-gray-700 dark:text-gray-300">
               {title && title !== lexicon.name && (
-                <h3 className="font-medium mb-1">{title}</h3>
+                <h3 className="font-medium mb-1">
+                  {canViewRecordInternally(record) ? (
+                    <a
+                      href={getRecordInternalLink(record)}
+                      className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
+                    >
+                      {title}
+                    </a>
+                  ) : (
+                    title
+                  )}
+                </h3>
               )}
               <p className="text-sm">
                 {truncateText(content, maxContentLength)}
@@ -199,7 +214,7 @@ export const Record: React.FC<RecordProps> = ({
     );
   }
 
-  if (view === 'full') {
+  if (view === "full") {
     return (
       <article className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
         <header className="mb-4">

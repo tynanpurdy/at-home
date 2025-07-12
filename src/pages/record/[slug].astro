@@ -1,0 +1,154 @@
+---
+import { createATProtoClient } from '../../lib/atproto';
+import { getATProtoConfig } from '../../config/atproto';
+import { getLexiconForRecord } from '../../lib/lexicons';
+import Navigation from '../../components/Navigation.astro';
+import Record from '../../components/Record.tsx';
+
+export async function getStaticPaths() {
+  const config = getATProtoConfig();
+  const atClient = createATProtoClient(config);
+
+  try {
+    // Get all records that support full page view
+    const { profile, recentActivity } = await atClient.getActivityData({
+      includeBlogPosts: true,
+      includeRepositoryStats: false,
+      activityLimit: 100, // Get more records to find full-page capable ones
+      blogPostLimit: 50,
+      collectionsLimit: 10,
+    });
+
+    const paths = [];
+
+    // Add blog posts and other full-page records
+    recentActivity.forEach((record) => {
+      const lexicon = getLexiconForRecord(record);
+      if (lexicon && lexicon.supportedViews.includes('full')) {
+        const rkey = record.uri.split('/').pop();
+        paths.push({
+          params: { slug: rkey },
+          props: { record, profile }
+        });
+      }
+    });
+
+    return paths;
+  } catch (error) {
+    console.error('Error generating record paths:', error);
+    return [];
+  }
+}
+
+const { slug } = Astro.params;
+const { record, profile } = Astro.props;
+
+if (!record) {
+  return Astro.redirect('/404');
+}
+
+const lexicon = getLexiconForRecord(record);
+if (!lexicon || !lexicon.supportedViews.includes('full')) {
+  return Astro.redirect('/404');
+}
+
+const title = lexicon.getTitle(record);
+const author = lexicon.getAuthor(record);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title} - {profile?.displayName || profile?.handle || 'AT Home'}</title>
+    <meta name="description" content={`${lexicon.name} by ${author.name}`} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <!-- Navigation -->
+    <Navigation profile={profile} />
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Breadcrumb -->
+      <nav class="mb-8" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+          <li>
+            <a href="/" class="hover:text-gray-700 dark:hover:text-gray-300">Home</a>
+          </li>
+          <li class="flex items-center">
+            <span class="mx-2">/</span>
+            <a href="/activity" class="hover:text-gray-700 dark:hover:text-gray-300">Activity</a>
+          </li>
+          <li class="flex items-center">
+            <span class="mx-2">/</span>
+            <span class="text-gray-900 dark:text-white font-medium">{lexicon.name}</span>
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Record Content -->
+      <Record record={record} view="full" showAuthor={true} />
+
+      <!-- Related Actions -->
+      <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <a
+              href="/activity"
+              class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
+            >
+              ← Back to Activity
+            </a>
+            {lexicon.collection === 'com.whtwnd.blog.entry' && (
+              <a
+                href="/blog"
+                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
+              >
+                View All Blog Posts
+              </a>
+            )}
+          </div>
+
+          <!-- Share button (optional) -->
+          <button
+            onclick="navigator.share ? navigator.share({title: document.title, url: window.location.href}) : navigator.clipboard.writeText(window.location.href)"
+            class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 text-sm"
+            title="Share this record"
+          >
+            Share
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div class="text-gray-500 dark:text-gray-400 text-sm">
+            © 2024 {profile?.displayName || profile?.handle || 'AT Home'}. Built with Astro and AT Protocol.
+          </div>
+          <div class="flex items-center space-x-4 mt-4 md:mt-0">
+            <a href="https://atproto.com" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm">
+              AT Protocol
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Dark mode toggle script -->
+    <script>
+      if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
+  </body>
+</html>

@@ -1,5 +1,10 @@
 import React from "react";
 import type { ATProtoRecord } from "../lib/atproto";
+import {
+  getLexiconForRecord,
+  getRecordInternalLink,
+  canViewRecordInternally,
+} from "../lib/lexicons";
 
 interface CollectionActivityProps {
   collection: string;
@@ -41,9 +46,14 @@ export const CollectionActivity: React.FC<CollectionActivityProps> = ({
   };
 
   const getContentPreview = (record: ATProtoRecord): string => {
+    const lexicon = getLexiconForRecord(record);
+    if (lexicon) {
+      return lexicon.getContent(record);
+    }
+
     const { value } = record;
 
-    // Handle different collection types
+    // Fallback for unsupported lexicons
     if (collection.includes("blog.entry")) {
       return value.title || value.content || "Blog post";
     } else if (collection.includes("feed.post")) {
@@ -67,6 +77,12 @@ export const CollectionActivity: React.FC<CollectionActivityProps> = ({
   };
 
   const getRecordLink = (record: ATProtoRecord): string => {
+    const lexicon = getLexiconForRecord(record);
+    if (lexicon) {
+      return lexicon.getLink(record);
+    }
+
+    // Fallback for unsupported lexicons
     const postId = record.uri.split("/").pop();
     return `https://bsky.app/profile/${record.author.handle}/post/${postId}`;
   };
@@ -169,7 +185,16 @@ export const CollectionActivity: React.FC<CollectionActivityProps> = ({
               <div className="mb-3">
                 {record.value.title && (
                   <h3 className="font-medium text-gray-900 dark:text-white mb-1">
-                    {record.value.title}
+                    {canViewRecordInternally(record) ? (
+                      <a
+                        href={getRecordInternalLink(record)}
+                        className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                      >
+                        {record.value.title}
+                      </a>
+                    ) : (
+                      record.value.title
+                    )}
                   </h3>
                 )}
                 <p className="text-sm text-gray-700 dark:text-gray-300">
@@ -202,14 +227,24 @@ export const CollectionActivity: React.FC<CollectionActivityProps> = ({
                   <span>Collection: {collection.split(".").pop()}</span>
                   {record.cid && <span>CID: {record.cid.slice(0, 12)}...</span>}
                 </div>
-                <a
-                  href={getRecordLink(record)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs font-medium"
-                >
-                  View →
-                </a>
+                <div className="flex items-center space-x-2">
+                  {canViewRecordInternally(record) && (
+                    <a
+                      href={getRecordInternalLink(record)}
+                      className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs font-medium"
+                    >
+                      Full View →
+                    </a>
+                  )}
+                  <a
+                    href={getRecordLink(record)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs font-medium"
+                  >
+                    External →
+                  </a>
+                </div>
               </div>
             </div>
           ))}
