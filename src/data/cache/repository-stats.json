@@ -1,7 +1,7 @@
 {
   "totalRecords": 6189,
   "recordsToday": 0,
-  "recordsThisWeek": 743,
+  "recordsThisWeek": 662,
   "activeCollections": 48,
   "collectionCounts": {
     "app.bsky.actor.profile": 1,
@@ -53,5 +53,5 @@
     "social.grain.photo.exif": 25,
     "social.pinksky.app.preference": 1
   },
-  "lastUpdated": "2025-07-13T15:18:40.299Z"
+  "lastUpdated": "2025-07-13T18:39:34.058Z"
 }

@@ -94,8 +94,8 @@ const formatCollectionName = (collection: string): string => {
 
         <!-- Activity Stats -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-            <Card class="p-6 text-center">
-                <CardContent class="p-0">
+            <Card>
+                <CardContent>
                     <div class="text-3xl font-bold text-primary mb-2">
                         {totalRecords}
                     </div>
@@ -105,8 +105,8 @@ const formatCollectionName = (collection: string): string => {
                 </CardContent>
             </Card>
 
-            <Card class="p-6 text-center">
-                <CardContent class="p-0">
+            <Card>
+                <CardContent>
                     <div
                         class="text-3xl font-bold text-green-600 dark:text-green-400 mb-2"
                     >
@@ -116,8 +116,8 @@ const formatCollectionName = (collection: string): string => {
                 </CardContent>
             </Card>
 
-            <Card class="p-6 text-center">
-                <CardContent class="p-0">
+            <Card>
+                <CardContent>
                     <div
                         class="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2"
                     >
@@ -127,8 +127,8 @@ const formatCollectionName = (collection: string): string => {
                 </CardContent>
             </Card>
 
-            <Card class="p-6 text-center">
-                <CardContent class="p-0">
+            <Card>
+                <CardContent>
                     <div
                         class="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2"
                     >
@@ -168,11 +168,7 @@ const formatCollectionName = (collection: string): string => {
                             <h2 class="text-xl font-bold text-foreground mb-4">
                                 Profile
                             </h2>
-                            <ProfileCard
-                                client:load
-                                profile={profile}
-                                compact={true}
-                            />
+                            <ProfileCard client:load profile={profile} />
                         </div>
                     )
                 }
@@ -180,7 +176,7 @@ const formatCollectionName = (collection: string): string => {
                 <!-- Activity by Collection -->
                 <Card>
                     <CardHeader>
-                        <CardTitle class="text-lg flex items-center gap-2">
+                        <CardTitle>
                             <ListFilter className="w-5 h-5" />
                             Activity by Type
                         </CardTitle>
@@ -192,10 +188,7 @@ const formatCollectionName = (collection: string): string => {
                                     ? Object.entries(
                                           repositoryStats.collectionCounts,
                                       ).map(([collection, count]) => (
-                                          <div
-                                              key={collection}
-                                              class="flex items-center justify-between p-3 bg-muted rounded-lg"
-                                          >
+                                          <div class="flex items-center justify-between p-3 bg-muted rounded-lg">
                                               <div class="flex items-center space-x-3">
                                                   <Badge
                                                       variant="outline"
@@ -212,10 +205,7 @@ const formatCollectionName = (collection: string): string => {
                                           </div>
                                       ))
                                     : collections.map((collection) => (
-                                          <div
-                                              key={collection.name}
-                                              class="flex items-center justify-between p-3 bg-muted rounded-lg"
-                                          >
+                                          <div class="flex items-center justify-between p-3 bg-muted rounded-lg">
                                               <div class="flex items-center space-x-3">
                                                   <Badge
                                                       variant="outline"
@@ -251,7 +241,7 @@ const formatCollectionName = (collection: string): string => {
                 <!-- AT Protocol Collections Info -->
                 <Card>
                     <CardHeader>
-                        <CardTitle class="text-lg flex items-center gap-2">
+                        <CardTitle>
                             <BookOpenText className="w-5 h-5" />
                             AT Protocol Collections
                         </CardTitle>
@@ -295,7 +285,7 @@ const formatCollectionName = (collection: string): string => {
                 <!-- Repository Info -->
                 <Card>
                     <CardHeader>
-                        <CardTitle class="text-lg flex items-center gap-2">
+                        <CardTitle>
                             <GitFork className="w-5 h-5" />
                             Your Repository
                         </CardTitle>

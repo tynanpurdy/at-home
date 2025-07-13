@@ -121,7 +121,9 @@ export async function refreshCache() {
     isRefreshingCache = false;
     return {
       success: false,
-      message: `Failed to refresh data: ${error.message}`,
+      message: `Failed to refresh data: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`,
     };
   }
 }

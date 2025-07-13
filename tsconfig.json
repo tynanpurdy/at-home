@@ -14,5 +14,5 @@
       "@/styles": ["./src/styles"]
     }
   },
-  "exclude": ["dist", "src/pages/enhanced-showcase.astro"]
+  "exclude": ["dist", "src/pages/enhanced-showcase.astro", "src/pages/record"]
 }
