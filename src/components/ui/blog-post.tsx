@@ -59,7 +59,7 @@ export const BlogPost: React.FC<BlogPostProps> = ({
             <div className="flex items-center space-x-2 mb-1">
               <h3 className="font-medium text-foreground truncate">
                 <a
-                  href={`/record/${post.uri.split("/").pop()}`}
+                  href={`/blog/${post.uri.split("/").pop()}`}
                   className="hover:text-primary transition-colors"
                 >
                   {post.record?.title || "Untitled Post"}
@@ -129,7 +129,7 @@ export const BlogPost: React.FC<BlogPostProps> = ({
         {post.record?.title && (
           <CardTitle className="text-2xl mb-2">
             <a
-              href={`/record/${post.uri.split("/").pop()}`}
+              href={`/blog/${post.uri.split("/").pop()}`}
               className="hover:text-primary transition-colors"
             >
               {post.record.title}

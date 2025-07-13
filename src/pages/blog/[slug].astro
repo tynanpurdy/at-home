@@ -1,0 +1,37 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { BlogPost } from "@/components/ui/blog-post";
+import { getCachedProfile, getCachedBlogPosts } from "@/data/cache-utils";
+import type { WhiteWindPost } from "../../../lib/atproto";
+
+export async function getStaticPaths() {
+    const profile = getCachedProfile();
+    // Blog pages are only generated from the dedicated blog post cache
+    const records = getCachedBlogPosts() as WhiteWindPost[];
+
+    const paths = records.map((record) => {
+        const rkey = record.uri.split("/").pop();
+        return {
+            params: { slug: rkey },
+            props: { post: record, profile },
+        };
+    });
+
+    return paths;
+}
+
+const { post, profile } = Astro.props;
+const title = post.record?.title || "Untitled Blog Post";
+const authorName =
+    post.author?.displayName || post.author?.handle || "Unknown Author";
+---
+
+<BaseLayout
+    title={`${title} - Blog`}
+    description={`A blog post by ${authorName}`}
+    profile={profile}
+>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <BlogPost post={post} />
+    </div>
+</BaseLayout>
