@@ -680,45 +680,40 @@ export class ATProtoClient {
 
       let resultIndex = 0;
 
-      let profile: any = null;
-      let recentActivity: any[] = [];
-      let blogPosts: any[] = [];
-      let repositoryStats: RepositoryStats | undefined;
-      const collections: { name: string; records: any[] }[] = [];
-
-      let currentIndex = 0;
-
       // Profile
-      if (results[currentIndex]?.status === "fulfilled") {
-        profile = results[currentIndex].value;
-      }
-      currentIndex++;
+      const profileResult = results[resultIndex++];
+      const profile =
+        profileResult?.status === "fulfilled" ? profileResult.value : null;
 
-      // Recent Activity
+      // Recent activity
+      let recentActivity: ATProtoRecord[] = [];
       if (activityLimit > 0) {
-        if (results[currentIndex]?.status === "fulfilled") {
-          recentActivity = results[currentIndex].value as any[];
+        const activityResult = results[resultIndex++];
+        if (activityResult?.status === "fulfilled" && activityResult.value) {
+          recentActivity = activityResult.value as ATProtoRecord[];
         }
-        currentIndex++;
       }
 
-      // Blog Posts
+      // Blog posts
+      let blogPosts: WhiteWindPost[] = [];
       if (includeBlogPosts) {
-        if (results[currentIndex]?.status === "fulfilled") {
-          blogPosts = results[currentIndex].value as any[];
+        const blogPostsResult = results[resultIndex++];
+        if (blogPostsResult?.status === "fulfilled" && blogPostsResult.value) {
+          blogPosts = blogPostsResult.value as WhiteWindPost[];
         }
-        currentIndex++;
       }
 
-      // Repository Stats
+      // Repository stats
+      let repositoryStats: RepositoryStats | undefined;
       if (includeRepositoryStats) {
-        if (results[currentIndex]?.status === "fulfilled") {
-          repositoryStats = results[currentIndex].value as RepositoryStats;
+        const repoStatsResult = results[resultIndex++];
+        if (repoStatsResult?.status === "fulfilled" && repoStatsResult.value) {
+          repositoryStats = repoStatsResult.value as RepositoryStats;
         }
-        currentIndex++;
       }
 
       // Collections
+      const collections: { name: string; records: ATProtoRecord[] }[] = [];
       if (collectionsLimit > 0) {
         const collectionNames = [
           "Posts",
@@ -727,11 +722,15 @@ export class ATProtoClient {
           "Follows",
           "Blog Posts",
         ];
-        for (let i = 0; i < collectionNames.length; i++) {
-          if (results[currentIndex + i]?.status === "fulfilled") {
+        for (const name of collectionNames) {
+          const collectionResult = results[resultIndex++];
+          if (
+            collectionResult?.status === "fulfilled" &&
+            collectionResult.value
+          ) {
             collections.push({
-              name: collectionNames[i],
-              records: results[currentIndex + i].value as any[],
+              name,
+              records: collectionResult.value as ATProtoRecord[],
             });
           }
         }
@@ -773,9 +772,6 @@ export const COLLECTIONS = {
   BLUESKY_FOLLOW: "app.bsky.graph.follow",
   BLUESKY_PROFILE: "app.bsky.actor.profile",
 } as const;
-
-// Alias for backward compatibility
-export const ATPROTO_COLLECTIONS = COLLECTIONS;
 
 // Type for collection names
 export type CollectionName = (typeof COLLECTIONS)[keyof typeof COLLECTIONS];

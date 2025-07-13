@@ -1,7 +1,7 @@
 {
-  "totalRecords": 6062,
-  "recordsToday": 32,
-  "recordsThisWeek": 616,
+  "totalRecords": 6189,
+  "recordsToday": 0,
+  "recordsThisWeek": 743,
   "activeCollections": 48,
   "collectionCounts": {
     "app.bsky.actor.profile": 1,
@@ -15,11 +15,11 @@
     "app.bsky.graph.list": 2,
     "app.bsky.graph.listitem": 157,
     "app.bsky.graph.verification": 5,
-    "app.rocksky.album": 339,
-    "app.rocksky.artist": 288,
+    "app.rocksky.album": 351,
+    "app.rocksky.artist": 298,
     "app.rocksky.like": 5,
-    "app.rocksky.scrobble": 648,
-    "app.rocksky.song": 2412,
+    "app.rocksky.scrobble": 660,
+    "app.rocksky.song": 2505,
     "blue.flashes.actor.profile": 1,
     "buzz.bookhive.book": 57,
     "chat.bsky.actor.declaration": 1,
@@ -53,5 +53,5 @@
     "social.grain.photo.exif": 25,
     "social.pinksky.app.preference": 1
   },
-  "lastUpdated": "2025-07-12T20:07:21.804Z"
+  "lastUpdated": "2025-07-13T15:18:40.299Z"
 }

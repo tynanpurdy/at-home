@@ -6,21 +6,16 @@ import { Separator } from "./separator";
 import { cn, formatJoinDate } from "@/lib/utils";
 import { ExternalLink, Calendar, User, Eye } from "lucide-react";
 import type { WhiteWindPost } from "@/lib/atproto";
-import { getRecordInternalLink, canViewRecordInternally } from "@/lib/lexicons";
 
 interface BlogPostProps {
   post: WhiteWindPost;
   variant?: "default" | "compact";
-  showAuthor?: boolean;
-  showExternalLink?: boolean;
   className?: string;
 }
 
 export const BlogPost: React.FC<BlogPostProps> = ({
   post,
   variant = "default",
-  showAuthor = true,
-  showExternalLink = true,
   className,
 }) => {
   // Add an early return if post or post.record is missing
@@ -74,7 +69,7 @@ export const BlogPost: React.FC<BlogPostProps> = ({
     return (
       <Card className={cn("p-4", className)}>
         <div className="flex items-start space-x-3">
-          {showAuthor && post.author?.avatar && (
+          {post.author?.avatar && (
             <div className="flex-shrink-0">
               <img
                 src={post.author.avatar}
@@ -90,16 +85,12 @@ export const BlogPost: React.FC<BlogPostProps> = ({
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2 mb-1">
               <h3 className="font-medium text-foreground truncate">
-                {canViewRecordInternally(post) ? (
-                  <a
-                    href={getRecordInternalLink(post)}
-                    className="hover:text-primary transition-colors"
-                  >
-                    {post.record?.title || "Untitled Post"}
-                  </a>
-                ) : (
-                  post.record.title || "Untitled Post"
-                )}
+                <a
+                  href={`/record/${post.uri.split("/").pop()}`}
+                  className="hover:text-primary transition-colors"
+                >
+                  {post.record?.title || "Untitled Post"}
+                </a>
               </h3>
               <span className="text-sm text-muted-foreground">
                 {formatRelativeTime(post.record.createdAt)}
@@ -133,7 +124,7 @@ export const BlogPost: React.FC<BlogPostProps> = ({
   return (
     <Card className={cn("overflow-hidden", className)}>
       <CardHeader>
-        {showAuthor && post.author && (
+        {post.author && (
           <div className="flex items-center space-x-3 mb-3">
             {post.author.avatar && (
               <img
@@ -164,16 +155,12 @@ export const BlogPost: React.FC<BlogPostProps> = ({
 
         {post.record?.title && (
           <CardTitle className="text-2xl mb-2">
-            {canViewRecordInternally(post) ? (
-              <a
-                href={getRecordInternalLink(post)}
-                className="hover:text-primary transition-colors"
-              >
-                {post.record?.title}
-              </a>
-            ) : (
-              post.record.title
-            )}
+            <a
+              href={`/record/${post.uri.split("/").pop()}`}
+              className="hover:text-primary transition-colors"
+            >
+              {post.record.title}
+            </a>
           </CardTitle>
         )}
 
@@ -226,21 +213,19 @@ export const BlogPost: React.FC<BlogPostProps> = ({
           </>
         )}
 
-        {showExternalLink && (
-          <>
-            <Separator className="mb-4" />
-            <Button variant="outline" size="sm" asChild>
-              <a
-                href={`https://whtwnd.com/${post.author.handle}/${post.uri.split("/").pop()}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <ExternalLink className="w-4 h-4 mr-2" />
-                Read on WhiteWind
-              </a>
-            </Button>
-          </>
-        )}
+        <Separator className="mb-4" />
+        <Button variant="outline" size="sm" asChild>
+          <a
+            href={`https://whtwnd.com/${post.author.handle}/${post.uri
+              .split("/")
+              .pop()}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ExternalLink className="w-4 h-4 mr-2" />
+            Read on WhiteWind
+          </a>
+        </Button>
       </CardContent>
     </Card>
   );
