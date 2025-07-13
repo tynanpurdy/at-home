@@ -16,15 +16,6 @@ export async function getStaticPaths() {
         let recentActivity = getCachedActivity();
         let blogPosts = getCachedBlogPosts();
 
-        // If cache is invalid or empty, fall back to direct fetch
-        if (!profile || recentActivity.length === 0) {
-            console.log("Cache invalid or empty, falling back to direct fetch");
-            const freshData = await getDataWithFallback();
-            profile = freshData.profile;
-            recentActivity = freshData.recentActivity;
-            blogPosts = freshData.blogPosts;
-        }
-
         // Transform blog posts to conform to ATProtoRecord structure for lexicons
         const transformedBlogPosts = blogPosts.map((post) => {
             return {
@@ -84,29 +75,11 @@ const author = lexicon.getAuthor(record);
     profile={profile}
 >
     <div>
-        <!-- Breadcrumb -->
-        <nav aria-label="Breadcrumb">
-            <ol>
-                <li>
-                    <a href="/">Home</a>
-                </li>
-                <li>
-                    <span class="mx-2">/</span>
-                    <a href="/activity">Activity</a>
-                </li>
-                <li>
-                    <span class="mx-2">/</span>
-                    <span>{lexicon.name}</span>
-                </li>
-            </ol>
-        </nav>
-
         <!-- Record Content -->
         <Record record={record} view="full" showAuthor={true} />
 
         <!-- Related Actions -->
-        <div <div>
-            >
+        <div>
             <div>
                 <div>
                     <a href="/activity"> ← Back to Activity </a>
