@@ -38,3 +38,34 @@ export function generateInitials(name?: string | null): string {
     .toUpperCase()
     .slice(0, 2);
 }
+
+export function formatRelativeTime(dateString?: string): string {
+  if (!dateString) return "Unknown time";
+
+  const now = new Date();
+  const date = new Date(dateString);
+
+  if (isNaN(date.getTime())) {
+    return "Invalid date";
+  }
+
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  if (diffInSeconds < 0) {
+    return "Just now";
+  } else if (diffInSeconds < 60) {
+    return `${diffInSeconds}s ago`;
+  } else if (diffInSeconds < 3600) {
+    return `${Math.floor(diffInSeconds / 60)}m ago`;
+  } else if (diffInSeconds < 86400) {
+    return `${Math.floor(diffInSeconds / 3600)}h ago`;
+  } else if (diffInSeconds < 2592000) {
+    return `${Math.floor(diffInSeconds / 86400)}d ago`;
+  } else {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
+}

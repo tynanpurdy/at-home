@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./card";
 import { Badge } from "./badge";
 import { Button } from "./button";
 import { Separator } from "./separator";
-import { cn, formatJoinDate } from "@/lib/utils";
+import { cn, formatJoinDate, formatRelativeTime } from "@/lib/utils";
 import { ExternalLink, Calendar, User, Eye } from "lucide-react";
 import type { WhiteWindPost } from "@/lib/atproto";
 
@@ -31,33 +31,6 @@ export const BlogPost: React.FC<BlogPostProps> = ({
       month: "long",
       day: "numeric",
     });
-  };
-
-  const formatRelativeTime = (dateString?: string): string => {
-    if (!dateString) return "Unknown time";
-
-    const now = new Date();
-    const date = new Date(dateString);
-
-    if (isNaN(date.getTime())) {
-      return "Invalid date";
-    }
-
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-    if (diffInSeconds < 0) {
-      return "Just now"; // Future date, should not happen for indexedAt
-    } else if (diffInSeconds < 60) {
-      return `${diffInSeconds}s ago`;
-    } else if (diffInSeconds < 3600) {
-      return `${Math.floor(diffInSeconds / 60)}m ago`;
-    } else if (diffInSeconds < 86400) {
-      return `${Math.floor(diffInSeconds / 3600)}h ago`;
-    } else if (diffInSeconds < 2592000) {
-      return `${Math.floor(diffInSeconds / 86400)}d ago`;
-    } else {
-      return formatDate(dateString);
-    }
   };
 
   const truncateContent = (content: string, maxLength: number): string => {
