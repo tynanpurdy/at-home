@@ -1,13 +1,12 @@
 ---
 import { getLexiconForRecord } from "../../lib/lexicons";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import Record from "../../components/Record.tsx";
+import Record from "../../components/ui/record.tsx";
 import {
     getCachedProfile,
     getCachedActivity,
     getCachedBlogPosts,
 } from "../../data/cache-utils";
-import { getDataWithFallback } from "../../data/cache-fallback";
 
 export async function getStaticPaths() {
     try {
