@@ -8,6 +8,20 @@ export interface ATProtoConfig {
   handle?: string;
 }
 
+export interface Profile {
+  did: string;
+  handle: string;
+  displayName?: string;
+  description?: string;
+  avatar?: string;
+  banner?: string;
+  followsCount?: number;
+  followersCount?: number;
+  postsCount?: number;
+  indexedAt?: string;
+  labels?: unknown[];
+}
+
 export interface WhiteWindPost {
   uri: string;
   cid: string;

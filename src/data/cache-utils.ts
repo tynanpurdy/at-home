@@ -5,7 +5,7 @@
  * to avoid rate limiting and improve performance.
  */
 
-import type { ATProtoRecord, WhiteWindPost } from "../lib/atproto";
+import type { ATProtoRecord, WhiteWindPost, Profile } from "../lib/atproto";
 
 // Default empty data structures for fallbacks
 const DEFAULT_PROFILE = null;
@@ -27,8 +27,8 @@ import metaJson from "../data/cache/meta.json";
 /**
  * Gets cached profile data
  */
-export function getCachedProfile() {
-  return profileJson || DEFAULT_PROFILE;
+export function getCachedProfile(): Profile | null {
+  return (profileJson as unknown as Profile) || DEFAULT_PROFILE;
 }
 
 /**
