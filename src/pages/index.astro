@@ -53,17 +53,17 @@ const cacheValid = isCacheValid();
         <!-- Grid Layout -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Main Content Area -->
-            <div class="lg:col-span-2 grid grid-cols-1 gap-8">
+            <div class="lg:col-span-2">
                 <!-- Latest Blog Posts -->
-                <CardHeader>
-                    <div class="flex justify-between">
-                        <CardTitle>Latest Blog Posts</CardTitle>
-                        <Button variant="ghost" asChild>
-                            <a href="/blog"> View all posts → </a>
-                        </Button>
-                    </div>
-                </CardHeader>
-                <CardContent>
+                <div class="flex justify-between">
+                    <h2 class="text-xl font-bold text-foreground">
+                        Latest Blog Posts
+                    </h2>
+                    <Button variant="ghost" asChild>
+                        <a href="/blog"> View all posts → </a>
+                    </Button>
+                </div>
+                <div>
                     {
                         blogPosts.length > 0 ? (
                             <div class="grid grid-cols-1 gap-4">
@@ -88,7 +88,7 @@ const cacheValid = isCacheValid();
                             </div>
                         )
                     }
-                </CardContent>
+                </div>
             </div>
 
             <!-- Sidebar -->
