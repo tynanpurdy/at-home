@@ -25,4 +25,4 @@ pnpm-debug.log*
 .vscode/
 
 # atproto data cache
-src/data/cache/*
+src/data/cache/
