@@ -53,44 +53,61 @@ const cacheValid = isCacheValid();
         <!-- Grid Layout -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Main Content Area -->
-            <div class="lg:col-span-2 space-y-8">
+            <div class="lg:col-span-2 grid grid-cols-1 gap-8">
                 <!-- Latest Blog Posts -->
-                <Card>
-                    <CardHeader>
-                        <div class="flex items-center justify-between">
-                            <CardTitle>Latest Blog Posts</CardTitle>
-                            <Button variant="ghost" asChild>
-                                <a href="/blog"> View all posts → </a>
-                            </Button>
+                <CardHeader>
+                    <div class="flex justify-between">
+                        <CardTitle>Latest Blog Posts</CardTitle>
+                        <Button variant="ghost" asChild>
+                            <a href="/blog"> View all posts → </a>
+                        </Button>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    {
+                        blogPosts.length > 0 ? (
+                            <div class="grid grid-cols-1 gap-4">
+                                {blogPosts.map((post) => (
+                                    <BlogPost
+                                        client:load
+                                        post={post}
+                                        variant="compact"
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <div class="text-center py-8">
+                                <div class="text-6xl mb-4">📝</div>
+                                <h3 class="text-xl font-medium text-foreground mb-2">
+                                    No blog posts found yet
+                                </h3>
+                                <p class="text-muted-foreground">
+                                    Posts will appear here when you publish them
+                                    using the WhiteWind lexicon.
+                                </p>
+                            </div>
+                        )
+                    }
+                </CardContent>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6 grid grid-cols-1 gap-8">
+                <!-- Profile Card -->
+                {
+                    profile && (
+                        <div>
+                            <h2 class="text-xl font-bold text-foreground">
+                                About Me
+                            </h2>
+                            <ProfileCard
+                                client:load
+                                profile={profile}
+                                variant="compact"
+                            />
                         </div>
-                    </CardHeader>
-                    <CardContent>
-                        {
-                            blogPosts.length > 0 ? (
-                                <div class="space-y-6">
-                                    {blogPosts.map((post) => (
-                                        <BlogPost
-                                            client:load
-                                            post={post}
-                                            variant="compact"
-                                        />
-                                    ))}
-                                </div>
-                            ) : (
-                                <div class="text-center py-8">
-                                    <div class="text-6xl mb-4">📝</div>
-                                    <h3 class="text-xl font-medium text-foreground mb-2">
-                                        No blog posts found yet
-                                    </h3>
-                                    <p class="text-muted-foreground">
-                                        Posts will appear here when you publish
-                                        them using the WhiteWind lexicon.
-                                    </p>
-                                </div>
-                            )
-                        }
-                    </CardContent>
-                </Card>
+                    )
+                }
 
                 <!-- Recent Activity -->
                 <ActivityFeed
@@ -104,25 +121,6 @@ const cacheValid = isCacheValid();
                     emptyMessage="No recent activity found."
                     emptySubMessage="Activity from your AT Protocol repository will appear here."
                 />
-            </div>
-
-            <!-- Sidebar -->
-            <div class="space-y-6">
-                <!-- Profile Card -->
-                {
-                    profile && (
-                        <div>
-                            <h2 class="text-xl font-bold text-foreground mb-4">
-                                About Me
-                            </h2>
-                            <ProfileCard
-                                client:load
-                                profile={profile}
-                                variant="compact"
-                            />
-                        </div>
-                    )
-                }
 
                 <!-- AT Protocol Info -->
                 <Card>
@@ -130,7 +128,7 @@ const cacheValid = isCacheValid();
                         <CardTitle>Powered by AT Protocol</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p class="text-sm text-muted-foreground mb-4">
+                        <p class="text-sm text-muted-foreground">
                             This site is built on the AT Protocol, a
                             decentralized social networking protocol. All
                             content is fetched directly from my AT Protocol
@@ -162,7 +160,7 @@ const cacheValid = isCacheValid();
                                 <Badge variant="secondary">AT Protocol</Badge>
                             </div>
                         </div>
-                        <Separator class="my-4" />
+                        <Separator />
                         <Button variant="outline" size="sm" asChild>
                             <a
                                 href="https://atproto.com"
@@ -172,85 +170,6 @@ const cacheValid = isCacheValid();
                                 Learn more about AT Protocol →
                             </a>
                         </Button>
-                    </CardContent>
-                </Card>
-
-                <!-- Quick Links -->
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Quick Links</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div class="space-y-2">
-                            <Button variant="ghost" asChild>
-                                <a href="/blog" class="block p-2 text-sm">
-                                    📝 All Blog Posts
-                                </a>
-                            </Button>
-                            <Button variant="ghost" asChild>
-                                <a href="/activity" class="block p-2 text-sm">
-                                    🔄 Recent Activity
-                                </a>
-                            </Button>
-                            <Button variant="ghost" asChild>
-                                <a href="/about" class="block p-2 text-sm">
-                                    👤 About Me
-                                </a>
-                            </Button>
-                            {
-                                profile && (
-                                    <Button variant="ghost" asChild>
-                                        <a
-                                            href={`https://bsky.app/profile/${profile.handle}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            class="block p-2 text-sm"
-                                        >
-                                            🐦 Follow on Bluesky
-                                        </a>
-                                    </Button>
-                                )
-                            }
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <!-- Component Showcase -->
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Enhanced Components</CardTitle>
-                        <CardDescription
-                            >Now powered by shadcn/ui</CardDescription
-                        >
-                    </CardHeader>
-                    <CardContent>
-                        <div class="space-y-3">
-                            <div class="text-sm">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-muted-foreground"
-                                        >Design System:</span
-                                    >
-                                    <Badge variant="outline">shadcn/ui</Badge>
-                                </div>
-                            </div>
-                            <div class="text-sm">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-muted-foreground"
-                                        >Accessibility:</span
-                                    >
-                                    <Badge variant="outline">Enhanced</Badge>
-                                </div>
-                            </div>
-                            <div class="text-sm">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-muted-foreground"
-                                        >Theme Support:</span
-                                    >
-                                    <Badge variant="outline">Dark/Light</Badge>
-                                </div>
-                            </div>
-                        </div>
-                        <Separator class="my-4" />
                     </CardContent>
                 </Card>
             </div>
