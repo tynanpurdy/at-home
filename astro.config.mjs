@@ -16,6 +16,9 @@ export default defineConfig({
   site: "https://your-domain.com", // Update this with your actual domain
 
   image: {
+    service: {
+      entry: "astro/assets/services/noop",
+    },
     remotePatterns: [
       {
         protocol: "https",

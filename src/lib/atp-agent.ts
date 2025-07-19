@@ -3,14 +3,6 @@ import { AtpAgent } from "@atproto/api";
 // This is the main service endpoint for the AT Protocol.
 const DEFAULT_SERVICE_URL = "https://bsky.social";
 
-// Define the shape of the environment variables we expect from Astro.
-// This provides type safety when accessing `import.meta.env`.
-interface ImportMetaEnv {
-  readonly ATP_SERVICE?: string;
-  readonly ATP_IDENTIFIER: string;
-  readonly ATP_PASSWORD: string;
-}
-
 // Create a global variable to hold our agent instance.
 // This will act as a singleton to ensure it's created only once.
 let agent: AtpAgent | null = null;
@@ -23,13 +15,12 @@ let agent: AtpAgent | null = null;
 const createAgent = async (): Promise<AtpAgent> => {
   console.log("Creating and authenticating new ATP Agent instance...");
 
-  const serviceUrl =
-    (import.meta.env as ImportMetaEnv).ATP_SERVICE || DEFAULT_SERVICE_URL;
+  const serviceUrl = import.meta.env.ATP_SERVICE || DEFAULT_SERVICE_URL;
   const newAgent = new AtpAgent({ service: serviceUrl });
 
   // In Astro, server-side environment variables are accessed via `import.meta.env`
-  const identifier = (import.meta.env as ImportMetaEnv).ATP_IDENTIFIER;
-  const password = (import.meta.env as ImportMetaEnv).ATP_PASSWORD;
+  const identifier = import.meta.env.ATP_IDENTIFIER;
+  const password = import.meta.env.ATP_PASSWORD;
 
   if (!identifier || !password) {
     throw new Error(

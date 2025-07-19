@@ -34,7 +34,6 @@ const [profile, authorFeed] = await Promise.all([
             title="All Activity"
             records={authorFeed}
             maxItems={100}
-            excludeLexicons={["com.whtwnd.blog.entry"]}
             emptyMessage="No social activity yet"
             emptySubMessage="Your posts, reposts, and likes will appear here."
         />

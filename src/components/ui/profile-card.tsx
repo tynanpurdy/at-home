@@ -25,7 +25,6 @@ interface ProfileData {
   followsCount?: number;
   postsCount?: number;
   indexedAt?: string;
-  descriptionFacets?: any;
 }
 
 interface ProfileCardProps {

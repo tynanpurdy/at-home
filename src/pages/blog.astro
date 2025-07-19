@@ -32,7 +32,6 @@ const [profile, blogPosts] = await Promise.all([getProfile(), getBlogPosts()]);
             title="All Posts"
             records={blogPosts}
             maxItems={100}
-            includeLexicons={["com.whtwnd.blog.entry"]}
             emptyMessage="No Blog Posts Yet"
             emptySubMessage="Once I publish posts using a compatible lexicon, they will appear here automatically."
         />

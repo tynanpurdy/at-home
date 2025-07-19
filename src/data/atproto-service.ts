@@ -51,9 +51,9 @@ export async function getProfile(): Promise<AppBskyActorDefs.ProfileViewDetailed
   const cacheKey = "profile";
   const cachedEntry = cache.get(cacheKey);
 
-  if (isCacheValid(cachedEntry)) {
+  if (cachedEntry && isCacheValid(cachedEntry)) {
     console.log(`[Cache] HIT for key: ${cacheKey}`);
-    return cachedEntry.data as AppBskyActorDefs.ProfileViewDetailed;
+    return cachedEntry.data;
   }
 
   console.log(
@@ -73,7 +73,7 @@ export async function getProfile(): Promise<AppBskyActorDefs.ProfileViewDetailed
     if (!response.success) {
       // Throw an error to be caught by the catch block
       throw new Error(
-        `Failed to fetch profile. Reason: ${response.error || "Unknown"}`,
+        "Failed to fetch profile: API request was not successful.",
       );
     }
 
@@ -95,7 +95,7 @@ export async function getProfile(): Promise<AppBskyActorDefs.ProfileViewDetailed
       console.warn(
         `[Cache] API ERROR. Serving stale data for key: ${cacheKey}`,
       );
-      return cachedEntry.data as AppBskyActorDefs.ProfileViewDetailed;
+      return cachedEntry.data;
     }
 
     return null;
@@ -112,9 +112,9 @@ export async function getBlogPosts(): Promise<WhiteWindPost[]> {
   const cacheKey = "blogPosts";
   const cachedEntry = cache.get(cacheKey);
 
-  if (isCacheValid(cachedEntry)) {
+  if (cachedEntry && isCacheValid(cachedEntry)) {
     console.log(`[Cache] HIT for key: ${cacheKey}`);
-    return cachedEntry.data as WhiteWindPost[];
+    return cachedEntry.data;
   }
 
   console.log(
@@ -179,7 +179,7 @@ export async function getBlogPosts(): Promise<WhiteWindPost[]> {
       console.warn(
         `[Cache] API ERROR. Serving stale data for key: ${cacheKey}`,
       );
-      return cachedEntry.data as WhiteWindPost[];
+      return cachedEntry.data;
     }
     return []; // Return an empty array on failure
   }
@@ -195,9 +195,9 @@ export async function getPost(rkey: string): Promise<WhiteWindPost | null> {
   const cacheKey = `post_${rkey}`;
   const cachedEntry = cache.get(cacheKey);
 
-  if (isCacheValid(cachedEntry)) {
+  if (cachedEntry && isCacheValid(cachedEntry)) {
     console.log(`[Cache] HIT for key: ${cacheKey}`);
-    return cachedEntry.data as WhiteWindPost;
+    return cachedEntry.data;
   }
 
   console.log(
@@ -256,7 +256,7 @@ export async function getPost(rkey: string): Promise<WhiteWindPost | null> {
       console.warn(
         `[Cache] API ERROR. Serving stale data for key: ${cacheKey}`,
       );
-      return cachedEntry.data as WhiteWindPost;
+      return cachedEntry.data;
     }
     return null;
   }
@@ -274,9 +274,9 @@ export async function getAuthorFeed(
   const cacheKey = `authorFeed_${limit}`;
   const cachedEntry = cache.get(cacheKey);
 
-  if (isCacheValid(cachedEntry)) {
+  if (cachedEntry && isCacheValid(cachedEntry)) {
     console.log(`[Cache] HIT for key: ${cacheKey}`);
-    return cachedEntry.data as ATProtoRecord[];
+    return cachedEntry.data;
   }
 
   console.log(
@@ -285,11 +285,7 @@ export async function getAuthorFeed(
 
   try {
     const agent = await getAtpAgent();
-    if (!agent.session) {
-      throw new Error("AT Protocol agent session is not available.");
-    }
-
-    if (!agent.session?.handle) {
+    if (!agent.session || !agent.session.handle) {
       throw new Error(
         "AT Protocol agent session handle is not available. Cannot fetch author feed.",
       );
@@ -309,30 +305,27 @@ export async function getAuthorFeed(
 
     // Filter out items that are not standard posts with a record,
     // and map the rest to our internal ATProtoRecord structure.
-    const activity: ATProtoRecord[] = response.data.feed
-      .map((feedItem) => {
-        // We only care about the post itself for the generic activity feed
+    const activity = response.data.feed.reduce(
+      (acc: ATProtoRecord[], feedItem) => {
         const post = feedItem.post;
-
-        // Ensure the post and its record exist before processing
-        if (!post || !post.record) {
-          return null;
+        if (post && post.record) {
+          acc.push({
+            uri: post.uri,
+            cid: post.cid,
+            author: {
+              did: post.author.did,
+              handle: post.author.handle,
+              displayName: post.author.displayName,
+              avatar: post.author.avatar,
+            },
+            record: post.record,
+            indexedAt: post.indexedAt,
+          });
         }
-
-        return {
-          uri: post.uri,
-          cid: post.cid,
-          author: {
-            did: post.author.did,
-            handle: post.author.handle,
-            displayName: post.author.displayName,
-            avatar: post.author.avatar,
-          },
-          record: post.record,
-          indexedAt: post.indexedAt,
-        };
-      })
-      .filter((item): item is ATProtoRecord => item !== null);
+        return acc;
+      },
+      [],
+    );
 
     cache.set(cacheKey, { data: activity, timestamp: Date.now() });
     console.log(`[Cache] SET for key: ${cacheKey}`);
@@ -344,7 +337,7 @@ export async function getAuthorFeed(
       console.warn(
         `[Cache] API ERROR. Serving stale data for key: ${cacheKey}`,
       );
-      return cachedEntry.data as ATProtoRecord[];
+      return cachedEntry.data;
     }
     return [];
   }

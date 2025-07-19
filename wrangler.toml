@@ -1,0 +1,24 @@
+# This is a configuration file for Cloudflare's Wrangler CLI.
+# It is used to configure your Astro project for deployment to Cloudflare Pages.
+
+# The name of your application.
+name = "at-home"
+
+# The compatibility date specifies the version of the Workers runtime to use.
+# It's important to keep this up-to-date.
+compatibility_date = "2024-05-20"
+
+# This flag is crucial. It enables Node.js APIs that are required by dependencies
+# like the AT Protocol SDK, allowing them to work in the Cloudflare environment.
+compatibility_flags = ["nodejs_compat"]
+
+# The Astro Cloudflare adapter enables session management by default, which
+# requires a KV namespace binding named "SESSION".
+# This configuration sets up a local KV namespace for use with `wrangler dev`.
+# For your production deployment, you will need to create a KV namespace
+# in the Cloudflare dashboard and add its binding to your Pages project settings.
+[[kv_namespaces]]
+binding = "SESSION"
+id = "YOUR_KV_NAMESPACE_ID_HERE" # Replace with your production KV namespace ID
+# This is a local-only preview ID for development.
+preview_id = "SESSION_dev_kv"
