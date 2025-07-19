@@ -271,7 +271,7 @@ export class ATProtoClient {
       const recordsToResolve = allRecords
         .filter(
           (record) =>
-            record.value.subject &&
+            record.record.subject &&
             (record.uri.includes("app.bsky.feed.like") ||
               record.uri.includes("app.bsky.feed.repost")),
         )
@@ -281,7 +281,7 @@ export class ATProtoClient {
         allRecords.map(async (record) => {
           if (recordsToResolve.includes(record)) {
             const resolvedSubject = await this.resolveSubject(
-              record.value.subject,
+              record.record.subject,
             );
             return {
               ...record,

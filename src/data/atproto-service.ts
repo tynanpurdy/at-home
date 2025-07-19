@@ -62,7 +62,7 @@ export async function getProfile(): Promise<AppBskyActorDefs.ProfileViewDetailed
 
   try {
     const agent = await getAtpAgent();
-    if (!agent.session) {
+    if (!agent.session || !agent.session.handle) {
       throw new Error("AT Protocol agent session is not available.");
     }
 
@@ -123,7 +123,7 @@ export async function getBlogPosts(): Promise<WhiteWindPost[]> {
 
   try {
     const agent = await getAtpAgent();
-    if (!agent.session) {
+    if (!agent.session || !agent.session.handle) {
       throw new Error("AT Protocol agent session is not available.");
     }
 
@@ -206,7 +206,7 @@ export async function getPost(rkey: string): Promise<WhiteWindPost | null> {
 
   try {
     const agent = await getAtpAgent();
-    if (!agent.session) {
+    if (!agent.session || !agent.session.handle) {
       throw new Error("AT Protocol agent session is not available.");
     }
 
