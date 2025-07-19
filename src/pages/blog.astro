@@ -1,61 +1,9 @@
 ---
-import type { WhiteWindPost } from "../lib/atproto"; // Import the type for better filtering
 import BaseLayout from "../layouts/BaseLayout.astro";
-import {
-    getCachedProfile,
-    getCachedBlogPosts,
-    isCacheValid,
-} from "../data/cache-utils";
-import BlogPost from "../components/ui/blog-post"; // Use the new enhanced BlogPost
-import ProfileCard from "../components/ui/profile-card"; // Use the new enhanced ProfileCard
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
-import { Separator } from "../components/ui/separator";
-import { Button } from "../components/ui/button";
-import { Hash, GitFork, BookOpenText, Feather } from "lucide-react";
+import ActivityFeed from "../components/ui/activity-feed";
+import { getProfile, getBlogPosts } from "../data/atproto-service";
 
-// Load data from cache
-const profile = getCachedProfile();
-const fetchedBlogPosts = getCachedBlogPosts();
-
-// Check if cache is valid (this can be used for debugging or fallback strategies)
-const cacheValid = isCacheValid();
-
-const blogPosts = (fetchedBlogPosts || []) as WhiteWindPost[];
-
-// Function to calculate tag counts for the tag cloud
-const getTagCounts = (posts: typeof blogPosts) => {
-    const tagCounts: { [key: string]: number } = {};
-    posts.forEach((post) => {
-        // Ensure post.record exists and has tags before accessing
-        if (post.record && post.record.tags) {
-            post.record.tags.forEach((tag) => {
-                tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-            });
-        }
-    });
-    return Object.entries(tagCounts)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 10);
-};
-
-const sortedTags = getTagCounts(blogPosts);
-
-const sortedBlogPosts = blogPosts.sort((a, b) => {
-    const dateA = a.record.createdAt
-        ? new Date(a.record.createdAt).getTime()
-        : 0;
-    const dateB = b.record.createdAt
-        ? new Date(b.record.createdAt).getTime()
-        : 0;
-    return dateB - dateA;
-});
+const [profile, blogPosts] = await Promise.all([getProfile(), getBlogPosts()]);
 ---
 
 <BaseLayout
@@ -79,32 +27,14 @@ const sortedBlogPosts = blogPosts.sort((a, b) => {
         </div>
 
         <!-- Blog Posts List -->
-        <div class="space-y-12">
-            {
-                sortedBlogPosts.length > 0 ? (
-                    sortedBlogPosts.map((post) => (
-                        <BlogPost post={post} variant="default" />
-                    ))
-                ) : (
-                    <Card>
-                        <CardContent>
-                            <div class="text-7xl mb-6">📝</div>
-                            <h3 class="text-2xl font-bold text-foreground mb-3">
-                                No Blog Posts Yet
-                            </h3>
-                            <p class="text-lg text-muted-foreground max-w-md mx-auto">
-                                Once I publish posts using the WhiteWind
-                                lexicon, they will appear here automatically.
-                            </p>
-                            <div class="mt-8">
-                                <Button asChild>
-                                    <a href="/">← Back to Home</a>
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-                )
-            }
-        </div>
+        <ActivityFeed
+            client:load
+            title="All Posts"
+            records={blogPosts}
+            maxItems={100}
+            includeLexicons={["com.whtwnd.blog.entry"]}
+            emptyMessage="No Blog Posts Yet"
+            emptySubMessage="Once I publish posts using a compatible lexicon, they will appear here automatically."
+        />
     </div>
 </BaseLayout>

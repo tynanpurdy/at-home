@@ -45,7 +45,7 @@ export interface WhiteWindPost {
 export interface ATProtoRecord {
   uri: string;
   cid: string;
-  value: any;
+  record: any;
   author: {
     did: string;
     handle: string;

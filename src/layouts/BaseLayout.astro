@@ -1,9 +1,11 @@
 ---
+import type { AppBskyActorDefs } from "@atproto/api";
+
 export interface Props {
     title: string;
     description?: string;
     currentPage?: string;
-    profile?: any;
+    profile?: AppBskyActorDefs.ProfileViewDetailed | null;
 }
 
 const {

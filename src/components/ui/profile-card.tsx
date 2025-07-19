@@ -3,20 +3,29 @@ import { Card, CardContent, CardHeader } from "./card";
 import { Button } from "./button";
 import { Badge } from "./badge";
 import { Separator } from "./separator";
-import { cn, formatNumber, formatJoinDate, generateInitials } from "@/lib/utils";
+import {
+  cn,
+  formatNumber,
+  formatJoinDate,
+  generateInitials,
+} from "@/lib/utils";
 import { ExternalLink, Copy, Calendar } from "lucide-react";
+import { RichText } from "@atproto/api";
+import type { AppBskyRichtextFacet } from "@atproto/api";
 
 interface ProfileData {
   did: string;
   handle: string;
   displayName?: string;
   description?: string;
+  descriptionFacets?: AppBskyRichtextFacet.Main[];
   avatar?: string;
   banner?: string;
   followersCount?: number;
   followsCount?: number;
   postsCount?: number;
   indexedAt?: string;
+  descriptionFacets?: any;
 }
 
 interface ProfileCardProps {
@@ -44,6 +53,15 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
       console.error("Failed to copy handle:", err);
     }
   };
+
+  const bioSegments = React.useMemo(() => {
+    if (!profile.description) return [];
+    const rt = new RichText({
+      text: profile.description,
+      facets: profile.descriptionFacets,
+    });
+    return Array.from(rt.segments());
+  }, [profile.description, profile.descriptionFacets]);
 
   if (variant === "compact") {
     return (
@@ -146,8 +164,34 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
 
         {/* Bio */}
         {showBio && profile.description && (
-          <div className="mb-4">
-            <p className="text-foreground leading-relaxed">{profile.description}</p>
+          <div className="mb-4 text-foreground leading-relaxed whitespace-pre-wrap">
+            {bioSegments.map((segment, i) => {
+              if (segment.isLink()) {
+                return (
+                  <a
+                    key={i}
+                    href={segment.link!.uri}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    {segment.text}
+                  </a>
+                );
+              }
+              if (segment.isMention()) {
+                return (
+                  <a
+                    key={i}
+                    href={`https://bsky.app/profile/${segment.mention!.did}`}
+                    className="text-primary hover:underline"
+                  >
+                    {segment.text}
+                  </a>
+                );
+              }
+              return <span key={i}>{segment.text}</span>;
+            })}
           </div>
         )}
 

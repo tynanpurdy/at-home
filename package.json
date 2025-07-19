@@ -12,6 +12,7 @@
     "refresh-cache": "node ./src/data/fetch-atproto-data.mjs"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.6.0",
     "@astrojs/react": "^4.3.0",
     "@astrojs/tailwind": "^6.0.2",
     "@atproto/api": "^0.15.24",

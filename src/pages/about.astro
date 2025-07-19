@@ -11,7 +11,7 @@ import {
 import { Badge } from "../components/ui/badge";
 import { Separator } from "../components/ui/separator";
 import { Button } from "../components/ui/button";
-import { getCachedProfile } from "../data/cache-utils";
+import { getProfile } from "../data/atproto-service";
 import {
     LayoutDashboard,
     Atom,
@@ -27,8 +27,8 @@ import {
     MessageCircleMore,
 } from "lucide-react";
 
-// Load profile data from cache
-const profile = getCachedProfile();
+// Load profile data from the service
+const profile = await getProfile();
 ---
 
 <BaseLayout

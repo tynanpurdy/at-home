@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import BlogPost from "../components/ui/blog-post";
+
 import ActivityFeed from "../components/ui/activity-feed";
 import ProfileCard from "../components/ui/profile-card";
 import {
@@ -14,19 +14,17 @@ import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Separator } from "../components/ui/separator";
 import {
-    getCachedProfile,
-    getLimitedActivity,
-    getLimitedBlogPosts,
-    isCacheValid,
-} from "../data/cache-utils";
+    getProfile,
+    getBlogPosts,
+    getAuthorFeed,
+} from "../data/atproto-service";
 
-// Load data from cache
-const profile = getCachedProfile();
-const recentActivity = getLimitedActivity(8);
-const blogPosts = getLimitedBlogPosts(3);
-
-// Check if cache is valid (this can be used for debugging or fallback strategies)
-const cacheValid = isCacheValid();
+// Fetch all data in parallel for performance.
+const [profile, blogPosts, authorFeed] = await Promise.all([
+    getProfile(),
+    getBlogPosts(),
+    getAuthorFeed(8), // Fetch only the 8 most recent activity items.
+]);
 ---
 
 <BaseLayout
@@ -54,41 +52,16 @@ const cacheValid = isCacheValid();
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Main Content Area -->
             <div class="lg:col-span-2">
-                <!-- Latest Blog Posts -->
-                <div class="flex justify-between">
-                    <h2 class="text-xl font-bold text-foreground">
-                        Latest Blog Posts
-                    </h2>
-                    <Button variant="ghost" asChild>
-                        <a href="/blog"> View all posts → </a>
-                    </Button>
-                </div>
-                <div>
-                    {
-                        blogPosts.length > 0 ? (
-                            <div class="grid grid-cols-1 gap-4">
-                                {blogPosts.map((post) => (
-                                    <BlogPost
-                                        client:load
-                                        post={post}
-                                        variant="compact"
-                                    />
-                                ))}
-                            </div>
-                        ) : (
-                            <div class="text-center py-8">
-                                <div class="text-6xl mb-4">📝</div>
-                                <h3 class="text-xl font-medium text-foreground mb-2">
-                                    No blog posts found yet
-                                </h3>
-                                <p class="text-muted-foreground">
-                                    Posts will appear here when you publish them
-                                    using the WhiteWind lexicon.
-                                </p>
-                            </div>
-                        )
-                    }
-                </div>
+                <ActivityFeed
+                    client:load
+                    records={blogPosts}
+                    title="Latest Blog Posts"
+                    maxItems={5}
+                    showViewAll={true}
+                    viewAllHref="/blog"
+                    emptyMessage="No blog posts found yet"
+                    emptySubMessage="Posts will appear here when you publish them using a compatible lexicon."
+                />
             </div>
 
             <!-- Sidebar -->
@@ -112,14 +85,13 @@ const cacheValid = isCacheValid();
                 <!-- Recent Activity -->
                 <ActivityFeed
                     client:load
-                    records={recentActivity}
+                    records={authorFeed}
                     title="Recent Activity"
                     maxItems={5}
-                    variant="default"
                     showViewAll={true}
                     viewAllHref="/activity"
                     emptyMessage="No recent activity found."
-                    emptySubMessage="Activity from your AT Protocol repository will appear here."
+                    emptySubMessage="Your posts, likes, and other activity will appear here."
                 />
 
                 <!-- AT Protocol Info -->

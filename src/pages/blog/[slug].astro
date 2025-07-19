@@ -1,26 +1,29 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { BlogPost } from "@/components/ui/blog-post";
-import { getCachedProfile, getCachedBlogPosts } from "@/data/cache-utils";
+import { BlogEntryCard } from "@/components/lexicon/BlogEntryCard";
+import { getProfile, getPost } from "@/data/atproto-service";
 import type { WhiteWindPost } from "../../../lib/atproto";
 
-export async function getStaticPaths() {
-    const profile = getCachedProfile();
-    // Blog pages are only generated from the dedicated blog post cache
-    const records = getCachedBlogPosts() as WhiteWindPost[];
+const { slug } = Astro.params;
 
-    const paths = records.map((record) => {
-        const rkey = record.uri.split("/").pop();
-        return {
-            params: { slug: rkey },
-            props: { post: record, profile },
-        };
+// Return a 404 if the slug is not present in the URL
+if (!slug) {
+    return new Response(null, {
+        status: 404,
+        statusText: "Not Found",
     });
-
-    return paths;
 }
 
-const { post, profile } = Astro.props;
+// Fetch the profile and the specific post in parallel.
+const [profile, post] = await Promise.all([getProfile(), getPost(slug)]);
+
+// Return a 404 if the post isn't found for the given slug
+if (!post) {
+    return new Response(null, {
+        status: 404,
+        statusText: "Not Found",
+    });
+}
 const title = post.record?.title || "Untitled Blog Post";
 const authorName =
     post.author?.displayName || post.author?.handle || "Unknown Author";
@@ -32,6 +35,6 @@ const authorName =
     profile={profile}
 >
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <BlogPost post={post} />
+        <BlogEntryCard record={post} variant="full" />
     </div>
 </BaseLayout>
