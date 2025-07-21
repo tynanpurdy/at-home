@@ -185,9 +185,9 @@ export const BlogEntryCard: React.FC<BlogEntryCardProps> = ({
         <Separator className="my-6" />
         <Button variant="outline" size="sm" asChild>
           <a
-            href={`https://whtwnd.com/profile/${
+            href={`https://whtwnd.com/${
               record.author.handle
-            }/post/${record.uri.split("/").pop()}`}
+            }/${record.uri.split("/").pop()}`}
             target="_blank"
             rel="noopener noreferrer"
           >
