@@ -92,13 +92,18 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
             );
           })}
         </div>
-        {records.length > maxItems && (
-          <div className="mt-4 pt-4 border-t border-border">
-            <p className="text-sm text-muted-foreground text-center">
-              Showing {displayedRecords.length} of {records.length} records.
-            </p>
+        <div className="flex items-center gap-2">
+          <div className="flex justify-center mt-4">
+            {showViewAll && viewAllHref && (
+              <Button variant="ghost" size="sm" asChild>
+                <a href={viewAllHref}>
+                  View all
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </a>
+              </Button>
+            )}
           </div>
-        )}
+        </div>
       </CardContent>
     </Card>
   );
