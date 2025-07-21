@@ -34,10 +34,7 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
     return (
       <Card className={cn("", className)}>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Activity className="w-5 h-5" />
-            {title}
-          </CardTitle>
+          <CardTitle className="flex items-center gap-2">{title}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
@@ -56,10 +53,7 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
     <Card className={cn("", className)}>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Activity className="w-5 h-5" />
-            {title}
-          </CardTitle>
+          <CardTitle className="flex items-center gap-2">{title}</CardTitle>
           <div className="flex items-center gap-2">
             {showViewAll && viewAllHref && (
               <Button variant="ghost" size="sm" asChild>

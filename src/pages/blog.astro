@@ -28,6 +28,7 @@ const [profile, blogPosts] = await Promise.all([getProfile(), getBlogPosts()]);
 
         <!-- Blog Posts List -->
         <ActivityFeed
+            className="border-none shadow-none"
             client:load
             title="All Posts"
             records={blogPosts}
