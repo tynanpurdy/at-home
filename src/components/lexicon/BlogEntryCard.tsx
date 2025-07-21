@@ -108,7 +108,12 @@ export const BlogEntryCard: React.FC<BlogEntryCardProps> = ({
 
   // Full variant for dedicated blog post pages
   return (
-    <Card className={cn("overflow-hidden border-transparent", className)}>
+    <Card
+      className={cn(
+        "overflow-hidden border-transparent shadow-none",
+        className,
+      )}
+    >
       <CardHeader>
         <div className="flex items-center space-x-3 mb-4">
           {record.author.avatar && (
@@ -126,7 +131,6 @@ export const BlogEntryCard: React.FC<BlogEntryCardProps> = ({
           )}
           <div>
             <h3 className="font-medium text-foreground flex items-center gap-2">
-              <User className="w-4 h-4" />
               {record.author.displayName ||
                 record.author.handle ||
                 "Unknown Author"}
@@ -155,7 +159,7 @@ export const BlogEntryCard: React.FC<BlogEntryCardProps> = ({
 
       <CardContent>
         <div
-          className="prose prose-lg max-w-none dark:prose-invert"
+          className="prose prose-neutral max-w-none dark:prose-stone"
           dangerouslySetInnerHTML={{
             __html: blogRecord.content.replace(/\n/g, "<br />"),
           }}
