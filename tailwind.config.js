@@ -7,8 +7,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["JetBrains Mono", "system-ui", "sans-serif"],
-        mono: ["JetBrains Mono", "monospace"],
+        sans: ["Space Grotesk", "system-ui", "sans-serif"],
+        mono: ["Space Mono", "monospace"],
         block: ["Unbounded", "system-ui", "sans-serif"],
       },
       colors: {
