@@ -8,6 +8,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Space Grotesk", "system-ui", "sans-serif"],
+        serif: ["Sentient-Variable", "serif"],
         mono: ["Space Mono", "monospace"],
         block: ["Unbounded", "system-ui", "sans-serif"],
       },
