@@ -62,10 +62,17 @@ export const KNOWN_COLLECTIONS: CollectionConfig[] = [
 
   // Grain.social collections (high priority for your use case)
   {
-    name: 'grain.social.feed.gallery',
+    name: 'social.grain.gallery',
     description: 'Grain.social image galleries',
     service: 'grain.social',
     priority: 95,
+    enabled: true
+  },
+  {
+    name: 'grain.social.feed.gallery',
+    description: 'Grain.social image galleries (legacy)',
+    service: 'grain.social',
+    priority: 85,
     enabled: true
   },
   {

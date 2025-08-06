@@ -1,0 +1,159 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GrainGalleryDisplay from '../components/content/GrainGalleryDisplay.astro';
+import { GrainGalleryService, type ProcessedGrainGallery, type GrainGalleryItem } from '../lib/services/grain-gallery-service';
+import { loadConfig } from '../lib/config/site';
+
+const config = loadConfig();
+const grainGalleryService = new GrainGalleryService();
+
+let galleries: ProcessedGrainGallery[] = [];
+let galleryItems: GrainGalleryItem[] = [];
+let error: unknown = null;
+
+try {
+  if (config.atproto.handle && config.atproto.handle !== 'your-handle-here') {
+    // Get both galleries and raw items for debugging
+    galleries = await grainGalleryService.getGalleries(config.atproto.handle);
+    galleryItems = await grainGalleryService.getGalleryItems(config.atproto.handle);
+  }
+} catch (err) {
+  error = err;
+  console.error('Grain gallery test: Error:', err);
+}
+---
+
+<Layout title="Grain Gallery Test">
+  <div class="container mx-auto px-4 py-8">
+    <header class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        Grain.social Gallery Test
+      </h1>
+      <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        Testing the Grain.social gallery grouping and display system
+      </p>
+    </header>
+
+    <main class="max-w-6xl mx-auto">
+      {error ? (
+        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-8">
+          <h3 class="text-xl font-semibold text-red-800 dark:text-red-200 mb-4">
+            Error Loading Galleries
+          </h3>
+          <p class="text-red-700 dark:text-red-300 mb-4">
+            {error instanceof Error ? error.message : String(error)}
+          </p>
+          <pre class="bg-red-100 dark:bg-red-800 p-3 rounded text-xs overflow-x-auto">
+{JSON.stringify(error, null, 2)}
+          </pre>
+        </div>
+      ) : config.atproto.handle && config.atproto.handle !== 'your-handle-here' ? (
+        <div class="space-y-8">
+          <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2">
+              Configuration
+            </h3>
+            <div class="text-sm text-blue-700 dark:text-blue-300">
+              <p><strong>Handle:</strong> {config.atproto.handle}</p>
+              <p><strong>DID:</strong> {config.atproto.did}</p>
+              <p><strong>PDS URL:</strong> {config.atproto.pdsUrl}</p>
+            </div>
+          </div>
+
+          <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-green-800 dark:text-green-200 mb-2">
+              Results
+            </h3>
+            <div class="text-sm text-green-700 dark:text-green-300">
+              <p><strong>Raw Gallery Items:</strong> {galleryItems.length}</p>
+              <p><strong>Grouped Galleries:</strong> {galleries.length}</p>
+            </div>
+          </div>
+
+          {galleryItems.length > 0 && (
+            <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6">
+              <h3 class="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
+                Raw Gallery Items (First 10)
+              </h3>
+              <div class="text-sm text-yellow-700 dark:text-yellow-300 space-y-2">
+                {galleryItems.slice(0, 10).map((item, index) => (
+                  <div class="bg-yellow-100 dark:bg-yellow-800 p-3 rounded">
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <p class="font-semibold">Item {index + 1}</p>
+                        <p class="text-xs">Collection: {item.collection}</p>
+                        <p class="text-xs">$type: {item.value?.$type || 'unknown'}</p>
+                        <p class="text-xs">Title: {item.value?.title || 'No title'}</p>
+                        <p class="text-xs">Gallery ID: {item.value?.galleryId || item.value?.gallery_id || item.value?.id || 'None'}</p>
+                      </div>
+                      <div class="text-right text-xs">
+                        <p>Created: {item.value?.createdAt || item.indexedAt}</p>
+                      </div>
+                    </div>
+                    <details class="mt-2">
+                      <summary class="cursor-pointer text-xs">View Item Data</summary>
+                      <pre class="text-xs bg-yellow-200 dark:bg-yellow-700 p-2 rounded mt-1 overflow-x-auto">
+{JSON.stringify(item.value, null, 2)}
+                      </pre>
+                    </details>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {galleries.length > 0 ? (
+            <div class="space-y-8">
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                Grouped Galleries
+              </h2>
+              {galleries.map((gallery) => (
+                <GrainGalleryDisplay 
+                  gallery={gallery}
+                  showDescription={true}
+                  showTimestamp={true}
+                  showCollections={true}
+                  columns={3}
+                />
+              ))}
+            </div>
+          ) : (
+            <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-8">
+              <h3 class="text-xl font-semibold text-yellow-800 dark:text-yellow-200 mb-4">
+                No Galleries Found
+              </h3>
+              <p class="text-yellow-700 dark:text-yellow-300 mb-4">
+                No Grain.social galleries were found for your account. This could mean:
+              </p>
+              <ul class="text-yellow-600 dark:text-yellow-400 text-sm list-disc list-inside space-y-1">
+                <li>You haven't created any galleries yet</li>
+                <li>The galleries are in a different collection</li>
+                <li>There's an issue with the API connection</li>
+                <li>The gallery format isn't recognized</li>
+                <li>The gallery grouping logic needs adjustment</li>
+              </ul>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div class="text-center py-12">
+          <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-8">
+            <h3 class="text-xl font-semibold text-yellow-800 dark:text-yellow-200 mb-4">
+              Configuration Required
+            </h3>
+            <p class="text-yellow-700 dark:text-yellow-300 mb-4">
+              To test the Grain.social gallery system, please configure your Bluesky handle in the environment variables.
+            </p>
+            <div class="text-sm text-yellow-600 dark:text-yellow-400">
+              <p class="mb-2">Create a <code class="bg-yellow-100 dark:bg-yellow-800 px-1 rounded">.env</code> file with:</p>
+              <pre class="bg-yellow-100 dark:bg-yellow-800 p-3 rounded text-xs overflow-x-auto">
+ATPROTO_HANDLE=your-handle.bsky.social
+SITE_TITLE=Your Site Title
+SITE_AUTHOR=Your Name</pre>
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
+  </div>
+</Layout> 

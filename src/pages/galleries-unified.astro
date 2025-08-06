@@ -1,0 +1,165 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GrainGalleryDisplay from '../components/content/GrainGalleryDisplay.astro';
+import { ContentSystem } from '../lib/services/content-system';
+import { loadConfig } from '../lib/config/site';
+
+const config = loadConfig();
+const contentSystem = new ContentSystem();
+
+let galleries = [];
+let contentFeed = null;
+let error = null;
+
+try {
+  if (config.atproto.handle && config.atproto.handle !== 'your-handle-here') {
+    // Initialize content system
+    contentFeed = await contentSystem.initialize(config.atproto.handle, {
+      enableStreaming: true,
+      maxItems: 500
+    });
+    
+    // Get galleries using the specialized service
+    galleries = await contentSystem.getGalleries(config.atproto.handle);
+  }
+} catch (err) {
+  error = err;
+  console.error('Unified galleries: Error:', err);
+}
+
+// Helper function to format date
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+};
+---
+
+<Layout title="Unified Galleries">
+  <div class="container mx-auto px-4 py-8">
+    <header class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        Unified Galleries
+      </h1>
+      <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        Your Grain.social galleries with real-time updates
+      </p>
+    </header>
+
+    <main class="max-w-6xl mx-auto">
+      {error ? (
+        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-8">
+          <h3 class="text-xl font-semibold text-red-800 dark:text-red-200 mb-4">
+            Error Loading Galleries
+          </h3>
+          <p class="text-red-700 dark:text-red-300 mb-4">
+            {error instanceof Error ? error.message : String(error)}
+          </p>
+        </div>
+      ) : contentFeed ? (
+        <div class="space-y-8">
+          <!-- Content System Stats -->
+          <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2">
+              Content System Stats
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-blue-700 dark:text-blue-300">
+              <div>
+                <p class="font-semibold">Total Content Items</p>
+                <p class="text-2xl">{contentFeed.totalItems}</p>
+              </div>
+              <div>
+                <p class="font-semibold">Collections</p>
+                <p class="text-2xl">{contentFeed.collections.length}</p>
+              </div>
+              <div>
+                <p class="font-semibold">Galleries Found</p>
+                <p class="text-2xl">{galleries.length}</p>
+              </div>
+              <div>
+                <p class="font-semibold">Last Updated</p>
+                <p class="text-sm">{formatDate(contentFeed.lastUpdated)}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gallery Content -->
+          <div class="space-y-4">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              Your Galleries ({galleries.length} galleries)
+            </h2>
+            
+            {galleries.length > 0 ? (
+              <div class="space-y-8">
+                {galleries.map((gallery) => (
+                  <GrainGalleryDisplay 
+                    gallery={gallery}
+                    showDescription={true}
+                    showTimestamp={true}
+                    showCollections={true}
+                    columns={3}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-8">
+                <h3 class="text-xl font-semibold text-yellow-800 dark:text-yellow-200 mb-4">
+                  No Galleries Found
+                </h3>
+                <p class="text-yellow-700 dark:text-yellow-300 mb-4">
+                  No Grain.social galleries were found for your account. This could mean:
+                </p>
+                <ul class="text-yellow-600 dark:text-yellow-400 text-sm list-disc list-inside space-y-1">
+                  <li>You haven't created any galleries yet</li>
+                  <li>The galleries are in a different collection</li>
+                  <li>There's an issue with the API connection</li>
+                  <li>The gallery format isn't recognized</li>
+                  <li>The gallery grouping logic needs adjustment</li>
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <!-- Raw Content Debug -->
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Raw Content Debug
+            </h3>
+            <div class="text-sm text-gray-600 dark:text-gray-400">
+              <p><strong>Total Content Items:</strong> {contentFeed.items.length}</p>
+              <p><strong>Collections:</strong> {contentFeed.collections.join(', ')}</p>
+              <p><strong>Content Types Found:</strong></p>
+              <ul class="list-disc list-inside mt-2">
+                {Array.from(new Set(contentFeed.items.map(item => item.$type))).map($type => (
+                  <li class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-xs">
+                    {$type}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div class="text-center py-12">
+          <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-8">
+            <h3 class="text-xl font-semibold text-yellow-800 dark:text-yellow-200 mb-4">
+              Configuration Required
+            </h3>
+            <p class="text-yellow-700 dark:text-yellow-300 mb-4">
+              To view your galleries, please configure your Bluesky handle in the environment variables.
+            </p>
+            <div class="text-sm text-yellow-600 dark:text-yellow-400">
+              <p class="mb-2">Create a <code class="bg-yellow-100 dark:bg-yellow-800 px-1 rounded">.env</code> file with:</p>
+              <pre class="bg-yellow-100 dark:bg-yellow-800 p-3 rounded text-xs overflow-x-auto">
+ATPROTO_HANDLE=your-handle.bsky.social
+SITE_TITLE=Your Site Title
+SITE_AUTHOR=Your Name</pre>
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
+  </div>
+</Layout> 
