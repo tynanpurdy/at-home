@@ -1,0 +1,26 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description || "A personal website powered by ATproto"} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title || 'Home'} | Tynanverse</title>
+  </head>
+  <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white font-sans">
+    <div class="min-h-screen">
+      <slot />
+    </div>
+  </body>
+</html> 

@@ -1,16 +1,55 @@
 ---
+import Layout from '../layouts/Layout.astro';
+import ContentFeed from '../components/content/ContentFeed.astro';
+import { loadConfig } from '../lib/config/site';
 
+const config = loadConfig();
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="Home Page">
+  <div class="container mx-auto px-4 py-8">
+    <header class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        Welcome to {config.site.title || 'Tynanverse'}
+      </h1>
+      <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        {config.site.description || 'A personal website powered by ATproto, made by Tynan'}
+      </p>
+    </header>
+
+    <main class="max-w-4xl mx-auto space-y-12">
+      <!-- My Posts Feed -->
+      {config.atproto.handle && config.atproto.handle !== 'your-handle-here' ? (
+        <section>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+            My Posts
+          </h2>
+          <ContentFeed 
+            handle={config.atproto.handle}
+            limit={10}
+            showAuthor={false}
+            showTimestamp={true}
+          />
+        </section>
+      ) : (
+        <section>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+            Configuration Required
+          </h2>
+          <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6">
+            <p class="text-yellow-800 dark:text-yellow-200 mb-4">
+              To display your posts, please configure your Bluesky handle in the environment variables.
+            </p>
+            <div class="text-sm text-yellow-700 dark:text-yellow-300">
+              <p class="mb-2">Create a <code class="bg-yellow-100 dark:bg-yellow-800 px-1 rounded">.env</code> file with:</p>
+              <pre class="bg-yellow-100 dark:bg-yellow-800 p-3 rounded text-xs overflow-x-auto">
+ATPROTO_HANDLE=your-handle.bsky.social
+SITE_TITLE=Your Site Title
+SITE_AUTHOR=Your Name</pre>
+            </div>
+          </div>
+        </section>
+      )}
+    </main>
+  </div>
+</Layout>

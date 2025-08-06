@@ -1,0 +1,115 @@
+---
+import type { BlueskyPost } from '../../lib/types/atproto';
+
+interface Props {
+  post: BlueskyPost;
+  showAuthor?: boolean;
+  showTimestamp?: boolean;
+}
+
+const { post, showAuthor = false, showTimestamp = true } = Astro.props;
+
+// Validate post data
+if (!post || !post.text) {
+  return null;
+}
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
+// Helper function to get image URL from blob reference
+const getImageUrl = (imageRef: string) => {
+  return `https://bsky.social/xrpc/com.atproto.sync.getBlob?did=did:plc:6ayddqghxhciedbaofoxkcbs&cid=${imageRef}`;
+};
+
+// Helper function to render images
+const renderImages = (images: any[]) => {
+  if (!images || images.length === 0) return null;
+  
+  return (
+    <div class={`grid gap-2 ${images.length === 1 ? 'grid-cols-1' : images.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+      {images.map((image: any) => {
+        const imageUrl = getImageUrl(image.image.ref.$link);
+        return (
+          <div class="relative">
+            <img 
+              src={imageUrl} 
+              alt={image.alt || 'Post image'} 
+              class="rounded-lg w-full h-auto object-cover"
+              style={`aspect-ratio: ${image.aspectRatio?.width || 1} / ${image.aspectRatio?.height || 1}`}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+---
+
+<article class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-4">
+  {showAuthor && post.author && (
+    <div class="flex items-center mb-3">
+      <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+        {post.author.displayName?.[0] || 'U'}
+      </div>
+      <div class="ml-3">
+        <div class="text-sm font-medium text-gray-900 dark:text-white">
+          {post.author.displayName || 'Unknown'}
+        </div>
+        <div class="text-xs text-gray-500 dark:text-gray-400">
+          @{post.author.handle || 'unknown'}
+        </div>
+      </div>
+    </div>
+  )}
+  
+  <div class="text-gray-900 dark:text-white mb-3">
+    {post.text}
+  </div>
+  
+  {post.embed && (
+    <div class="mb-3">
+      {/* Handle image embeds */}
+      {post.embed.$type === 'app.bsky.embed.images' && post.embed.images && (
+        renderImages(post.embed.images)
+      )}
+      
+      {/* Handle external link embeds */}
+      {post.embed.$type === 'app.bsky.embed.external' && post.embed.external && (
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+          <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">
+            {post.embed.external.uri}
+          </div>
+          <div class="text-sm font-medium text-gray-900 dark:text-white">
+            {post.embed.external.title}
+          </div>
+          {post.embed.external.description && (
+            <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              {post.embed.external.description}
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* Handle record embeds (quotes/reposts) */}
+      {post.embed.$type === 'app.bsky.embed.record' && post.embed.record && (
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-700">
+          <div class="text-sm text-gray-600 dark:text-gray-400">
+            Quoted post
+          </div>
+        </div>
+      )}
+    </div>
+  )}
+  
+  {showTimestamp && post.createdAt && (
+    <div class="text-xs text-gray-500 dark:text-gray-400">
+      {formatDate(post.createdAt)}
+    </div>
+  )}
+</article> 

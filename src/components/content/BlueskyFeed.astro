@@ -1,0 +1,49 @@
+---
+import { AtprotoClient } from '../../lib/atproto/client';
+import { loadConfig } from '../../lib/config/site';
+import BlueskyPost from './BlueskyPost.astro';
+
+interface Props {
+  feedUri: string;
+  limit?: number;
+  showAuthor?: boolean;
+  showTimestamp?: boolean;
+}
+
+const { feedUri, limit = 10, showAuthor = true, showTimestamp = true } = Astro.props;
+
+const config = loadConfig();
+const client = new AtprotoClient(config.atproto.pdsUrl);
+
+// Fetch feed data with error handling
+let blueskyPosts: any[] = [];
+try {
+  const records = await client.getFeed(feedUri, limit);
+  const filteredRecords = client.filterSupportedRecords(records);
+  
+  // Only render Bluesky posts
+  blueskyPosts = filteredRecords.filter(record => 
+    record.value && record.value.$type === 'app.bsky.feed.post'
+  );
+} catch (error) {
+  console.error('Error fetching feed:', error);
+  blueskyPosts = [];
+}
+---
+
+<div class="space-y-4">
+  {blueskyPosts.length > 0 ? (
+    blueskyPosts.map((record) => (
+      <BlueskyPost 
+        post={record.value} 
+        showAuthor={showAuthor}
+        showTimestamp={showTimestamp}
+      />
+    ))
+  ) : (
+    <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+      <p>No posts found in this feed.</p>
+      <p class="text-sm mt-2">This could be due to authentication requirements or the feed being empty.</p>
+    </div>
+  )}
+</div> 

@@ -1,0 +1,49 @@
+---
+import type { WhitewindBlogPost } from '../../lib/types/atproto';
+
+interface Props {
+  post: WhitewindBlogPost;
+  showTags?: boolean;
+  showTimestamp?: boolean;
+}
+
+const { post, showTags = true, showTimestamp = true } = Astro.props;
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+};
+---
+
+<article class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+  <header class="mb-4">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+      {post.title}
+    </h2>
+    
+    {showTimestamp && (
+      <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+        Published on {formatDate(post.publishedAt)}
+      </div>
+    )}
+    
+    {showTags && post.tags && post.tags.length > 0 && (
+      <div class="flex flex-wrap gap-2 mb-4">
+        {post.tags.map((tag) => (
+          <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full">
+            #{tag}
+          </span>
+        ))}
+      </div>
+    )}
+  </header>
+  
+  <div class="prose prose-gray dark:prose-invert max-w-none">
+    <div class="text-gray-700 dark:text-gray-300 leading-relaxed">
+      {post.content}
+    </div>
+  </div>
+</article> 

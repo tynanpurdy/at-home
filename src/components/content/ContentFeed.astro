@@ -1,0 +1,144 @@
+---
+import { AtprotoClient } from '../../lib/atproto/client';
+import { loadConfig } from '../../lib/config/site';
+import type { AtprotoRecord } from '../../lib/types/atproto';
+
+interface Props {
+  handle: string;
+  collection?: string;
+  limit?: number;
+  feedUri?: string;
+  showAuthor?: boolean;
+  showTimestamp?: boolean;
+}
+
+const { 
+  handle, 
+  collection = 'app.bsky.feed.post', 
+  limit = 10, 
+  feedUri,
+  showAuthor = true,
+  showTimestamp = true 
+} = Astro.props;
+
+const config = loadConfig();
+const client = new AtprotoClient(config.atproto.pdsUrl);
+
+// Helper function to get image URL from blob reference
+const getImageUrl = (imageRef: string) => {
+  return `https://bsky.social/xrpc/com.atproto.sync.getBlob?did=did:plc:6ayddqghxhciedbaofoxkcbs&cid=${imageRef}`;
+};
+
+// Helper function to format date
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
+// Fetch data based on whether it's a feed or collection with error handling
+let records: AtprotoRecord[] = [];
+try {
+  if (feedUri) {
+    records = await client.getFeed(feedUri, limit);
+  } else {
+    records = await client.getRecords(handle, collection, limit);
+  }
+
+} catch (error) {
+  console.error('ContentFeed: Error fetching content:', error);
+  records = [];
+}
+---
+
+<div class="space-y-6">
+  {records.length > 0 ? (
+    <div class="space-y-4">
+      {records.map((record) => {
+        if (record.value?.$type !== 'app.bsky.feed.post') return null;
+        
+        const post = record.value;
+        return (
+          <article class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-4">
+            <div class="text-gray-900 dark:text-white mb-3">
+              {post.text}
+            </div>
+            
+            {post.embed && (
+              <div class="mb-3">
+                {/* Handle image embeds */}
+                {post.embed.$type === 'app.bsky.embed.images' && post.embed.images && (
+                  <div class={`grid gap-2 ${post.embed.images.length === 1 ? 'grid-cols-1' : post.embed.images.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                    {post.embed.images.map((image: any) => {
+                      // Handle both string and BlobRef object formats
+                      let imageRef;
+                      if (typeof image.image?.ref === 'string') {
+                        imageRef = image.image.ref;
+                      } else if (image.image?.ref?.$link) {
+                        imageRef = image.image.ref.$link;
+                      } else if (image.image?.ref?.toString) {
+                        // Handle BlobRef object
+                        imageRef = image.image.ref.toString();
+                      }
+                      
+                      const imageUrl = imageRef ? getImageUrl(imageRef) : '';
+                      return (
+                        <div class="relative">
+                          <img 
+                            src={imageUrl} 
+                            alt={image.alt || 'Post image'} 
+                            class="rounded-lg w-full h-auto object-cover"
+                            style={`aspect-ratio: ${image.aspectRatio?.width || 1} / ${image.aspectRatio?.height || 1}`}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                
+                {/* Handle external link embeds */}
+                {post.embed.$type === 'app.bsky.embed.external' && post.embed.external && (
+                  <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                    <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                      {post.embed.external.uri}
+                    </div>
+                    <div class="text-sm font-medium text-gray-900 dark:text-white">
+                      {post.embed.external.title}
+                    </div>
+                    {post.embed.external.description && (
+                      <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        {post.embed.external.description}
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {/* Handle record embeds (quotes/reposts) */}
+                {post.embed.$type === 'app.bsky.embed.record' && post.embed.record && (
+                  <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-700">
+                    <div class="text-sm text-gray-600 dark:text-gray-400">
+                      Quoted post
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {showTimestamp && post.createdAt && (
+              <div class="text-xs text-gray-500 dark:text-gray-400">
+                {formatDate(post.createdAt)}
+              </div>
+            )}
+          </article>
+        );
+      })}
+    </div>
+  ) : (
+    <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+      <p>No posts found.</p>
+      <p class="text-sm mt-2">Debug: Handle = {handle}, Records fetched = {records.length}</p>
+    </div>
+  )}
+</div> 

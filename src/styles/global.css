@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+/* Custom styles */
+html {
+  font-family: var(--font-family, Inter, system-ui, sans-serif);
+}
+
+body {
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Prose styles */
+.prose {
+  color: rgb(55 65 81);
+}
+
+.dark .prose {
+  color: rgb(209 213 219);
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  color: rgb(17 24 39);
+  font-weight: 600;
+}
+
+.dark .prose h1, .dark .prose h2, .dark .prose h3, .dark .prose h4, .dark .prose h5, .dark .prose h6 {
+  color: rgb(255 255 255);
+}
+
+.prose a {
+  color: rgb(37 99 235);
+}
+
+.prose a:hover {
+  color: rgb(30 64 175);
+}
+
+.dark .prose a {
+  color: rgb(96 165 250);
+}
+
+.dark .prose a:hover {
+  color: rgb(147 197 253);
+}
+
+.prose blockquote {
+  border-left: 4px solid rgb(209 213 219);
+  padding-left: 1rem;
+  font-style: italic;
+}
+
+.dark .prose blockquote {
+  border-left-color: rgb(75 85 99);
+}
+
+.prose code {
+  background-color: rgb(243 244 246);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.dark .prose code {
+  background-color: rgb(31 41 55);
+}
+
+.prose pre {
+  background-color: rgb(243 244 246);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+.dark .prose pre {
+  background-color: rgb(31 41 55);
+}
