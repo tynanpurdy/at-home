@@ -20,6 +20,11 @@ A modern personal website template powered by Astro, Tailwind CSS, and the ATpro
 - **Leaflet Publications**: Publications with categories and rich content
 - **Grain Image Galleries**: Image galleries with descriptions and captions
 
+## Pages
+
+- **Home Page** (`/`): Displays your latest posts and links to other content
+- **Galleries Page** (`/galleries`): Shows all your grain.social image galleries
+
 ## Quick Start
 
 1. **Clone the template**:
@@ -128,6 +133,21 @@ Display content from your repository:
   showTimestamp={true}
 />
 ```
+
+### Displaying Image Galleries
+
+The template includes a dedicated galleries page that displays all your grain.social image galleries:
+
+```astro
+<GrainImageGallery 
+  gallery={galleryData}
+  showDescription={true}
+  showTimestamp={true}
+  columns={3}
+/>
+```
+
+Visit `/galleries` to see all your image galleries in a beautiful grid layout.
 
 ## Project Structure
 

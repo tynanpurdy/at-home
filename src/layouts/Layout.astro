@@ -20,6 +20,39 @@ const { title, description } = Astro.props;
   </head>
   <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white font-sans">
     <div class="min-h-screen">
+      <!-- Navigation -->
+      <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <div class="container mx-auto px-4">
+          <div class="flex justify-between items-center h-16">
+            <div class="flex items-center space-x-8">
+              <a href="/" class="text-xl font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                Tynanverse
+              </a>
+              <div class="hidden md:flex space-x-6">
+                <a href="/" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
+                  Home
+                </a>
+                <a href="/galleries" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
+                  Galleries
+                </a>
+                <a href="/debug" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
+                  Debug
+                </a>
+                <a href="/test-api" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
+                  Test API
+                </a>
+                <a href="/comprehensive-test" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
+                  Comprehensive Test
+                </a>
+                <a href="/collection-config" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
+                  Collections
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      
       <slot />
     </div>
   </body>

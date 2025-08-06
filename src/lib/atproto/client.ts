@@ -165,6 +165,67 @@ export class AtprotoClient {
     });
   }
 
+  // Get all records from a repository (using existing API)
+  async getAllRecords(handle: string, limit: number = 100): Promise<AtprotoRecord[]> {
+    const cacheKey = `all-records:${handle}:${limit}`;
+    const cached = this.cache.get(cacheKey);
+    if (cached) return cached;
+
+    try {
+      console.log('getAllRecords: Starting with handle:', handle);
+      
+      // Resolve handle to DID
+      const did = await this.resolveHandle(handle);
+      console.log('getAllRecords: Resolved DID:', did);
+      
+      if (!did) {
+        console.error('getAllRecords: Failed to resolve handle to DID');
+        return [];
+      }
+
+      // Try to get records from common collections
+      console.log('getAllRecords: Trying common collections...');
+      const collections = ['app.bsky.feed.post', 'app.bsky.actor.profile'];
+      let allRecords: AtprotoRecord[] = [];
+
+      for (const collection of collections) {
+        try {
+          console.log(`getAllRecords: Trying collection: ${collection}`);
+          const response = await this.agent.api.com.atproto.repo.listRecords({
+            repo: did,
+            collection,
+            limit: Math.floor(limit / collections.length),
+          });
+          
+          console.log(`getAllRecords: Got ${response.data.records.length} records from ${collection}`);
+          
+          const records = response.data.records.map((record: any) => ({
+            uri: record.uri,
+            cid: record.cid,
+            value: record.value,
+            indexedAt: record.indexedAt,
+          }));
+          
+          allRecords = allRecords.concat(records);
+        } catch (error) {
+          console.log(`getAllRecords: No records in collection ${collection}:`, error);
+        }
+      }
+
+      console.log('getAllRecords: Total records found:', allRecords.length);
+      this.cache.set(cacheKey, allRecords);
+      return allRecords;
+    } catch (error) {
+      console.error('getAllRecords: Error fetching all records:', error);
+      console.error('getAllRecords: Error details:', {
+        handle,
+        limit,
+        error: error instanceof Error ? error.message : String(error)
+      });
+      return [];
+    }
+  }
+
   // Clear cache (useful for development)
   clearCache(): void {
     this.cache.clear();

@@ -102,12 +102,36 @@ export interface GrainImageGallery extends CustomLexiconRecord {
   createdAt: string;
 }
 
+// Generic grain gallery post type (for posts that contain galleries)
+export interface GrainGalleryPost extends CustomLexiconRecord {
+  $type: 'app.bsky.feed.post#grainGallery' | 'app.bsky.feed.post#grainImageGallery';
+  text?: string;
+  createdAt: string;
+  embed?: {
+    $type: 'app.bsky.embed.images';
+    images?: Array<{
+      alt?: string;
+      image: {
+        $type: 'blob';
+        ref: string;
+        mimeType: string;
+        size: number;
+      };
+      aspectRatio?: {
+        width: number;
+        height: number;
+      };
+    }>;
+  };
+}
+
 // Union type for all supported content types
 export type SupportedContentType = 
   | BlueskyPost 
   | WhitewindBlogPost 
   | LeafletPublication 
-  | GrainImageGallery;
+  | GrainImageGallery
+  | GrainGalleryPost;
 
 // Component registry type
 export interface ContentComponent {

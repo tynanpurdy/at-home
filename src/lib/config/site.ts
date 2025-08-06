@@ -1,7 +1,9 @@
 import dotenv from 'dotenv';
 
-// Load environment variables from .env file
-dotenv.config();
+// Load environment variables from .env file (server-side only)
+if (typeof process !== 'undefined') {
+  dotenv.config();
+}
 
 export interface SiteConfig {
   // ATproto configuration
@@ -34,11 +36,11 @@ export interface SiteConfig {
   };
 }
 
-// Default configuration
+// Default configuration with static handle
 export const defaultConfig: SiteConfig = {
   atproto: {
-    handle: '',
-    did: '',
+    handle: 'tynanpurdy.com', // Static handle - not confidential
+    did: 'did:plc:6ayddqghxhciedbaofoxkcbs',
     pdsUrl: 'https://bsky.social',
   },
   site: {
@@ -59,8 +61,13 @@ export const defaultConfig: SiteConfig = {
   },
 };
 
-// Load configuration from environment variables
+// Load configuration from environment variables (server-side only)
 export function loadConfig(): SiteConfig {
+  // In browser environment, return default config with static handle
+  if (typeof process === 'undefined') {
+    return defaultConfig;
+  }
+
   return {
     atproto: {
       handle: process.env.ATPROTO_HANDLE || defaultConfig.atproto.handle,

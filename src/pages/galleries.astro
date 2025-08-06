@@ -1,0 +1,142 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GrainImageGallery from '../components/content/GrainImageGallery.astro';
+import { ATprotoDiscovery } from '../lib/atproto/discovery';
+import { loadConfig } from '../lib/config/site';
+import type { AtprotoRecord } from '../lib/types/atproto';
+
+const config = loadConfig();
+const discovery = new ATprotoDiscovery(config.atproto.pdsUrl);
+
+// Fetch all records and filter for galleries
+let galleries: AtprotoRecord[] = [];
+try {
+  if (config.atproto.handle && config.atproto.handle !== 'your-handle-here') {
+    // Perform comprehensive repository analysis
+    const analysis = await discovery.analyzeRepository(config.atproto.handle);
+    
+    // Filter for grain-related content from all discovered lexicons
+    galleries = analysis.lexicons
+      .filter(lexicon => 
+        lexicon.$type.includes('grain') || 
+        lexicon.$type.includes('gallery') ||
+        lexicon.service === 'grain.social' ||
+        lexicon.description.includes('grain')
+      )
+      .map(lexicon => lexicon.sampleRecord);
+    
+    // Sort by creation date (newest first)
+    galleries.sort((a, b) => {
+      const dateA = new Date(a.value?.createdAt || a.indexedAt || 0);
+      const dateB = new Date(b.value?.createdAt || b.indexedAt || 0);
+      return dateB.getTime() - dateA.getTime();
+    });
+  }
+} catch (error) {
+  console.error('Galleries page: Error fetching galleries:', error);
+  galleries = [];
+}
+---
+
+<Layout title="Image Galleries">
+  <div class="container mx-auto px-4 py-8">
+    <header class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        Image Galleries
+      </h1>
+      <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        A collection of my grain.social image galleries
+      </p>
+    </header>
+
+    <main class="max-w-6xl mx-auto">
+      {config.atproto.handle && config.atproto.handle !== 'your-handle-here' ? (
+        galleries.length > 0 ? (
+          <div class="space-y-8">
+            {galleries.map((record) => {
+              const $type = record.value?.$type;
+              
+              // Handle different types of grain records
+              if ($type?.includes('grain') || $type?.includes('gallery')) {
+                // For now, display as a generic gallery component
+                return (
+                  <article class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+                    <header class="mb-4">
+                      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                        {record.value?.title || 'Gallery'}
+                      </h2>
+                      
+                      {record.value?.description && (
+                        <div class="text-gray-600 dark:text-gray-400 mb-3">
+                          {record.value.description}
+                        </div>
+                      )}
+                      
+                      <div class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                        Type: {record.value?.$type || 'Unknown'}
+                      </div>
+                    </header>
+                    
+                    {record.value?.text && (
+                      <div class="text-gray-900 dark:text-white mb-4">
+                        {record.value.text}
+                      </div>
+                    )}
+                    
+                    {record.value?.embed && record.value.embed.$type === 'app.bsky.embed.images' && (
+                      <div class="grid grid-cols-3 gap-4">
+                        {record.value.embed.images?.map((image: any) => (
+                          <div class="relative group">
+                            <img 
+                              src={image.image?.ref ? `https://bsky.social/xrpc/com.atproto.sync.getBlob?did=did:plc:6ayddqghxhciedbaofoxkcbs&cid=${image.image.ref}` : ''} 
+                              alt={image.alt || 'Gallery image'} 
+                              class="w-full h-48 object-cover rounded-lg transition-transform duration-200 group-hover:scale-105"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </article>
+                );
+              }
+              
+              return null;
+            })}
+          </div>
+        ) : (
+          <div class="text-center py-12">
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-8">
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                No Galleries Found
+              </h3>
+              <p class="text-gray-600 dark:text-gray-400 mb-4">
+                No grain.social image galleries were found for your account.
+              </p>
+              <p class="text-sm text-gray-500 dark:text-gray-500">
+                Make sure you have created galleries using grain.social and they are properly indexed.
+              </p>
+            </div>
+          </div>
+        )
+      ) : (
+        <div class="text-center py-12">
+          <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-8">
+            <h3 class="text-xl font-semibold text-yellow-800 dark:text-yellow-200 mb-4">
+              Configuration Required
+            </h3>
+            <p class="text-yellow-700 dark:text-yellow-300 mb-4">
+              To display your galleries, please configure your Bluesky handle in the environment variables.
+            </p>
+            <div class="text-sm text-yellow-600 dark:text-yellow-400">
+              <p class="mb-2">Create a <code class="bg-yellow-100 dark:bg-yellow-800 px-1 rounded">.env</code> file with:</p>
+              <pre class="bg-yellow-100 dark:bg-yellow-800 p-3 rounded text-xs overflow-x-auto">
+ATPROTO_HANDLE=your-handle.bsky.social
+SITE_TITLE=Your Site Title
+SITE_AUTHOR=Your Name</pre>
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
+  </div>
+</Layout> 

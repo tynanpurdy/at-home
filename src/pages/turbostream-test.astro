@@ -1,0 +1,158 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { loadConfig } from '../lib/config/site';
+
+const config = loadConfig();
+---
+
+<Layout title="Turbostream Test">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-8">Turbostream Test</h1>
+    
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Configuration</h2>
+      <p><strong>Handle:</strong> {config.atproto.handle}</p>
+      <p><strong>DID:</strong> {config.atproto.did}</p>
+      <p class="text-sm text-gray-600 mt-2">Filtering for records from your handle only. Only posts from @{config.atproto.handle} will be displayed.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Connection</h2>
+        <button id="connect-btn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          Connect to Turbostream
+        </button>
+        <button id="disconnect-btn" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 ml-2" disabled>
+          Disconnect
+        </button>
+        <div id="status" class="mt-4 p-2 rounded bg-gray-100">
+          Status: <span id="status-text">Disconnected</span>
+        </div>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Statistics</h2>
+        <div class="space-y-2">
+          <div>Records received: <span id="records-count" class="font-bold">0</span></div>
+          <div>Connection status: <span id="connection-status" class="font-bold">Disconnected</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8">
+      <h2 class="text-2xl font-semibold mb-4">Live Records</h2>
+      <div id="records-container" class="space-y-4 max-h-96 overflow-y-auto">
+        <p class="text-gray-500 text-center py-8">No records received yet...</p>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { TurbostreamClient } from '../lib/atproto/turbostream';
+
+  let client: TurbostreamClient | null = null;
+  let recordsCount = 0;
+
+  // DOM elements
+  const connectBtn = document.getElementById('connect-btn') as HTMLButtonElement;
+  const disconnectBtn = document.getElementById('disconnect-btn') as HTMLButtonElement;
+  const statusText = document.getElementById('status-text') as HTMLSpanElement;
+  const recordsCountEl = document.getElementById('records-count') as HTMLSpanElement;
+  const connectionStatusEl = document.getElementById('connection-status') as HTMLSpanElement;
+  const recordsContainer = document.getElementById('records-container') as HTMLDivElement;
+
+  function updateStatus(status: string) {
+    statusText.textContent = status;
+    connectionStatusEl.textContent = status;
+    
+    if (status === 'connected') {
+      connectBtn.disabled = true;
+      disconnectBtn.disabled = false;
+    } else {
+      connectBtn.disabled = false;
+      disconnectBtn.disabled = true;
+    }
+  }
+
+  function addRecord(record: any) {
+    recordsCount++;
+    recordsCountEl.textContent = recordsCount.toString();
+
+    const recordEl = document.createElement('div');
+    recordEl.className = 'bg-gray-50 border border-gray-200 rounded-lg p-4';
+    
+    const time = new Date(record.time_us / 1000).toLocaleString();
+    const did = record.did;
+    const uri = record.at_uri;
+    const user = record.hydrated_metadata?.user;
+    const text = record.message?.text || 'No text content';
+    
+    recordEl.innerHTML = `
+      <div class="flex items-start space-x-3">
+        <div class="flex-shrink-0">
+          <img src="${user?.avatar || '/favicon.svg'}" alt="Avatar" class="w-10 h-10 rounded-full">
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center space-x-2 mb-1">
+            <span class="font-semibold">${user?.displayName || 'Unknown'}</span>
+            <span class="text-gray-500">@${user?.handle || did}</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-2">${text}</p>
+          <p class="text-xs text-gray-500">${time}</p>
+          <p class="text-xs font-mono text-gray-400 mt-1 break-all">${uri}</p>
+        </div>
+      </div>
+    `;
+
+    recordsContainer.insertBefore(recordEl, recordsContainer.firstChild);
+    
+    // Keep only the last 20 records
+    const records = recordsContainer.querySelectorAll('div');
+    if (records.length > 20) {
+      records[records.length - 1].remove();
+    }
+  }
+
+  connectBtn.addEventListener('click', async () => {
+    try {
+      updateStatus('connecting');
+      
+      client = new TurbostreamClient();
+      
+      client.onConnect(() => {
+        updateStatus('connected');
+        console.log('Connected to Turbostream');
+      });
+
+      client.onDisconnect(() => {
+        updateStatus('disconnected');
+        console.log('Disconnected from Turbostream');
+      });
+
+      client.onError((error) => {
+        console.error('Turbostream error:', error);
+        updateStatus('error');
+      });
+
+      client.onRecord((record) => {
+        console.log('Received record:', record);
+        addRecord(record);
+      });
+
+      await client.connect();
+      
+    } catch (error) {
+      console.error('Failed to connect:', error);
+      updateStatus('error');
+      alert('Failed to connect to Turbostream. Check the console for details.');
+    }
+  });
+
+  disconnectBtn.addEventListener('click', () => {
+    if (client) {
+      client.disconnect();
+      client = null;
+    }
+  });
+</script> 

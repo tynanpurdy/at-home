@@ -20,17 +20,90 @@ const config = loadConfig();
     <main class="max-w-4xl mx-auto space-y-12">
       <!-- My Posts Feed -->
       {config.atproto.handle && config.atproto.handle !== 'your-handle-here' ? (
-        <section>
-          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-            My Posts
-          </h2>
-          <ContentFeed 
-            handle={config.atproto.handle}
-            limit={10}
-            showAuthor={false}
-            showTimestamp={true}
-          />
-        </section>
+        <>
+          <section>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+              My Posts
+            </h2>
+            <ContentFeed 
+              handle={config.atproto.handle}
+              limit={10}
+              showAuthor={false}
+              showTimestamp={true}
+            />
+          </section>
+          
+          <section>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+              Live Feed
+            </h2>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+              <h3 class="text-xl font-semibold mb-2">Turbostream Test</h3>
+              <p class="text-gray-600 mb-4">
+                Test the real-time Turbostream connection to see live posts from your handle.
+              </p>
+              <a href="/turbostream-test" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 inline-block">
+                Test Turbostream
+              </a>
+            </div>
+          </section>
+          
+          <section>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+              Explore More
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6">
+              <a href="/galleries" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  Image Galleries
+                </h3>
+                <p class="text-gray-600 dark:text-gray-400">
+                  View my grain.social image galleries and photo collections.
+                </p>
+              </a>
+              <a href="/turbostream-test" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  Turbostream Test
+                </h3>
+                <p class="text-gray-600 dark:text-gray-400">
+                  Test the Graze Turbostream connection and see live records.
+                </p>
+              </a>
+              <a href="/turbostream-simple" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  Simple Debug Test
+                </h3>
+                <p class="text-gray-600 dark:text-gray-400">
+                  Simple connection test with detailed console logging.
+                </p>
+              </a>
+              <a href="/repository-stream-test" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  Repository Stream Test
+                </h3>
+                <p class="text-gray-600 dark:text-gray-400">
+                  Comprehensive repository streaming (like atptools) - all collections, all content types.
+                </p>
+              </a>
+              <a href="/jetstream-test" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  Jetstream Test
+                </h3>
+                <p class="text-gray-600 dark:text-gray-400">
+                  ATProto sync API streaming with DID filtering (like atptools) - low latency, real-time.
+                </p>
+              </a>
+              <a href="/atproto-browser-test" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  ATProto Browser Test
+                </h3>
+                <p class="text-gray-600 dark:text-gray-400">
+                  Browse ATProto accounts and records like atptools - explore collections and records.
+                </p>
+              </a>
+            </div>
+          </section>
+        </>
       ) : (
         <section>
           <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">

@@ -1,0 +1,187 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { loadConfig } from '../lib/config/site';
+
+const config = loadConfig();
+---
+
+<Layout title="Repository Stream Test">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-8">Repository Stream Test</h1>
+    
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Configuration</h2>
+      <p><strong>Handle:</strong> {config.atproto.handle}</p>
+      <p><strong>DID:</strong> {config.atproto.did}</p>
+      <p class="text-sm text-gray-600 mt-2">This streams ALL repository content, not just posts. Includes galleries, profiles, follows, etc.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Connection</h2>
+        <button id="start-btn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          Start Repository Stream
+        </button>
+        <button id="stop-btn" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 ml-2" disabled>
+          Stop Stream
+        </button>
+        <div id="status" class="mt-4 p-2 rounded bg-gray-100">
+          Status: <span id="status-text">Stopped</span>
+        </div>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Statistics</h2>
+        <div class="space-y-2">
+          <div>Records received: <span id="records-count" class="font-bold">0</span></div>
+          <div>Collections discovered: <span id="collections-count" class="font-bold">0</span></div>
+          <div>Streaming status: <span id="streaming-status" class="font-bold">Stopped</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8">
+      <h2 class="text-2xl font-semibold mb-4">Discovered Collections</h2>
+      <div id="collections-container" class="bg-white border border-gray-200 rounded-lg p-6">
+        <p class="text-gray-500">No collections discovered yet...</p>
+      </div>
+    </div>
+
+    <div class="mt-8">
+      <h2 class="text-2xl font-semibold mb-4">Live Records</h2>
+      <div id="records-container" class="space-y-4 max-h-96 overflow-y-auto">
+        <p class="text-gray-500 text-center py-8">No records received yet...</p>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { RepositoryStream } from '../lib/atproto/repository-stream';
+
+  let stream: RepositoryStream | null = null;
+  let recordsCount = 0;
+  let discoveredCollections: string[] = [];
+
+  // DOM elements
+  const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
+  const stopBtn = document.getElementById('stop-btn') as HTMLButtonElement;
+  const statusText = document.getElementById('status-text') as HTMLSpanElement;
+  const recordsCountEl = document.getElementById('records-count') as HTMLSpanElement;
+  const collectionsCountEl = document.getElementById('collections-count') as HTMLSpanElement;
+  const streamingStatusEl = document.getElementById('streaming-status') as HTMLSpanElement;
+  const collectionsContainer = document.getElementById('collections-container') as HTMLDivElement;
+  const recordsContainer = document.getElementById('records-container') as HTMLDivElement;
+
+  function updateStatus(status: string) {
+    statusText.textContent = status;
+    streamingStatusEl.textContent = status;
+    
+    if (status === 'Streaming') {
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+    } else {
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+    }
+  }
+
+  function updateCollections() {
+    collectionsCountEl.textContent = discoveredCollections.length.toString();
+    
+    if (discoveredCollections.length === 0) {
+      collectionsContainer.innerHTML = '<p class="text-gray-500">No collections discovered yet...</p>';
+    } else {
+      collectionsContainer.innerHTML = discoveredCollections.map(collection => 
+        `<div class="bg-gray-50 border border-gray-200 rounded p-3 mb-2">
+          <span class="font-mono text-sm">${collection}</span>
+        </div>`
+      ).join('');
+    }
+  }
+
+  function addRecord(record: any) {
+    recordsCount++;
+    recordsCountEl.textContent = recordsCount.toString();
+
+    const recordEl = document.createElement('div');
+    recordEl.className = 'bg-gray-50 border border-gray-200 rounded-lg p-4';
+    
+    const time = new Date(record.indexedAt).toLocaleString();
+    const collection = record.collection;
+    const $type = record.$type;
+    const service = record.service;
+    const text = record.value?.text || 'No text content';
+    
+    recordEl.innerHTML = `
+      <div class="flex items-start space-x-3">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center space-x-2 mb-2">
+            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">${service}</span>
+            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">${collection}</span>
+            <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-medium">${$type}</span>
+          </div>
+          ${text ? `<p class="text-sm text-gray-600 mb-2">${text}</p>` : ''}
+          <p class="text-xs text-gray-500">${time}</p>
+          <p class="text-xs font-mono text-gray-400 mt-1 break-all">${record.uri}</p>
+        </div>
+      </div>
+    `;
+
+    recordsContainer.insertBefore(recordEl, recordsContainer.firstChild);
+    
+    // Keep only the last 20 records
+    const records = recordsContainer.querySelectorAll('div');
+    if (records.length > 20) {
+      records[records.length - 1].remove();
+    }
+  }
+
+  startBtn.addEventListener('click', async () => {
+    try {
+      updateStatus('Starting...');
+      
+      stream = new RepositoryStream();
+      
+      stream.onConnect(() => {
+        updateStatus('Streaming');
+        console.log('Repository stream connected');
+      });
+
+      stream.onDisconnect(() => {
+        updateStatus('Stopped');
+        console.log('Repository stream disconnected');
+      });
+
+      stream.onError((error) => {
+        console.error('Repository stream error:', error);
+        updateStatus('Error');
+      });
+
+      stream.onCollectionDiscovered((collection) => {
+        discoveredCollections.push(collection);
+        updateCollections();
+        console.log('Collection discovered:', collection);
+      });
+
+      stream.onRecord((record) => {
+        console.log('Record received:', record);
+        addRecord(record);
+      });
+
+      await stream.startStreaming();
+      
+    } catch (error) {
+      console.error('Failed to start repository stream:', error);
+      updateStatus('Error');
+      alert('Failed to start repository stream. Check the console for details.');
+    }
+  });
+
+  stopBtn.addEventListener('click', () => {
+    if (stream) {
+      stream.stopStreaming();
+      stream = null;
+    }
+  });
+</script> 
