@@ -1,5 +1,5 @@
 ---
-import { AtprotoClient } from '../../lib/atproto/client';
+import { AtprotoBrowser } from '../../lib/atproto/atproto-browser';
 import { loadConfig } from '../../lib/config/site';
 import BlueskyPost from './BlueskyPost.astro';
 
@@ -13,18 +13,16 @@ interface Props {
 const { feedUri, limit = 10, showAuthor = true, showTimestamp = true } = Astro.props;
 
 const config = loadConfig();
-const client = new AtprotoClient(config.atproto.pdsUrl);
+const browser = new AtprotoBrowser();
 
 // Fetch feed data with error handling
 let blueskyPosts: any[] = [];
 try {
-  const records = await client.getFeed(feedUri, limit);
-  const filteredRecords = client.filterSupportedRecords(records);
+  const records = await browser.getFeed(feedUri, limit);
+  const filteredRecords = records.filter(r => r.value?.$type === 'app.bsky.feed.post');
   
   // Only render Bluesky posts
-  blueskyPosts = filteredRecords.filter(record => 
-    record.value && record.value.$type === 'app.bsky.feed.post'
-  );
+  blueskyPosts = filteredRecords;
 } catch (error) {
   console.error('Error fetching feed:', error);
   blueskyPosts = [];

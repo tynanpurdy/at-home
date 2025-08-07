@@ -1,17 +1,13 @@
 import type { DiscoveredTypes } from '../generated/discovered-types';
+import type { AnyRecordByType } from '../atproto/record-types';
 
-export interface DiscoveredComponent {
-  $type: DiscoveredTypes;
+export type DiscoveredComponent<T extends string = DiscoveredTypes> = {
+  $type: T;
   component: string;
-  props: Record<string, any>;
+  props: Record<string, unknown>;
 }
 
-export interface ComponentRegistry {
-  [key: string]: {
-    component: string;
-    props?: Record<string, any>;
-  };
-}
+export type ComponentRegistry = Record<string, { component: string; props?: Record<string, unknown> }>
 
 export class DiscoveredComponentRegistry {
   private registry: ComponentRegistry = {};
@@ -46,7 +42,7 @@ export class DiscoveredComponentRegistry {
   }
 
   // Register a component for a specific $type
-  registerComponent($type: DiscoveredTypes, component: string, props?: Record<string, any>): void {
+  registerComponent($type: DiscoveredTypes, component: string, props?: Record<string, unknown>): void {
     this.registry[$type] = {
       component,
       props
@@ -54,7 +50,7 @@ export class DiscoveredComponentRegistry {
   }
 
   // Get component info for a $type
-  getComponent($type: DiscoveredTypes): { component: string; props?: Record<string, any> } | null {
+  getComponent($type: DiscoveredTypes): { component: string; props?: Record<string, unknown> } | null {
     return this.registry[$type] || null;
   }
 
@@ -104,7 +100,7 @@ export class DiscoveredComponentRegistry {
   }
 
   // Get component info for rendering
-  getComponentInfo($type: DiscoveredTypes): DiscoveredComponent | null {
+  getComponentInfo<T extends DiscoveredTypes>($type: T): DiscoveredComponent<T> | null {
     const componentInfo = this.getComponent($type);
     if (!componentInfo) return null;
 

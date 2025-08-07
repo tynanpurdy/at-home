@@ -105,9 +105,36 @@ const imageLayout = getImageLayout(gallery.images.length);
             class="w-full h-48 object-cover rounded-lg transition-transform duration-200 group-hover:scale-105"
             loading="lazy"
           />
-          {(image.alt || image.caption) && (
-            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-sm p-2 rounded-b-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-              {image.alt || image.caption}
+          {(image.alt || image.caption || image.exif) && (
+            <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-2 rounded-b-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 space-y-1">
+              {image.alt || image.caption ? (
+                <div class="font-medium">{image.alt || image.caption}</div>
+              ) : null}
+              {image.exif && (
+                <div class="grid grid-cols-2 gap-x-2 gap-y-0.5">
+                  {image.exif.make && image.exif.model && (
+                    <div class="col-span-2">{image.exif.make} {image.exif.model}</div>
+                  )}
+                  {image.exif.lensMake && image.exif.lensModel && (
+                    <div class="col-span-2">{image.exif.lensMake} {image.exif.lensModel}</div>
+                  )}
+                  {image.exif.fNumber && (
+                    <div>ƒ/{image.exif.fNumber}</div>
+                  )}
+                  {image.exif.exposureTime && (
+                    <div>{image.exif.exposureTime}s</div>
+                  )}
+                  {image.exif.iSO && (
+                    <div>ISO {image.exif.iSO}</div>
+                  )}
+                  {image.exif.focalLengthIn35mmFormat && (
+                    <div>{image.exif.focalLengthIn35mmFormat}mm</div>
+                  )}
+                  {image.exif.dateTimeOriginal && (
+                    <div class="col-span-2">{new Date(image.exif.dateTimeOriginal).toLocaleDateString()}</div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>

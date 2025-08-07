@@ -1,6 +1,7 @@
 import { AtprotoBrowser } from '../atproto/atproto-browser';
 import { loadConfig } from '../config/site';
 import type { AtprotoRecord } from '../types/atproto';
+import { extractCidFromBlobRef, blobCdnUrl } from '../atproto/blob-url';
 
 export interface GrainGalleryItem {
   uri: string;
@@ -56,6 +57,17 @@ export interface ProcessedGrainGallery {
     alt?: string;
     url: string;
     caption?: string;
+    exif?: {
+      make?: string;
+      model?: string;
+      lensMake?: string;
+      lensModel?: string;
+      iSO?: number;
+      fNumber?: number;
+      exposureTime?: number;
+      focalLengthIn35mmFormat?: number;
+      dateTimeOriginal?: string;
+    };
   }>;
   itemCount: number;
   collections: string[];
@@ -70,27 +82,13 @@ export class GrainGalleryService {
     this.browser = new AtprotoBrowser();
   }
 
-  // Extract gallery ID from various possible fields
-  private extractGalleryId(item: GrainGalleryItem): string | null {
-    const value = item.value;
-    
-    // Direct gallery ID fields
-    if (value.galleryId) return value.galleryId;
-    if (value.gallery_id) return value.gallery_id;
-    if (value.id) return value.id;
-    
-    // Extract from URI if it contains gallery ID
-    const uriMatch = item.uri.match(/gallery\/([^\/]+)/);
-    if (uriMatch) return uriMatch[1];
-    
-    // Extract from title if it contains gallery ID
-    if (value.title) {
-      const titleMatch = value.title.match(/gallery[:\-\s]+([^\s]+)/i);
-      if (titleMatch) return titleMatch[1];
-    }
-    
-    // Use a hash of the collection and first part of URI as fallback
-    return `${item.collection}-${item.uri.split('/').pop()?.split('?')[0]}`;
+  // Resolve gallery URI directly from the item record if present
+  private extractGalleryUriFromItem(item: any): string | null {
+    const value = item?.value ?? item;
+    if (typeof value?.gallery === 'string') return value.gallery;
+    // Some variants might use a nested key
+    if (typeof value?.galleryUri === 'string') return value.galleryUri;
+    return null;
   }
 
   // Extract image from gallery item
@@ -114,46 +112,81 @@ export class GrainGalleryService {
     return null;
   }
 
-  // Group gallery items into galleries
-  private groupGalleryItems(items: GrainGalleryItem[]): GrainGallery[] {
-    const galleryGroups = new Map<string, GrainGallery>();
-    
+  // Build processed galleries using the authoritative gallery records and item mappings
+  private buildProcessedGalleries(
+    galleries: AtprotoRecord[],
+    items: AtprotoRecord[],
+    photosByUri: Map<string, AtprotoRecord>,
+    exifByPhotoUri: Map<string, any>
+  ): ProcessedGrainGallery[] {
+    // Index items by gallery URI
+    const itemsByGallery = new Map<string, AtprotoRecord[]>();
     for (const item of items) {
-      const galleryId = this.extractGalleryId(item);
-      if (!galleryId) continue;
-      
-      if (!galleryGroups.has(galleryId)) {
-        // Create new gallery
-        galleryGroups.set(galleryId, {
-          id: galleryId,
-          title: item.value.title || `Gallery ${galleryId}`,
-          description: item.value.description || item.value.caption,
-          createdAt: item.value.createdAt || item.indexedAt,
-          items: [],
-          imageCount: 0,
-          collections: new Set()
+      const galleryUri = this.extractGalleryUriFromItem(item);
+      if (!galleryUri) continue;
+      const arr = itemsByGallery.get(galleryUri) ?? [];
+      arr.push(item);
+      itemsByGallery.set(galleryUri, arr);
+    }
+
+    const processed: ProcessedGrainGallery[] = [];
+    const did = this.config.atproto.did;
+
+    for (const gallery of galleries) {
+      const galleryUri = gallery.uri;
+      const galleryItems = itemsByGallery.get(galleryUri) ?? [];
+      // Sort by position if available
+      galleryItems.sort((a, b) => {
+        const pa = Number(a.value?.position ?? 0);
+        const pb = Number(b.value?.position ?? 0);
+        return pa - pb;
+      });
+
+      const images: Array<{ alt?: string; url: string; caption?: string; exif?: any }> = [];
+      for (const item of galleryItems) {
+        const photoUri = typeof item.value?.item === 'string' ? item.value.item : null;
+        if (!photoUri) continue;
+        const photo = photosByUri.get(photoUri);
+        if (!photo) continue;
+
+        // Extract blob CID
+        const cid = extractCidFromBlobRef(photo.value?.photo?.ref ?? photo.value?.photo);
+        if (!cid || !did) continue;
+        const url = blobCdnUrl(did, cid);
+
+        const exif = exifByPhotoUri.get(photoUri);
+        images.push({
+          url,
+          alt: photo.value?.alt,
+          caption: photo.value?.caption,
+          exif: exif ? {
+            make: exif.make,
+            model: exif.model,
+            lensMake: exif.lensMake,
+            lensModel: exif.lensModel,
+            iSO: exif.iSO,
+            fNumber: exif.fNumber,
+            exposureTime: exif.exposureTime,
+            focalLengthIn35mmFormat: exif.focalLengthIn35mmFormat,
+            dateTimeOriginal: exif.dateTimeOriginal,
+          } : undefined,
         });
       }
-      
-      const gallery = galleryGroups.get(galleryId)!;
-      gallery.items.push(item);
-      gallery.collections.add(item.collection);
-      
-      // Update earliest creation date
-      const itemDate = new Date(item.value.createdAt || item.indexedAt);
-      const galleryDate = new Date(gallery.createdAt);
-      if (itemDate < galleryDate) {
-        gallery.createdAt = item.value.createdAt || item.indexedAt;
-      }
+
+      processed.push({
+        id: galleryUri,
+        title: gallery.value?.title || 'Untitled Gallery',
+        description: gallery.value?.description,
+        createdAt: gallery.value?.createdAt || gallery.indexedAt,
+        images,
+        itemCount: galleryItems.length,
+        collections: [gallery.collection],
+      });
     }
-    
-    // Calculate image counts and convert collections to arrays
-    for (const gallery of galleryGroups.values()) {
-      gallery.imageCount = gallery.items.filter(item => this.extractImageFromItem(item)).length;
-      gallery.collections = Array.from(gallery.collections);
-    }
-    
-    return Array.from(galleryGroups.values());
+
+    // Sort galleries by createdAt desc
+    processed.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    return processed;
   }
 
   // Process gallery into display format
@@ -179,82 +212,53 @@ export class GrainGalleryService {
     };
   }
 
-  // Fetch all gallery items from Grain.social collections
-  async getGalleryItems(identifier: string): Promise<GrainGalleryItem[]> {
+  // Fetch galleries with items, photos, and exif metadata
+  async getGalleries(identifier: string): Promise<ProcessedGrainGallery[]> {
     try {
       const repoInfo = await this.browser.getRepoInfo(identifier);
       if (!repoInfo) {
         throw new Error(`Could not get repository info for: ${identifier}`);
       }
 
-      const items: GrainGalleryItem[] = [];
-      
-      // Get all grain-related collections
-      const grainCollections = repoInfo.collections.filter(col => 
-        col.includes('grain') || col.includes('social.grain')
-      );
-      
-      console.log('🔍 Found grain collections:', grainCollections);
-      
-      for (const collection of grainCollections) {
-        const records = await this.browser.getCollectionRecords(identifier, collection, 200);
-        if (records && records.records) {
-          console.log(`📦 Collection ${collection}: ${records.records.length} records`);
-          
-          for (const record of records.records) {
-            // Convert to GrainGalleryItem format
-            const item: GrainGalleryItem = {
-              uri: record.uri,
-              cid: record.cid,
-              value: record.value,
-              indexedAt: record.indexedAt,
-              collection: record.collection
-            };
-            
-            items.push(item);
-          }
-        }
-      }
-      
-      console.log(`🎯 Total gallery items found: ${items.length}`);
-      return items;
-    } catch (error) {
-      console.error('Error fetching gallery items:', error);
-      return [];
-    }
-  }
+      // Fetch the four relevant collections
+      const [galleries, items, photos, exifs] = await Promise.all([
+        this.browser.getCollectionRecords(identifier, 'social.grain.gallery', 100),
+        this.browser.getCollectionRecords(identifier, 'social.grain.gallery.item', 100),
+        this.browser.getCollectionRecords(identifier, 'social.grain.photo', 100),
+        this.browser.getCollectionRecords(identifier, 'social.grain.photo.exif', 100),
+      ]);
 
-  // Get grouped galleries
-  async getGalleries(identifier: string): Promise<ProcessedGrainGallery[]> {
-    try {
-      const items = await this.getGalleryItems(identifier);
-      
-      if (items.length === 0) {
-        console.log('No gallery items found');
-        return [];
+      const galleryRecords = galleries?.records ?? [];
+      const itemRecords = items?.records ?? [];
+      const photoRecords = photos?.records ?? [];
+      const exifRecords = exifs?.records ?? [];
+
+      // Build maps for fast lookup
+      const photosByUri = new Map<string, AtprotoRecord>();
+      for (const p of photoRecords) {
+        photosByUri.set(p.uri, p);
       }
-      
-      // Group items into galleries
-      const groupedGalleries = this.groupGalleryItems(items);
-      
-      console.log(`🏛️ Grouped into ${groupedGalleries.length} galleries`);
-      
-      // Process for display
-      const processedGalleries = groupedGalleries.map(gallery => this.processGalleryForDisplay(gallery));
-      
-      // Sort by creation date (newest first)
-      processedGalleries.sort((a, b) => {
-        const dateA = new Date(a.createdAt);
-        const dateB = new Date(b.createdAt);
-        return dateB.getTime() - dateA.getTime();
-      });
-      
-      return processedGalleries;
+      const exifByPhotoUri = new Map<string, any>();
+      for (const e of exifRecords) {
+        const photoUri = typeof e.value?.photo === 'string' ? e.value.photo : undefined;
+        if (photoUri) exifByPhotoUri.set(photoUri, e.value);
+      }
+
+      const processed = this.buildProcessedGalleries(
+        galleryRecords,
+        itemRecords,
+        photosByUri,
+        exifByPhotoUri,
+      );
+
+      return processed;
     } catch (error) {
       console.error('Error getting galleries:', error);
       return [];
     }
   }
+
+  // Deprecated older flow kept for compatibility; prefer getGalleries()
 
   // Get a specific gallery by ID
   async getGallery(identifier: string, galleryId: string): Promise<ProcessedGrainGallery | null> {

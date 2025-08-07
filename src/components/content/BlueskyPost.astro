@@ -1,5 +1,7 @@
 ---
 import type { BlueskyPost } from '../../lib/types/atproto';
+import { extractCidFromBlobRef, blobCdnUrl } from '../../lib/atproto/blob-url';
+import { loadConfig } from '../../lib/config/site';
 
 interface Props {
   post: BlueskyPost;
@@ -22,9 +24,12 @@ const formatDate = (dateString: string) => {
   });
 };
 
-// Helper function to get image URL from blob reference
-const getImageUrl = (imageRef: string) => {
-  return `https://bsky.social/xrpc/com.atproto.sync.getBlob?did=did:plc:6ayddqghxhciedbaofoxkcbs&cid=${imageRef}`;
+const getImageUrl = (ref: unknown) => {
+  const cid = extractCidFromBlobRef(ref);
+  if (!cid) return '';
+  const did = loadConfig().atproto.did;
+  if (!did) return '';
+  return blobCdnUrl(did, cid);
 };
 
 // Helper function to render images
@@ -34,7 +39,7 @@ const renderImages = (images: any[]) => {
   return (
     <div class={`grid gap-2 ${images.length === 1 ? 'grid-cols-1' : images.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
       {images.map((image: any) => {
-        const imageUrl = getImageUrl(image.image.ref.$link);
+        const imageUrl = getImageUrl(image.image?.ref);
         return (
           <div class="relative">
             <img 

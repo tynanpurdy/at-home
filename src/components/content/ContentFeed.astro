@@ -1,7 +1,8 @@
 ---
-import { AtprotoClient } from '../../lib/atproto/client';
+import { AtprotoBrowser } from '../../lib/atproto/atproto-browser';
 import { loadConfig } from '../../lib/config/site';
 import type { AtprotoRecord } from '../../lib/types/atproto';
+import { extractCidFromBlobRef, blobCdnUrl } from '../../lib/atproto/blob';
 
 interface Props {
   handle: string;
@@ -22,11 +23,15 @@ const {
 } = Astro.props;
 
 const config = loadConfig();
-const client = new AtprotoClient(config.atproto.pdsUrl);
+const browser = new AtprotoBrowser();
 
 // Helper function to get image URL from blob reference
-const getImageUrl = (imageRef: string) => {
-  return `https://bsky.social/xrpc/com.atproto.sync.getBlob?did=did:plc:6ayddqghxhciedbaofoxkcbs&cid=${imageRef}`;
+const getImageUrl = (imageRef: unknown) => {
+  const cid = extractCidFromBlobRef(imageRef);
+  if (!cid) return '';
+  const did = config.atproto.did;
+  if (!did) return '';
+  return blobCdnUrl(did, cid);
 };
 
 // Helper function to format date
@@ -42,9 +47,10 @@ const formatDate = (dateString: string) => {
 let records: AtprotoRecord[] = [];
 try {
   if (feedUri) {
-    records = await client.getFeed(feedUri, limit);
+    records = await browser.getFeed(feedUri, limit);
   } else {
-    records = await client.getRecords(handle, collection, limit);
+    const res = await browser.getCollectionRecords(handle, collection, limit);
+    records = res?.records ?? [];
   }
 
 } catch (error) {
@@ -72,18 +78,7 @@ try {
                 {post.embed.$type === 'app.bsky.embed.images' && post.embed.images && (
                   <div class={`grid gap-2 ${post.embed.images.length === 1 ? 'grid-cols-1' : post.embed.images.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
                     {post.embed.images.map((image: any) => {
-                      // Handle both string and BlobRef object formats
-                      let imageRef;
-                      if (typeof image.image?.ref === 'string') {
-                        imageRef = image.image.ref;
-                      } else if (image.image?.ref?.$link) {
-                        imageRef = image.image.ref.$link;
-                      } else if (image.image?.ref?.toString) {
-                        // Handle BlobRef object
-                        imageRef = image.image.ref.toString();
-                      }
-                      
-                      const imageUrl = imageRef ? getImageUrl(imageRef) : '';
+                      const imageUrl = getImageUrl(image.image?.ref);
                       return (
                         <div class="relative">
                           <img 

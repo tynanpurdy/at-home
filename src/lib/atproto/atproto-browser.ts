@@ -202,4 +202,28 @@ export class AtprotoBrowser {
       return [];
     }
   }
+
+  // Get posts from an appview feed URI
+  async getFeed(feedUri: string, limit: number = 20): Promise<AtprotoRecord[]> {
+    try {
+      const response = await this.agent.api.app.bsky.feed.getFeed({
+        feed: feedUri,
+        limit,
+      });
+
+      const records: AtprotoRecord[] = response.data.feed.map((item: any) => ({
+        uri: item.post.uri,
+        cid: item.post.cid,
+        value: item.post.record,
+        indexedAt: item.post.indexedAt,
+        collection: item.post.uri.split('/')[2] || 'unknown',
+        $type: (item.post.record?.$type as string) || 'unknown',
+      }));
+
+      return records;
+    } catch (error) {
+      console.error('Error fetching feed:', error);
+      return [];
+    }
+  }
 } 
