@@ -221,17 +221,12 @@ export class GrainGalleryService {
       }
 
       // Fetch the four relevant collections
-      const [galleries, items, photos, exifs] = await Promise.all([
-        this.browser.getCollectionRecords(identifier, 'social.grain.gallery', 100),
-        this.browser.getCollectionRecords(identifier, 'social.grain.gallery.item', 100),
-        this.browser.getCollectionRecords(identifier, 'social.grain.photo', 100),
-        this.browser.getCollectionRecords(identifier, 'social.grain.photo.exif', 100),
+      const [galleryRecords, itemRecords, photoRecords, exifRecords] = await Promise.all([
+        this.browser.getAllCollectionRecords(identifier, 'social.grain.gallery', 500),
+        this.browser.getAllCollectionRecords(identifier, 'social.grain.gallery.item', 5000),
+        this.browser.getAllCollectionRecords(identifier, 'social.grain.photo', 5000),
+        this.browser.getAllCollectionRecords(identifier, 'social.grain.photo.exif', 5000),
       ]);
-
-      const galleryRecords = galleries?.records ?? [];
-      const itemRecords = items?.records ?? [];
-      const photoRecords = photos?.records ?? [];
-      const exifRecords = exifs?.records ?? [];
 
       // Build maps for fast lookup
       const photosByUri = new Map<string, AtprotoRecord>();

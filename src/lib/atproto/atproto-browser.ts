@@ -140,6 +140,33 @@ export class AtprotoBrowser {
     }
   }
 
+  // Get all records from a collection using pagination
+  async getAllCollectionRecords(
+    identifier: string,
+    collection: string,
+    maxTotal: number = 1000
+  ): Promise<AtprotoRecord[]> {
+    const results: AtprotoRecord[] = [];
+    let cursor: string | undefined = undefined;
+
+    try {
+      while (true) {
+        const page = await this.getCollectionRecords(identifier, collection, 100, cursor);
+        if (!page) break;
+
+        results.push(...page.records);
+
+        if (!page.cursor) break;
+        if (results.length >= maxTotal) break;
+        cursor = page.cursor;
+      }
+    } catch (error) {
+      console.error(`Error paginating collection ${collection}:`, error);
+    }
+
+    return results.slice(0, maxTotal);
+  }
+
   // Get all collections for a repository
   async getAllCollections(identifier: string): Promise<string[]> {
     try {
