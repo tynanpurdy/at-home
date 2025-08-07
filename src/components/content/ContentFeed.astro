@@ -4,25 +4,27 @@ import { loadConfig } from '../../lib/config/site';
 import type { AtprotoRecord } from '../../lib/types/atproto';
 import { extractCidFromBlobRef, blobCdnUrl } from '../../lib/atproto/blob';
 
+
 interface Props {
-  handle: string;
   collection?: string;
   limit?: number;
   feedUri?: string;
   showAuthor?: boolean;
   showTimestamp?: boolean;
+  live?: boolean;
 }
 
 const { 
-  handle, 
   collection = 'app.bsky.feed.post', 
   limit = 10, 
   feedUri,
   showAuthor = true,
-  showTimestamp = true 
+  showTimestamp = true,
+  live = false,
 } = Astro.props;
 
 const config = loadConfig();
+const handle = config.atproto.handle;
 const browser = new AtprotoBrowser();
 
 // Helper function to get image URL from blob reference
@@ -61,7 +63,7 @@ try {
 
 <div class="space-y-6">
   {records.length > 0 ? (
-    <div class="space-y-4">
+    <div id="feed-container" class="space-y-4" data-show-timestamp={String(showTimestamp)} data-initial-limit={String(limit)} data-did={config.atproto.did}>
       {records.map((record) => {
         if (record.value?.$type !== 'app.bsky.feed.post') return null;
         
@@ -137,3 +139,109 @@ try {
     </div>
   )}
 </div> 
+
+{live && (
+  <script>
+    // @ts-nocheck
+    const container = document.getElementById('feed-container');
+    if (container) {
+      const SHOW_TIMESTAMP = container.getAttribute('data-show-timestamp') === 'true';
+      const INITIAL_LIMIT = Number(container.getAttribute('data-initial-limit') || '10');
+      const maxPrepend = 20;
+      const DID = container.getAttribute('data-did') || '';
+
+      function extractCid(ref) {
+        if (typeof ref === 'string') return ref;
+        if (ref && typeof ref === 'object') {
+          if (typeof ref.$link === 'string') return ref.$link;
+          if (typeof ref.toString === 'function') return ref.toString();
+        }
+        return null;
+      }
+
+      function buildImagesEl(post, did) {
+        if (post?.embed?.$type !== 'app.bsky.embed.images' || !post.embed.images) return null;
+        const grid = document.createElement('div');
+        const count = post.embed.images.length;
+        const cols = count === 1 ? 'grid-cols-1' : count === 2 ? 'grid-cols-2' : 'grid-cols-3';
+        grid.className = `grid gap-2 ${cols}`;
+        for (const img of post.embed.images) {
+          const cid = extractCid(img?.image?.ref);
+          if (!cid) continue;
+          const url = `https://bsky.social/xrpc/com.atproto.sync.getBlob?did=${encodeURIComponent(did)}&cid=${encodeURIComponent(cid)}`;
+          const wrapper = document.createElement('div');
+          wrapper.className = 'relative';
+          const image = document.createElement('img');
+          image.src = url;
+          image.alt = img?.alt || 'Post image';
+          image.className = 'rounded-lg w-full h-auto object-cover';
+          const arW = (img?.aspectRatio && img.aspectRatio.width) || 1;
+          const arH = (img?.aspectRatio && img.aspectRatio.height) || 1;
+          // @ts-ignore
+          image.style.aspectRatio = `${arW} / ${arH}`;
+          wrapper.appendChild(image);
+          grid.appendChild(wrapper);
+        }
+        return grid;
+      }
+
+      function buildPostEl(post, did) {
+        const article = document.createElement('article');
+        article.className = 'bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-4';
+
+        const textDiv = document.createElement('div');
+        textDiv.className = 'text-gray-900 dark:text-white mb-3';
+        textDiv.textContent = post?.text ? String(post.text) : '';
+        article.appendChild(textDiv);
+
+        const imagesEl = buildImagesEl(post, did);
+        if (imagesEl) {
+          const imagesWrap = document.createElement('div');
+          imagesWrap.className = 'mb-3';
+          imagesWrap.appendChild(imagesEl);
+          article.appendChild(imagesWrap);
+        }
+
+        if (SHOW_TIMESTAMP && post?.createdAt) {
+          const timeDiv = document.createElement('div');
+          timeDiv.className = 'text-xs text-gray-500 dark:text-gray-400';
+          timeDiv.textContent = new Date(post.createdAt).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+          article.appendChild(timeDiv);
+        }
+
+        return article;
+      }
+
+      try {
+        const endpoint = 'wss://jetstream1.us-east.bsky.network/subscribe';
+        const url = new URL(endpoint);
+        if (DID) url.searchParams.append('wantedDids', DID);
+        const ws = new WebSocket(url.toString());
+
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data?.kind !== 'commit') return;
+            const commit = data.commit;
+            const record = commit?.record || {};
+            if (commit?.operation !== 'create') return;
+            if (record?.$type !== 'app.bsky.feed.post') return;
+            const el = buildPostEl(record, data.did);
+            // @ts-ignore
+            container.insertBefore(el, container.firstChild);
+            const posts = container.children;
+            if (posts.length > maxPrepend + INITIAL_LIMIT) {
+              if (container.lastElementChild) container.removeChild(container.lastElementChild);
+            }
+          } catch (e) {
+            console.error('jetstream msg error', e);
+          }
+        };
+
+        ws.onerror = (e) => console.error('jetstream ws error', e);
+      } catch (e) {
+        console.error('jetstream start error', e);
+      }
+    }
+  </script>
+)}

@@ -26,10 +26,10 @@ const config = loadConfig();
               My Posts
             </h2>
             <ContentFeed 
-              handle={config.atproto.handle}
               limit={10}
               showAuthor={false}
               showTimestamp={true}
+              live={true}
             />
           </section>
           
@@ -40,116 +40,12 @@ const config = loadConfig();
               Explore More
             </h2>
             <div class="grid md:grid-cols-2 gap-6">
-              <a href="/content-feed" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Content Feed
-                </h3>
-                <p class="text-gray-600 dark:text-gray-400">
-                  All your ATProto content with real-time updates and streaming.
-                </p>
-              </a>
               <a href="/galleries" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                   Image Galleries
                 </h3>
                 <p class="text-gray-600 dark:text-gray-400">
                   View my grain.social image galleries and photo collections.
-                </p>
-              </a>
-              <a href="/galleries-unified" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Unified Galleries
-                </h3>
-                <p class="text-gray-600 dark:text-gray-400">
-                  Galleries with real-time updates using the content system.
-                </p>
-              </a>
-              <a href="/gallery-test" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Gallery System Test
-                </h3>
-                <p class="text-gray-600 dark:text-gray-400">
-                  Test the gallery service and display components with detailed debugging.
-                </p>
-              </a>
-              <a href="/content-test" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Content Rendering Test
-                </h3>
-                <p class="text-gray-600 dark:text-gray-400">
-                  Test the content rendering system with type-safe components and filters.
-                </p>
-              </a>
-              <a href="/gallery-debug" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Gallery Structure Debug
-                </h3>
-                <p class="text-gray-600 dark:text-gray-400">
-                  Examine Grain.social collection structure and relationships.
-                </p>
-              </a>
-              <a href="/grain-gallery-test" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Grain Gallery Test
-                </h3>
-                <p class="text-gray-600 dark:text-gray-400">
-                  Test the Grain.social gallery grouping and display system.
-                </p>
-              </a>
-              <a href="/api-debug" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  API Debug
-                </h3>
-                <p class="text-gray-600 dark:text-gray-400">
-                  Debug ATProto API calls and configuration issues.
-                </p>
-              </a>
-              <a href="/simple-test" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Simple API Test
-                </h3>
-                <p class="text-gray-600 dark:text-gray-400">
-                  Basic HTTP request test to ATProto APIs.
-                </p>
-              </a>
-              <a href="/discovery-test" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Discovery Test
-                </h3>
-                <p class="text-gray-600 dark:text-gray-400">
-                  Build-time collection discovery and type generation.
-                </p>
-              </a>
-              <a href="/simplified-test" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Simplified Content Test
-                </h3>
-                <p class="text-gray-600 dark:text-gray-400">
-                  Test the simplified content service approach based on reference repository patterns.
-                </p>
-              </a>
-              <a href="/jetstream-test" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Jetstream Test
-                </h3>
-                <p class="text-gray-600 dark:text-gray-400">
-                  ATProto sync API streaming with DID filtering (like atptools) - low latency, real-time.
-                </p>
-              </a>
-              <a href="/atproto-browser-test" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  ATProto Browser Test
-                </h3>
-                <p class="text-gray-600 dark:text-gray-400">
-                  Browse ATProto accounts and records like atptools - explore collections and records.
-                </p>
-              </a>
-              <a href="/lexicon-generator-test" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Lexicon Generator Test
-                </h3>
-                <p class="text-gray-600 dark:text-gray-400">
-                  Generate TypeScript types for all lexicons discovered in your configured repository.
                 </p>
               </a>
             </div>
