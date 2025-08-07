@@ -17,6 +17,7 @@
     "@types/node": "^24.2.0",
     "astro": "^5.12.8",
     "dotenv": "^17.2.1",
+    "marked": "^12.0.2",
     "tailwindcss": "^4.1.11",
     "tsx": "^4.19.2",
     "typescript": "^5.9.2"

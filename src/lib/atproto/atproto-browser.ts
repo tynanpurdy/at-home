@@ -184,17 +184,26 @@ export class AtprotoBrowser {
   // Get a specific record
   async getRecord(uri: string): Promise<AtprotoRecord | null> {
     try {
+      // Parse at://did:.../collection/rkey
+      if (!uri.startsWith('at://')) throw new Error('Invalid at:// URI');
+      const parts = uri.replace('at://', '').split('/');
+      const repo = parts[0];
+      const collection = parts[1];
+      const rkey = parts[2];
+
       const response = await this.agent.api.com.atproto.repo.getRecord({
-        uri: uri,
+        repo,
+        collection,
+        rkey,
       });
 
-      const record = response.data;
+      const record = response.data as any;
       return {
-        uri: record.uri,
+        uri: `at://${repo}/${collection}/${rkey}`,
         cid: record.cid,
         value: record.value,
         indexedAt: record.indexedAt,
-        collection: record.uri.split('/')[2] || 'unknown',
+        collection: collection || 'unknown',
         $type: (record.value?.$type as string) || 'unknown',
       };
     } catch (error) {
