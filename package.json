@@ -6,7 +6,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "discover": "tsx scripts/discover-collections.ts",
+    "gen:types": "tsx scripts/generate-types.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -21,5 +23,8 @@
     "tailwindcss": "^4.1.11",
     "tsx": "^4.19.2",
     "typescript": "^5.9.2"
+  },
+  "devDependencies": {
+    "@atproto/lex-cli": "^0.9.1"
   }
 }

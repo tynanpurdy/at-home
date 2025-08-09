@@ -1,14 +1,13 @@
 ---
-import type { WhitewindBlogPost } from '../../lib/types/atproto';
-import { marked } from 'marked';
+import type { ComWhtwndBlogEntryRecord } from '../../lib/generated/com-whtwnd-blog-entry';
 
 interface Props {
-  post: WhitewindBlogPost;
+  record: ComWhtwndBlogEntryRecord;
   showTags?: boolean;
   showTimestamp?: boolean;
 }
 
-const { post, showTags = true, showTimestamp = true } = Astro.props;
+const { record, showTags = true, showTimestamp = true } = Astro.props;
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -18,26 +17,25 @@ const formatDate = (dateString: string) => {
   });
 };
 
-// Prefer explicit publishedAt; fall back to createdAt or indexedAt if present
-const publishedRaw = (post as any).publishedAt || (post as any).createdAt || (post as any).indexedAt || null;
-const publishedSafe = publishedRaw && !isNaN(new Date(publishedRaw).getTime()) ? publishedRaw : null;
+const published = record.createdAt;
+const isValidDate = published ? !isNaN(new Date(published).getTime()) : false;
 ---
 
 <article class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
   <header class="mb-4">
     <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-      {post.title}
+      {record.title}
     </h2>
     
-    {showTimestamp && publishedSafe && (
+    {showTimestamp && isValidDate && (
       <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">
-        Published on {formatDate(publishedSafe)}
+        Published on {formatDate(published!)}
       </div>
     )}
     
-    {showTags && post.tags && post.tags.length > 0 && (
+    {showTags && record.tags && record.tags.length > 0 && (
       <div class="flex flex-wrap gap-2 mb-4">
-        {post.tags.map((tag) => (
+        {record.tags.map((tag) => (
           <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full">
             #{tag}
           </span>
@@ -46,7 +44,9 @@ const publishedSafe = publishedRaw && !isNaN(new Date(publishedRaw).getTime()) ?
     )}
   </header>
   
-  <div class="prose prose-white dark:prose-invert max-w-none">
-    <Fragment set:html={await marked(post.content || '')} />
+  <div class="prose prose-gray dark:prose-invert max-w-none">
+    <div class="text-gray-700 dark:text-gray-300 leading-relaxed">
+      {record.content}
+    </div>
   </div>
 </article> 

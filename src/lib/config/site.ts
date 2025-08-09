@@ -33,7 +33,10 @@ export interface SiteConfig {
   content: {
     defaultFeedLimit: number;
     cacheTTL: number; // in milliseconds
+    collections: string[];
+    maxRecords: number;
   };
+  lexiconSources: Record<string, string>; // NSID -> local schema file path
 }
 
 // Default configuration with static handle
@@ -58,6 +61,12 @@ export const defaultConfig: SiteConfig = {
   content: {
     defaultFeedLimit: 20,
     cacheTTL: 5 * 60 * 1000, // 5 minutes
+    collections: ['app.bsky.feed.post', 'com.whtwnd.blog.entry'],
+    maxRecords: 500,
+  },
+  lexiconSources: {
+    'com.whtwnd.blog.entry': './src/lexicons/com.whtwnd.blog.entry.json',
+    // Add more NSIDs -> schema file mappings here
   },
 };
 
@@ -89,6 +98,9 @@ export function loadConfig(): SiteConfig {
     content: {
       defaultFeedLimit: parseInt(process.env.CONTENT_DEFAULT_FEED_LIMIT || '20'),
       cacheTTL: parseInt(process.env.CONTENT_CACHE_TTL || '300000'),
+      collections: defaultConfig.content.collections, // Keep default collections
+      maxRecords: parseInt(process.env.CONTENT_MAX_RECORDS || '500'),
     },
+    lexiconSources: defaultConfig.lexiconSources, // Keep default lexicon sources
   };
 } 

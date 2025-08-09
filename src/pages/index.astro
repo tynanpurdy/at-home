@@ -6,70 +6,34 @@ import { loadConfig } from '../lib/config/site';
 const config = loadConfig();
 ---
 
-<Layout title="Home Page">
+<Layout title="Home">
   <div class="container mx-auto px-4 py-8">
-    <header class="text-center mb-12">
+    <header class="mb-8">
       <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-        Welcome to {config.site.title || 'Tynanverse'}
+        Welcome to {config.site.title}
       </h1>
-      <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-        {config.site.description || 'A personal website powered by ATproto, made by Tynan'}
+      <p class="text-xl text-gray-600 dark:text-gray-300 mb-6">
+        {config.site.description}
       </p>
+      <nav class="flex space-x-4">
+        <a href="/" class="text-blue-600 dark:text-blue-400 hover:underline">Home</a>
+        <a href="/blog" class="text-blue-600 dark:text-blue-400 hover:underline">Blog</a>
+        <a href="/galleries" class="text-blue-600 dark:text-blue-400 hover:underline">Galleries</a>
+      </nav>
     </header>
 
-    <main class="max-w-4xl mx-auto space-y-12">
-      <!-- My Posts Feed -->
-      {config.atproto.handle && config.atproto.handle !== 'your-handle-here' ? (
-        <>
-          <section>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              My Posts
-            </h2>
-            <ContentFeed 
-              limit={10}
-              showAuthor={false}
-              showTimestamp={true}
-              live={true}
-            />
-          </section>
-          
-
-          
-          <section>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              Explore More
-            </h2>
-            <div class="grid md:grid-cols-2 gap-6">
-              <a href="/galleries" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Image Galleries
-                </h3>
-                <p class="text-gray-600 dark:text-gray-400">
-                  View my grain.social image galleries and photo collections.
-                </p>
-              </a>
-            </div>
-          </section>
-        </>
-      ) : (
-        <section>
-          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-            Configuration Required
-          </h2>
-          <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6">
-            <p class="text-yellow-800 dark:text-yellow-200 mb-4">
-              To display your posts, please configure your Bluesky handle in the environment variables.
-            </p>
-            <div class="text-sm text-yellow-700 dark:text-yellow-300">
-              <p class="mb-2">Create a <code class="bg-yellow-100 dark:bg-yellow-800 px-1 rounded">.env</code> file with:</p>
-              <pre class="bg-yellow-100 dark:bg-yellow-800 p-3 rounded text-xs overflow-x-auto">
-ATPROTO_HANDLE=your-handle.bsky.social
-SITE_TITLE=Your Site Title
-SITE_AUTHOR=Your Name</pre>
-            </div>
-          </div>
-        </section>
-      )}
+    <main>
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+          Latest Posts
+        </h2>
+        <ContentFeed
+          limit={10}
+          showAuthor={false}
+          showTimestamp={true}
+          live={true}
+        />
+      </section>
     </main>
   </div>
 </Layout>

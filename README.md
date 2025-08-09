@@ -1,71 +1,108 @@
-# ATProto Personal Website
+# ATproto Personal Website
 
-A personal website powered by ATProto, featuring real-time streaming, repository browsing, and type generation.
+A personal website built with Astro that uses your ATproto repository as a CMS. Features full type safety, real-time updates, and automatic component routing.
 
 ## Features
 
-### 🚀 Real-time Streaming
-- **Jetstream Test** (`/jetstream-test`): Real-time ATProto streaming with DID filtering
-- Uses the same jetstream endpoint as atptools for low-latency updates
-- Filters by your configured DID for personalized streaming
+- **Type-Safe Content**: Automatic TypeScript type generation from ATproto lexicon schemas
+- **Real-Time Updates**: Live content streaming via ATproto Jetstream
+- **Component Registry**: Type-safe mapping of lexicon types to Astro components
+- **Dynamic Routing**: Automatic component selection based on record types
+- **Blog Support**: Full blog post rendering with markdown support
+- **Gallery Display**: Image galleries with EXIF data and hover effects
+- **Pagination**: Fetch more than 100 records with cursor-based pagination
 
-### 🌐 Repository Browsing
-- **ATProto Browser Test** (`/atproto-browser-test`): Browse any ATProto account's collections and records
-- Discover all collections in a repository
-- View records from specific collections
-- Similar functionality to atptools
+## Quick Start
 
-### 📝 Type Generation
-- **Lexicon Generator Test** (`/lexicon-generator-test`): Generate TypeScript types for all lexicons in your repository
-- Automatically discovers all lexicon types from your configured account
-- Generates proper TypeScript interfaces and helper functions
-- Copy to clipboard or download as `.ts` file
+1. **Configure Environment**:
+   ```bash
+   cp env.example .env
+   # Edit .env with your ATproto handle and DID
+   ```
 
-### 🖼️ Image Galleries
-- **Image Galleries** (`/galleries`): View grain.social image galleries and photo collections
+2. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
 
-## Configuration
+3. **Add Lexicon Schemas**:
+   - Place JSON lexicon schemas in `src/lexicons/`
+   - Update `src/lib/config/site.ts` with your lexicon sources
+   - Run `npm run gen:types` to generate TypeScript types
 
-The site is configured to use your ATProto account:
+4. **Create Components**:
+   - Create Astro components in `src/components/content/`
+   - Register them in `src/lib/components/registry.ts`
+   - Use `ContentDisplay.astro` for automatic routing
 
-- **Handle**: `tynanpurdy.com`
-- **DID**: `did:plc:6ayddqghxhciedbaofoxkcbs`
-- **PDS**: `https://bsky.social`
+5. **Start Development**:
+   ```bash
+   npm run dev
+   ```
 
-## Development
+## Lexicon Integration
 
-```bash
-npm install
-npm run dev
-```
+The system provides full type safety for ATproto lexicons:
 
-Visit `http://localhost:4324` to see the site.
+1. **Schema Files**: JSON lexicon definitions in `src/lexicons/`
+2. **Type Generation**: Automatic TypeScript type generation
+3. **Component Registry**: Type-safe mapping of lexicon types to components
+4. **Content Display**: Dynamic component routing
+
+See [LEXICON_INTEGRATION.md](./LEXICON_INTEGRATION.md) for detailed instructions.
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run discover` - Discover collections from your repo
+- `npm run gen:types` - Generate TypeScript types from lexicon schemas
 
 ## Project Structure
 
 ```
 src/
-├── lib/atproto/
-│   ├── atproto-browser.ts    # Repository browsing functionality
-│   ├── jetstream-client.ts   # Real-time streaming client
-│   └── client.ts             # Basic ATProto client
-├── pages/
-│   ├── index.astro           # Homepage with navigation
-│   ├── jetstream-test.astro  # Real-time streaming test
-│   ├── atproto-browser-test.astro  # Repository browsing test
-│   ├── lexicon-generator-test.astro # Type generation test
-│   └── galleries.astro       # Image galleries
-└── components/
-    └── content/              # Content display components
+├── components/content/     # Content display components
+├── lib/
+│   ├── atproto/          # ATproto client and utilities
+│   ├── components/        # Component registry
+│   ├── config/           # Site configuration
+│   ├── generated/        # Generated TypeScript types
+│   ├── services/         # Content services
+│   └── types/           # Type definitions
+├── lexicons/            # Lexicon schema files
+└── pages/              # Astro pages
 ```
 
-## Technologies
+## Configuration
 
-- **Astro**: Web framework
-- **ATProto API**: For repository access and streaming
-- **TypeScript**: For type safety
-- **Tailwind CSS**: For styling
+The system is configured via environment variables and `src/lib/config/site.ts`:
 
-## Inspired By
+- `ATPROTO_HANDLE` - Your Bluesky handle
+- `ATPROTO_DID` - Your DID (optional, auto-resolved)
+- `SITE_TITLE` - Site title
+- `SITE_DESCRIPTION` - Site description
+- `SITE_AUTHOR` - Site author
 
-This project takes inspiration from [atptools](https://github.com/espeon/atptools) for repository browsing and jetstream streaming approaches.
+## Adding New Content Types
+
+1. Create a lexicon schema in `src/lexicons/`
+2. Add it to `lexiconSources` in site config
+3. Run `npm run gen:types`
+4. Create a component in `src/components/content/`
+5. Register it in `src/lib/components/registry.ts`
+
+The system will automatically route records to your components with full type safety.
+
+## Development
+
+- Debug mode shows component routing information
+- Generic fallback for unknown record types
+- Real-time updates via Jetstream
+- Type-safe component registry
+- Automatic type generation from schemas
+
+## License
+
+MIT
