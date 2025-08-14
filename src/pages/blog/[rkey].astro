@@ -1,0 +1,59 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { AtprotoBrowser } from '../../lib/atproto/atproto-browser';
+import { loadConfig } from '../../lib/config/site';
+import WhitewindBlogPost from '../../components/content/WhitewindBlogPost.astro';
+
+export async function getStaticPaths() {
+  const config = loadConfig();
+  const browser = new AtprotoBrowser();
+  const paths: Array<{ params: { rkey: string } }> = [];
+  try {
+    const records = await browser.getAllCollectionRecords(config.atproto.handle, 'com.whtwnd.blog.entry', 2000);
+    for (const rec of records) {
+      if (rec.value?.$type === 'com.whtwnd.blog.entry') {
+        const rkey = rec.uri.split('/').pop();
+        if (rkey) paths.push({ params: { rkey } });
+      }
+    }
+  } catch (e) {
+    console.error('getStaticPaths whitewind', e);
+  }
+  return paths;
+}
+
+const { rkey } = Astro.params as Record<string, string>;
+
+const config = loadConfig();
+const browser = new AtprotoBrowser();
+
+let record: any = null;
+let title = 'Post';
+
+try {
+  const did = config.atproto.did || (await browser.resolveHandle(config.atproto.handle));
+  if (did) {
+    const uri = `at://${did}/com.whtwnd.blog.entry/${rkey}`;
+    const rec = await browser.getRecord(uri);
+    if (rec && rec.value?.$type === 'com.whtwnd.blog.entry') {
+      record = rec.value;
+      title = record.title || title;
+    }
+  }
+} catch (e) {
+  console.error('Error loading whitewind post', e);
+}
+---
+
+<Layout title={title}>
+  <div class="container mx-auto px-4 py-8">
+    {record ? (
+      <div class="max-w-3xl mx-auto">
+        <WhitewindBlogPost record={record} showTags={true} showTimestamp={true} />
+      </div>
+    ) : (
+      <div class="text-center text-gray-500 dark:text-gray-400 py-16">Post not found.</div>
+    )}
+  </div>
+</Layout>
+

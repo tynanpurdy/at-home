@@ -1,0 +1,89 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { AtprotoBrowser } from '../lib/atproto/atproto-browser';
+import { loadConfig } from '../lib/config/site';
+import type { ComWhtwndBlogEntryRecord } from '../lib/generated/com-whtwnd-blog-entry';
+
+const config = loadConfig();
+const browser = new AtprotoBrowser();
+
+// Fetch Whitewind blog posts from the repo using generated types
+let posts: Array<{
+  uri: string;
+  record: ComWhtwndBlogEntryRecord;
+  createdAt: string;
+}> = [];
+
+try {
+  const records = await browser.getAllCollectionRecords(config.atproto.handle, 'com.whtwnd.blog.entry', 2000);
+  posts = records
+    .filter((r: any) => r.value?.$type === 'com.whtwnd.blog.entry')
+    .map((r: any) => {
+      const record = r.value as ComWhtwndBlogEntryRecord;
+      const createdAt = (record as any).createdAt || r.indexedAt;
+      return {
+        uri: r.uri,
+        record,
+        createdAt,
+      };
+    });
+  posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+} catch (e) {
+  console.error('Error loading whitewind posts', e);
+}
+
+function excerpt(text: string, maxChars = 240) {
+  let t = text
+    .replace(/!\[[^\]]*\]\([^\)]+\)/g, ' ')
+    .replace(/\[[^\]]+\]\(([^\)]+)\)/g, '$1')
+    .replace(/`{3}[\s\S]*?`{3}/g, ' ')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/[*_]{1,3}([^*_]+)[*_]{1,3}/g, '$1');
+  t = t.replace(/\s+/g, ' ').trim();
+  if (t.length <= maxChars) return t;
+  return t.slice(0, maxChars).trimEnd() + '…';
+}
+
+function postPathFromUri(uri: string) {
+  // at://did/.../<collection>/<rkey>
+  const parts = uri.split('/');
+  const rkey = parts[parts.length - 1];
+  return `/blog/${rkey}`;
+}
+---
+
+<Layout title="Blog">
+  <div class="container mx-auto px-4 py-8">
+    <header class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">Blog</h1>
+      <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Writing powered by the Whitewind lexicon</p>
+    </header>
+
+    <main class="max-w-3xl mx-auto">
+      {posts.length === 0 ? (
+        <div class="text-center text-gray-500 dark:text-gray-400 py-16">No posts yet.</div>
+      ) : (
+        <div class="space-y-8">
+          {posts.map((p) => (
+            <article class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                <a href={postPathFromUri(p.uri)} class="hover:underline">
+                  {p.record.title || 'Untitled'}
+                </a>
+              </h2>
+              <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                {(() => {
+                  const d = new Date(p.createdAt);
+                  return isNaN(d.getTime()) ? '' : d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                })()}
+              </div>
+              <p class="text-gray-700 dark:text-gray-300">{excerpt(p.record.content || '')}</p>
+            </article>
+          ))}
+        </div>
+      )}
+    </main>
+  </div>
+</Layout>
+
