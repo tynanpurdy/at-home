@@ -1,5 +1,6 @@
 ---
 import type { ComWhtwndBlogEntryRecord } from '../../lib/generated/com-whtwnd-blog-entry';
+import { marked } from 'marked';
 
 interface Props {
   record: ComWhtwndBlogEntryRecord;
@@ -32,21 +33,11 @@ const isValidDate = published ? !isNaN(new Date(published).getTime()) : false;
         Published on {formatDate(published!)}
       </div>
     )}
-    
-    {showTags && record.tags && record.tags.length > 0 && (
-      <div class="flex flex-wrap gap-2 mb-4">
-        {record.tags.map((tag) => (
-          <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full">
-            #{tag}
-          </span>
-        ))}
-      </div>
-    )}
   </header>
   
   <div class="prose prose-gray dark:prose-invert max-w-none">
     <div class="text-gray-700 dark:text-gray-300 leading-relaxed">
-      {record.content}
+      <Fragment set:html={await marked(record.content || '')} />
     </div>
   </div>
 </article> 

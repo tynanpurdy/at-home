@@ -1,0 +1,49 @@
+---
+import type { AtprotoRecord } from '../../lib/types/atproto';
+import type { GeneratedLexiconUnion } from '../../lib/generated/lexicon-types';
+import { getComponentInfo, autoAssignComponent } from '../../lib/components/registry';
+import { loadConfig } from '../../lib/config/site';
+
+interface Props {
+  record: AtprotoRecord;
+  showAuthor?: boolean;
+  showTimestamp?: boolean;
+}
+
+const { record, showAuthor = true, showTimestamp = true } = Astro.props;
+const config = loadConfig();
+
+// Extract $type from the record value
+const recordType = record.value?.$type || 'unknown';
+
+// Try to get component info from registry
+const componentInfo = getComponentInfo(recordType as any) || autoAssignComponent(recordType);
+
+// Dynamic component import
+let Component: any = null;
+try {
+  // Try to import the component dynamically
+  const componentPath = `../../components/content/${componentInfo.component}.astro`;
+  Component = await import(componentPath);
+} catch (error) {
+  console.warn(`Component ${componentInfo.component} not found for type ${recordType}`);
+}
+
+---
+
+{Component && <Component.default 
+  record={record.value} 
+  showAuthor={showAuthor} 
+  showTimestamp={showTimestamp} 
+  {...componentInfo.props} 
+/>}
+
+{process.env.NODE_ENV === 'development' && (
+  <div class="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm">
+    <h3 class="font-semibold mb-2">Debug Info:</h3>
+    <p><strong>Type:</strong> {recordType}</p>
+    <p><strong>Component:</strong> {componentInfo.component}</p>
+    <p><strong>Record:</strong></p>
+    <pre class="text-xs overflow-auto">{JSON.stringify(record, null, 2)}</pre>
+  </div>
+)} 
