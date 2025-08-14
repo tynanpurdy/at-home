@@ -213,32 +213,29 @@ try {
       }
 
       try {
-        const endpoint = 'wss://jetstream1.us-east.bsky.network/subscribe';
-        const url = new URL(endpoint);
-        if (DID) url.searchParams.append('wantedDids', DID);
-        const ws = new WebSocket(url.toString());
-
-        ws.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data);
-            if (data?.kind !== 'commit') return;
-            const commit = data.commit;
-            const record = commit?.record || {};
-            if (commit?.operation !== 'create') return;
-            if (record?.$type !== 'app.bsky.feed.post') return;
-            const el = buildPostEl(record, data.did);
+        // Use shared jetstream instead of creating a new connection
+        const { startSharedStream, subscribeToPosts } = await import('../../lib/atproto/shared-jetstream');
+        
+        // Start the shared stream
+        await startSharedStream();
+        
+        // Subscribe to new posts
+        const unsubscribe = subscribeToPosts((record) => {
+          if (record.operation === 'create') {
+            const el = buildPostEl(record.value, record.did);
             // @ts-ignore
             container.insertBefore(el, container.firstChild);
             const posts = container.children;
             if (posts.length > maxPrepend + INITIAL_LIMIT) {
               if (container.lastElementChild) container.removeChild(container.lastElementChild);
             }
-          } catch (e) {
-            console.error('jetstream msg error', e);
           }
-        };
-
-        ws.onerror = (e) => console.error('jetstream ws error', e);
+        });
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+          unsubscribe();
+        });
       } catch (e) {
         console.error('jetstream start error', e);
       }

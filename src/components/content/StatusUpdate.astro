@@ -19,13 +19,13 @@ try {
 }
 ---
 
-<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4" id="status-update-container">
   {latestStatus ? (
     <div class="space-y-2">
-      <p class="text-lg font-medium text-gray-900 dark:text-white leading-relaxed">
+      <p class="text-lg font-medium text-gray-900 dark:text-white leading-relaxed" id="status-text">
         {latestStatus.text}
       </p>
-      <time class="text-sm text-gray-500 dark:text-gray-400 block" datetime={latestStatus.createdAt}>
+      <time class="text-sm text-gray-500 dark:text-gray-400 block" id="status-time" datetime={latestStatus.createdAt}>
         {new Date(latestStatus.createdAt).toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'short',
@@ -36,8 +36,80 @@ try {
       </time>
     </div>
   ) : (
-    <div class="text-center py-4">
+    <div class="text-center py-4" id="status-placeholder">
       <p class="text-gray-500 italic">No status updates available</p>
     </div>
   )}
 </div>
+
+<script>
+  import { startSharedStream, subscribeToStatusUpdates } from '../../lib/atproto/shared-jetstream';
+  
+  // Start the shared stream
+  startSharedStream();
+  
+  // Subscribe to status updates
+  const unsubscribe = subscribeToStatusUpdates((record) => {
+    if (record.operation === 'create') {
+      updateStatusDisplay(record.value);
+    }
+  });
+  
+  function updateStatusDisplay(statusData: any) {
+    const container = document.getElementById('status-update-container');
+    const textEl = document.getElementById('status-text');
+    const timeEl = document.getElementById('status-time');
+    const placeholderEl = document.getElementById('status-placeholder');
+    
+    if (!container) return;
+    
+    // Remove placeholder if it exists
+    if (placeholderEl) {
+      placeholderEl.remove();
+    }
+    
+    // Update or create text element
+    if (textEl) {
+      textEl.textContent = statusData.text;
+    } else {
+      const newTextEl = document.createElement('p');
+      newTextEl.className = 'text-lg font-medium text-gray-900 dark:text-white leading-relaxed';
+      newTextEl.id = 'status-text';
+      newTextEl.textContent = statusData.text;
+      container.appendChild(newTextEl);
+    }
+    
+    // Update or create time element
+    const formattedTime = new Date(statusData.createdAt).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    
+    if (timeEl) {
+      timeEl.textContent = formattedTime;
+      timeEl.setAttribute('datetime', statusData.createdAt);
+    } else {
+      const newTimeEl = document.createElement('time');
+      newTimeEl.className = 'text-sm text-gray-500 dark:text-gray-400 block';
+      newTimeEl.id = 'status-time';
+      newTimeEl.setAttribute('datetime', statusData.createdAt);
+      newTimeEl.textContent = formattedTime;
+      container.appendChild(newTimeEl);
+    }
+    
+    // Add a subtle animation to indicate the update
+    container.style.transition = 'all 0.3s ease';
+    container.style.transform = 'scale(1.02)';
+    setTimeout(() => {
+      container.style.transform = 'scale(1)';
+    }, 300);
+  }
+  
+  // Cleanup on page unload
+  window.addEventListener('beforeunload', () => {
+    unsubscribe();
+  });
+</script>
