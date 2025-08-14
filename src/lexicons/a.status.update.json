@@ -1,0 +1,26 @@
+{
+  "lexicon": 1,
+  "id": "a.status.update",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A simple status update record",
+      "key": "self",
+      "record": {
+        "type": "object",
+        "required": ["text", "createdAt"],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The status update text"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "When the status was created"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,43 @@
+---
+import type { AStatusUpdateRecord } from '../../lib/generated/a-status-update';
+import { AtprotoBrowser } from '../../lib/atproto/atproto-browser';
+import { loadConfig } from '../../lib/config/site';
+
+const config = loadConfig();
+const client = new AtprotoBrowser();
+
+// Fetch the latest status update
+let latestStatus: AStatusUpdateRecord | null = null;
+try {
+  const records = await client.getAllCollectionRecords(config.atproto.handle, 'a.status.update', 1);
+  
+  if (records.length > 0) {
+    latestStatus = records[0].value as AStatusUpdateRecord;
+  }
+} catch (error) {
+  console.error('Failed to fetch status update:', error);
+}
+---
+
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+  {latestStatus ? (
+    <div class="space-y-2">
+      <p class="text-lg font-medium text-gray-900 dark:text-white leading-relaxed">
+        {latestStatus.text}
+      </p>
+      <time class="text-sm text-gray-500 dark:text-gray-400 block" datetime={latestStatus.createdAt}>
+        {new Date(latestStatus.createdAt).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })}
+      </time>
+    </div>
+  ) : (
+    <div class="text-center py-4">
+      <p class="text-gray-500 italic">No status updates available</p>
+    </div>
+  )}
+</div>

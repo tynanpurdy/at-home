@@ -18,6 +18,10 @@ export const registry: ComponentRegistry = {
     component: 'WhitewindBlogPost',
     props: {}
   },
+  'AStatusUpdate': {
+    component: 'StatusUpdate',
+    props: {}
+  },
   // Add more mappings as you create components
   // 'ComExampleRecord': {
   //   component: 'ExampleComponent',

@@ -1,0 +1,2360 @@
+{
+  "collections": [
+    {
+      "name": "app.bsky.actor.profile",
+      "description": "Bluesky profile information",
+      "service": "bsky.app",
+      "sampleRecords": [
+        {
+          "$type": "app.bsky.actor.profile",
+          "avatar": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe"
+            },
+            "mimeType": "image/jpeg",
+            "size": 915425
+          },
+          "banner": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreicyefphti37yc4grac2q47eedkdwj67tnbomr5rwz62ikvrqvvcg4"
+            },
+            "mimeType": "image/jpeg",
+            "size": 806361
+          },
+          "description": "Experience designer for the decentralized web\n\n📍 Boston 🇺🇸\n\nmy work: tynanpurdy.com\nmy writing: blog.tynanpurdy.com\n\nI'm on Germ DM 🔑 and Signal @tynanpurdy.95\nhttps://ger.mx/A1CM6J3FugcfRh4NCNElrRdMsA9tLViN0QqqcMoMxkdS#did:plc:6ayddqghxhciedbaofoxkcbs",
+          "displayName": "Tynan Purdy"
+        }
+      ],
+      "generatedTypes": "export interface AppBskyActorProfile {\n  $type: 'app.bsky.actor.profile';\n  avatar?: Record<string, any>;\n  banner?: Record<string, any>;\n  description?: string;\n  displayName?: string;\n}\n",
+      "$types": [
+        "app.bsky.actor.profile"
+      ]
+    },
+    {
+      "name": "app.bsky.feed.like",
+      "description": "Bluesky like records",
+      "service": "bsky.app",
+      "sampleRecords": [
+        {
+          "$type": "app.bsky.feed.like",
+          "subject": {
+            "cid": "bafyreigdkn5773gshisfjoawof5aahcetkmwvc4pjjgo4xv3wu23ownss4",
+            "uri": "at://did:plc:x56l2n7i7babgdzqul4bd433/app.bsky.feed.post/3lvqn6sjvtc2u"
+          },
+          "createdAt": "2025-08-06T17:07:51.363Z"
+        },
+        {
+          "$type": "app.bsky.feed.like",
+          "subject": {
+            "cid": "bafyreihunfswi26wp276moerpjfyaoxa3qfcyxfk5aiohk5kitkhjw2nye",
+            "uri": "at://did:plc:vc7f4oafdgxsihk4cry2xpze/app.bsky.feed.post/3lvqfhz6tyk2z"
+          },
+          "createdAt": "2025-08-06T15:09:06.729Z"
+        },
+        {
+          "$type": "app.bsky.feed.like",
+          "subject": {
+            "cid": "bafyreibcvqmt6cnhx3gwhji7ljltsncah2lf6rlqc4wwopxqz7r5oyyryy",
+            "uri": "at://did:plc:pkeo4mm3uwnik45y3tgjc5cs/app.bsky.feed.post/3lvqicp2fvb2z"
+          },
+          "createdAt": "2025-08-06T15:00:41.448Z"
+        }
+      ],
+      "generatedTypes": "export interface AppBskyFeedLike {\n  $type: 'app.bsky.feed.like';\n  subject?: Record<string, any>;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "app.bsky.feed.like"
+      ]
+    },
+    {
+      "name": "app.bsky.feed.post",
+      "description": "Bluesky posts",
+      "service": "bsky.app",
+      "sampleRecords": [
+        {
+          "text": "yep shoulda realized the graze turbostream would only include bluesky records",
+          "$type": "app.bsky.feed.post",
+          "langs": [
+            "en"
+          ],
+          "createdAt": "2025-08-06T14:08:17.583Z"
+        },
+        {
+          "text": "this is a test",
+          "$type": "app.bsky.feed.post",
+          "langs": [
+            "en"
+          ],
+          "createdAt": "2025-08-06T14:04:21.632Z"
+        },
+        {
+          "text": "Is there not merit to 'sign in with atproto'? The decentralized identity is a major selling point of the protocol, not just the usage of lexicon.",
+          "$type": "app.bsky.feed.post",
+          "langs": [
+            "en"
+          ],
+          "reply": {
+            "root": {
+              "cid": "bafyreigxgudy4k2zvpikpnpqxwbwmkb6whfzkefr2rovd4y7pcppoggj7y",
+              "uri": "at://did:plc:nmc77zslrwafxn75j66mep6o/app.bsky.feed.post/3lvpyn2gacc2e"
+            },
+            "parent": {
+              "cid": "bafyreigxgudy4k2zvpikpnpqxwbwmkb6whfzkefr2rovd4y7pcppoggj7y",
+              "uri": "at://did:plc:nmc77zslrwafxn75j66mep6o/app.bsky.feed.post/3lvpyn2gacc2e"
+            }
+          },
+          "createdAt": "2025-08-06T13:28:03.405Z"
+        }
+      ],
+      "generatedTypes": "export interface AppBskyFeedPost {\n  $type: 'app.bsky.feed.post';\n  text?: string;\n  langs?: string[];\n  createdAt?: string;\n}\n",
+      "$types": [
+        "app.bsky.feed.post"
+      ]
+    },
+    {
+      "name": "app.bsky.feed.postgate",
+      "description": "app.bsky.feed.postgate records",
+      "service": "bsky.app",
+      "sampleRecords": [
+        {
+          "post": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3laub4w4obc2a",
+          "$type": "app.bsky.feed.postgate",
+          "createdAt": "2024-11-13T21:11:08.065Z",
+          "embeddingRules": [
+            {
+              "$type": "app.bsky.feed.postgate#disableRule"
+            }
+          ],
+          "detachedEmbeddingUris": []
+        }
+      ],
+      "generatedTypes": "export interface AppBskyFeedPostgate {\n  $type: 'app.bsky.feed.postgate';\n  post?: string;\n  createdAt?: string;\n  embeddingRules?: Record<string, any>[];\n  detachedEmbeddingUris?: any[];\n}\n",
+      "$types": [
+        "app.bsky.feed.postgate"
+      ]
+    },
+    {
+      "name": "app.bsky.feed.repost",
+      "description": "Bluesky repost records",
+      "service": "bsky.app",
+      "sampleRecords": [
+        {
+          "$type": "app.bsky.feed.repost",
+          "subject": {
+            "cid": "bafyreihwclfpjxtgkjdempzvvwo4ayj5ynm3aezry4ym3its6tdiy5kz3i",
+            "uri": "at://did:plc:i6y3jdklpvkjvynvsrnqfdoq/app.bsky.feed.post/3lvofxjoqt22g"
+          },
+          "createdAt": "2025-08-05T19:50:46.238Z"
+        },
+        {
+          "$type": "app.bsky.feed.repost",
+          "subject": {
+            "cid": "bafyreibcfwujyfz2fnpks62tujff5qxlqtfrndz7bllv3u4l7zp6xes6ka",
+            "uri": "at://did:plc:sfjxpxxyvewb2zlxwoz2vduw/app.bsky.feed.post/3lvldmqr7fs2q"
+          },
+          "createdAt": "2025-08-04T14:10:40.273Z"
+        },
+        {
+          "$type": "app.bsky.feed.repost",
+          "subject": {
+            "cid": "bafyreicxla5m4mw2ocmxwtsodwijcy7hlgedml2gbohpgvc5ftf2j2z3sa",
+            "uri": "at://did:plc:tpg43qhh4lw4ksiffs4nbda3/app.bsky.feed.post/3lvizvvkvhk2d"
+          },
+          "createdAt": "2025-08-03T21:17:44.210Z"
+        }
+      ],
+      "generatedTypes": "export interface AppBskyFeedRepost {\n  $type: 'app.bsky.feed.repost';\n  subject?: Record<string, any>;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "app.bsky.feed.repost"
+      ]
+    },
+    {
+      "name": "app.bsky.feed.threadgate",
+      "description": "app.bsky.feed.threadgate records",
+      "service": "bsky.app",
+      "sampleRecords": [
+        {
+          "post": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3laub4w4obc2a",
+          "$type": "app.bsky.feed.threadgate",
+          "allow": [
+            {
+              "$type": "app.bsky.feed.threadgate#mentionRule"
+            }
+          ],
+          "createdAt": "2024-11-13T21:11:08.361Z",
+          "hiddenReplies": []
+        }
+      ],
+      "generatedTypes": "export interface AppBskyFeedThreadgate {\n  $type: 'app.bsky.feed.threadgate';\n  post?: string;\n  allow?: Record<string, any>[];\n  createdAt?: string;\n  hiddenReplies?: any[];\n}\n",
+      "$types": [
+        "app.bsky.feed.threadgate"
+      ]
+    },
+    {
+      "name": "app.bsky.graph.block",
+      "description": "Bluesky block relationships",
+      "service": "bsky.app",
+      "sampleRecords": [
+        {
+          "$type": "app.bsky.graph.block",
+          "subject": "did:plc:7tw5kcf6375mlghspilpmpix",
+          "createdAt": "2025-07-23T22:11:19.502Z"
+        },
+        {
+          "$type": "app.bsky.graph.block",
+          "subject": "did:plc:f6y7lzl5jslkfn7ta47e7to3",
+          "createdAt": "2025-07-23T20:01:13.114Z"
+        },
+        {
+          "$type": "app.bsky.graph.block",
+          "subject": "did:plc:efwg4pw7qdyuh3qgr5x454fd",
+          "createdAt": "2025-06-27T18:04:36.550Z"
+        }
+      ],
+      "generatedTypes": "export interface AppBskyGraphBlock {\n  $type: 'app.bsky.graph.block';\n  subject?: string;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "app.bsky.graph.block"
+      ]
+    },
+    {
+      "name": "app.bsky.graph.follow",
+      "description": "Bluesky follow relationships",
+      "service": "bsky.app",
+      "sampleRecords": [
+        {
+          "$type": "app.bsky.graph.follow",
+          "subject": "did:plc:mdailwqaetwpqnysw6qllqwl",
+          "createdAt": "2025-08-06T14:57:20.859Z"
+        },
+        {
+          "$type": "app.bsky.graph.follow",
+          "subject": "did:plc:f2np526hugxvamu25t6l4y6e",
+          "createdAt": "2025-08-05T21:41:26.560Z"
+        },
+        {
+          "$type": "app.bsky.graph.follow",
+          "subject": "did:plc:7axcqwj4roha6mqpdhpdwczx",
+          "createdAt": "2025-08-05T21:37:20.051Z"
+        }
+      ],
+      "generatedTypes": "export interface AppBskyGraphFollow {\n  $type: 'app.bsky.graph.follow';\n  subject?: string;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "app.bsky.graph.follow"
+      ]
+    },
+    {
+      "name": "app.bsky.graph.list",
+      "description": "app.bsky.graph.list records",
+      "service": "bsky.app",
+      "sampleRecords": [
+        {
+          "name": "hehe comics",
+          "$type": "app.bsky.graph.list",
+          "purpose": "app.bsky.graph.defs#curatelist",
+          "createdAt": "2025-08-04T15:44:09.398Z",
+          "description": "these are fun"
+        },
+        {
+          "name": "What's up Boston",
+          "$type": "app.bsky.graph.list",
+          "purpose": "app.bsky.graph.defs#referencelist",
+          "createdAt": "2025-08-04T15:15:39.837Z"
+        },
+        {
+          "name": "My domain is proof of my identity",
+          "$type": "app.bsky.graph.list",
+          "avatar": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreie56qtqmtp5iu56zqqjkvwhvzqcudtsbetgs2joaowvuljbcluvze"
+            },
+            "mimeType": "image/jpeg",
+            "size": 941683
+          },
+          "purpose": "app.bsky.graph.defs#curatelist",
+          "createdAt": "2025-07-31T15:57:34.609Z",
+          "description": "You know this is me because its tynanpurdy.com",
+          "descriptionFacets": [
+            {
+              "index": {
+                "byteEnd": 46,
+                "byteStart": 32
+              },
+              "features": [
+                {
+                  "uri": "https://tynanpurdy.com",
+                  "$type": "app.bsky.richtext.facet#link"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedTypes": "export interface AppBskyGraphList {\n  $type: 'app.bsky.graph.list';\n  name?: string;\n  purpose?: string;\n  createdAt?: string;\n  description?: string;\n}\n",
+      "$types": [
+        "app.bsky.graph.list"
+      ]
+    },
+    {
+      "name": "app.bsky.graph.listitem",
+      "description": "app.bsky.graph.listitem records",
+      "service": "bsky.app",
+      "sampleRecords": [
+        {
+          "list": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.graph.list/3lquir4dvpk2v",
+          "$type": "app.bsky.graph.listitem",
+          "subject": "did:plc:mdailwqaetwpqnysw6qllqwl",
+          "createdAt": "2025-08-06T14:45:30.004Z"
+        },
+        {
+          "list": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.graph.list/3lquir4dvpk2v",
+          "$type": "app.bsky.graph.listitem",
+          "subject": "did:plc:k2r4d4exuuord4sos4wavcoj",
+          "createdAt": "2025-08-05T13:39:59.770Z"
+        },
+        {
+          "list": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.graph.list/3lvljxc7e2r2j",
+          "$type": "app.bsky.graph.listitem",
+          "subject": "did:plc:v3n5wr27y6flohaycmcgsrij",
+          "createdAt": "2025-08-04T19:01:10.319Z"
+        }
+      ],
+      "generatedTypes": "export interface AppBskyGraphListitem {\n  $type: 'app.bsky.graph.listitem';\n  list?: string;\n  subject?: string;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "app.bsky.graph.listitem"
+      ]
+    },
+    {
+      "name": "app.bsky.graph.starterpack",
+      "description": "app.bsky.graph.starterpack records",
+      "service": "bsky.app",
+      "sampleRecords": [
+        {
+          "list": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.graph.list/3lvliedprgp2t",
+          "name": "What's up Boston",
+          "$type": "app.bsky.graph.starterpack",
+          "feeds": [
+            {
+              "cid": "bafyreigd75aawyao7dikal4bm634dxtgf7xp43msbywcx4ctcyqojjubni",
+              "did": "did:web:skyfeed.me",
+              "uri": "at://did:plc:r2mpjf3gz2ygfaodkzzzfddg/app.bsky.feed.generator/aaag6jgz6tfou",
+              "labels": [],
+              "viewer": {},
+              "creator": {
+                "did": "did:plc:r2mpjf3gz2ygfaodkzzzfddg",
+                "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:r2mpjf3gz2ygfaodkzzzfddg/bafkreidvm7mnr3mwg7lnktrpeebsr7tz5u4ic3acrdlnte7ojp45vrtmjm@jpeg",
+                "handle": "boston.gov",
+                "labels": [
+                  {
+                    "cts": "2025-02-12T02:03:24.048Z",
+                    "src": "did:plc:m6adptn62dcahfaq34tce3j5",
+                    "uri": "did:plc:r2mpjf3gz2ygfaodkzzzfddg",
+                    "val": "joined-feb-c",
+                    "ver": 1
+                  },
+                  {
+                    "cts": "2025-06-06T17:54:44.623Z",
+                    "src": "did:plc:fqfzpua2rp5io5nmxcixvdvm",
+                    "uri": "did:plc:r2mpjf3gz2ygfaodkzzzfddg",
+                    "val": "voting-for-kodos",
+                    "ver": 1
+                  }
+                ],
+                "viewer": {
+                  "muted": false,
+                  "blockedBy": false,
+                  "following": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.graph.follow/3lvlj4yyafh2w"
+                },
+                "createdAt": "2024-02-09T16:18:11.855Z",
+                "indexedAt": "2025-04-29T23:55:10.143Z",
+                "associated": {
+                  "activitySubscription": {
+                    "allowSubscriptions": "followers"
+                  }
+                },
+                "description": "The official Bluesky account of the City of Boston. For non-emergency services, please call 311. \n\nBoston.gov",
+                "displayName": "City of Boston",
+                "verification": {
+                  "verifications": [
+                    {
+                      "uri": "at://did:plc:z72i7hdynmk6r22z27h6tvur/app.bsky.graph.verification/3lu23uowywx2m",
+                      "issuer": "did:plc:z72i7hdynmk6r22z27h6tvur",
+                      "isValid": true,
+                      "createdAt": "2025-07-15T23:51:42.492Z"
+                    }
+                  ],
+                  "verifiedStatus": "valid",
+                  "trustedVerifierStatus": "none"
+                }
+              },
+              "indexedAt": "2024-11-27T19:48:59.425Z",
+              "likeCount": 21,
+              "description": "Official City of Boston accounts representing departments, cabinets, commissions and more teams working to make Boston a home for everyone.",
+              "displayName": "City of Boston"
+            }
+          ],
+          "createdAt": "2025-08-04T15:15:40.040Z",
+          "updatedAt": "2025-08-04T15:36:11.792Z"
+        }
+      ],
+      "generatedTypes": "export interface AppBskyGraphStarterpack {\n  $type: 'app.bsky.graph.starterpack';\n  list?: string;\n  name?: string;\n  feeds?: Record<string, any>[];\n  createdAt?: string;\n  updatedAt?: string;\n}\n",
+      "$types": [
+        "app.bsky.graph.starterpack"
+      ]
+    },
+    {
+      "name": "app.bsky.graph.verification",
+      "description": "app.bsky.graph.verification records",
+      "service": "bsky.app",
+      "sampleRecords": [
+        {
+          "$type": "app.bsky.graph.verification",
+          "handle": "goodwillhinton.com",
+          "subject": "did:plc:ek7ua4ev2a35cdgehdxo4jsg",
+          "createdAt": "2025-07-10T19:57:12.524Z",
+          "displayName": "Good Will Hinton"
+        },
+        {
+          "$type": "app.bsky.graph.verification",
+          "handle": "jacknicolaus.bsky.social",
+          "subject": "did:plc:5ldqrqjevj5q5s5dyc3w6q2a",
+          "createdAt": "2025-07-10T19:55:00.870Z",
+          "displayName": "Jack Purdy"
+        },
+        {
+          "$type": "app.bsky.graph.verification",
+          "handle": "jennpurdy.bsky.social",
+          "subject": "did:plc:7tai7ouufljuzlhjajpiojyw",
+          "createdAt": "2025-07-10T19:54:44.028Z",
+          "displayName": "Jenn Purdy"
+        }
+      ],
+      "generatedTypes": "export interface AppBskyGraphVerification {\n  $type: 'app.bsky.graph.verification';\n  handle?: string;\n  subject?: string;\n  createdAt?: string;\n  displayName?: string;\n}\n",
+      "$types": [
+        "app.bsky.graph.verification"
+      ]
+    },
+    {
+      "name": "app.popsky.list",
+      "description": "app.popsky.list records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "name": "Played Games",
+          "$type": "app.popsky.list",
+          "authorDid": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "createdAt": "2025-07-29T18:45:43.158Z",
+          "indexedAt": "2025-07-29T18:45:43.158Z",
+          "description": ""
+        },
+        {
+          "name": "The good life",
+          "tags": [],
+          "$type": "app.popsky.list",
+          "ordered": false,
+          "createdAt": "2025-07-29T18:42:13.706Z",
+          "description": ""
+        },
+        {
+          "name": "Listened Albums & EPs",
+          "$type": "app.popsky.list",
+          "authorDid": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "createdAt": "2025-07-29T18:40:45.138Z",
+          "indexedAt": "2025-07-29T18:40:45.138Z",
+          "description": ""
+        }
+      ],
+      "generatedTypes": "export interface AppPopskyList {\n  $type: 'app.popsky.list';\n  name?: string;\n  authorDid?: string;\n  createdAt?: string;\n  indexedAt?: string;\n  description?: string;\n}\n",
+      "$types": [
+        "app.popsky.list"
+      ]
+    },
+    {
+      "name": "app.popsky.listItem",
+      "description": "app.popsky.listItem records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "app.popsky.listItem",
+          "addedAt": "2025-08-04T20:56:17.962Z",
+          "listUri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.popsky.list/3lv4qhdmaoc2f",
+          "identifiers": {
+            "isbn10": "1991152310",
+            "isbn13": "9781991152312"
+          },
+          "creativeWorkType": "book"
+        },
+        {
+          "$type": "app.popsky.listItem",
+          "addedAt": "2025-08-04T20:56:14.809Z",
+          "listUri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.popsky.list/3lv4r46l6ck2f",
+          "identifiers": {
+            "isbn10": "1991152310",
+            "isbn13": "9781991152312"
+          },
+          "creativeWorkType": "book"
+        },
+        {
+          "$type": "app.popsky.listItem",
+          "addedAt": "2025-08-04T20:55:30.197Z",
+          "listUri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.popsky.list/3ltyvzvrlkk2k",
+          "identifiers": {
+            "isbn10": "1988575060",
+            "isbn13": "9781988575063"
+          },
+          "creativeWorkType": "book"
+        }
+      ],
+      "generatedTypes": "export interface AppPopskyListItem {\n  $type: 'app.popsky.listItem';\n  addedAt?: string;\n  listUri?: string;\n  identifiers?: Record<string, any>;\n  creativeWorkType?: string;\n}\n",
+      "$types": [
+        "app.popsky.listItem"
+      ]
+    },
+    {
+      "name": "app.popsky.profile",
+      "description": "app.popsky.profile records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "app.popsky.profile",
+          "createdAt": "2025-07-29T18:29:43.645Z",
+          "description": "",
+          "displayName": "Tynan Purdy"
+        }
+      ],
+      "generatedTypes": "export interface AppPopskyProfile {\n  $type: 'app.popsky.profile';\n  createdAt?: string;\n  description?: string;\n  displayName?: string;\n}\n",
+      "$types": [
+        "app.popsky.profile"
+      ]
+    },
+    {
+      "name": "app.popsky.review",
+      "description": "app.popsky.review records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "tags": [],
+          "$type": "app.popsky.review",
+          "facets": [],
+          "rating": 10,
+          "createdAt": "2025-07-29T18:45:40.559Z",
+          "isRevisit": false,
+          "reviewText": "",
+          "identifiers": {
+            "igdbId": "28512"
+          },
+          "containsSpoilers": false,
+          "creativeWorkType": "video_game"
+        },
+        {
+          "tags": [],
+          "$type": "app.popsky.review",
+          "facets": [],
+          "rating": 9,
+          "createdAt": "2024-01-05T00:00:00.000Z",
+          "isRevisit": false,
+          "reviewText": "",
+          "identifiers": {
+            "isbn13": "9781797114613"
+          },
+          "containsSpoilers": false,
+          "creativeWorkType": "book"
+        },
+        {
+          "tags": [],
+          "$type": "app.popsky.review",
+          "facets": [],
+          "rating": 8,
+          "createdAt": "2024-05-02T00:00:00.000Z",
+          "isRevisit": false,
+          "reviewText": "",
+          "identifiers": {
+            "isbn13": "9781415959138"
+          },
+          "containsSpoilers": false,
+          "creativeWorkType": "book"
+        }
+      ],
+      "generatedTypes": "export interface AppPopskyReview {\n  $type: 'app.popsky.review';\n  tags?: any[];\n  facets?: any[];\n  rating?: number;\n  createdAt?: string;\n  isRevisit?: boolean;\n  reviewText?: string;\n  identifiers?: Record<string, any>;\n  containsSpoilers?: boolean;\n  creativeWorkType?: string;\n}\n",
+      "$types": [
+        "app.popsky.review"
+      ]
+    },
+    {
+      "name": "app.rocksky.album",
+      "description": "app.rocksky.album records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "year": 2025,
+          "$type": "app.rocksky.album",
+          "title": "Heartbreak Hysteria",
+          "artist": "Sawyer Hill",
+          "albumArt": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreibaol5obcwhudbcli2o33nh7ats764hqnkpfxjxqn3ykjeb65ht5q"
+            },
+            "mimeType": "image/jpeg",
+            "size": 38011
+          },
+          "createdAt": "2025-07-12T20:41:54.087Z",
+          "releaseDate": "2025-04-18T00:00:00.000Z"
+        },
+        {
+          "year": 2023,
+          "$type": "app.rocksky.album",
+          "title": "I Love You, I’m Trying",
+          "artist": "grandson",
+          "albumArt": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreih72c6ye2vd7scwbedjbfoqzue26fnsfs42dc2quqououlvqzdly4"
+            },
+            "mimeType": "image/jpeg",
+            "size": 266870
+          },
+          "createdAt": "2025-07-12T20:39:46.979Z",
+          "releaseDate": "2023-05-05T00:00:00.000Z"
+        },
+        {
+          "year": 2025,
+          "$type": "app.rocksky.album",
+          "title": "june",
+          "artist": "DE'WAYNE",
+          "albumArt": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreihiydajfy66mbmk4g2cc4ymvcj5jkba2rxrnucxjcxl63rvch37ee"
+            },
+            "mimeType": "image/jpeg",
+            "size": 78882
+          },
+          "createdAt": "2025-07-12T20:36:54.769Z",
+          "releaseDate": "2025-05-14T00:00:00.000Z"
+        }
+      ],
+      "generatedTypes": "export interface AppRockskyAlbum {\n  $type: 'app.rocksky.album';\n  year?: number;\n  title?: string;\n  artist?: string;\n  albumArt?: Record<string, any>;\n  createdAt?: string;\n  releaseDate?: string;\n}\n",
+      "$types": [
+        "app.rocksky.album"
+      ]
+    },
+    {
+      "name": "app.rocksky.artist",
+      "description": "app.rocksky.artist records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "name": "Sawyer Hill",
+          "$type": "app.rocksky.artist",
+          "picture": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreibndm5e5idr7o26wlci5twbcavtjrfatg4eeal7beieqxvqyipfnu"
+            },
+            "mimeType": "image/jpeg",
+            "size": 92121
+          },
+          "createdAt": "2025-07-12T20:41:51.867Z"
+        },
+        {
+          "name": "DE'WAYNE",
+          "$type": "app.rocksky.artist",
+          "picture": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreihvir6gp4ls2foh7grfx7cgouc4scxc7ubhk535ig7nbrvtpscf7u"
+            },
+            "mimeType": "image/jpeg",
+            "size": 167229
+          },
+          "createdAt": "2025-07-12T20:36:52.320Z"
+        },
+        {
+          "name": "Bryce Fox",
+          "$type": "app.rocksky.artist",
+          "picture": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreigx4a5reezucwsujfuyv27lun5xkavjtgkzvifknrsblh3jnvznhi"
+            },
+            "mimeType": "image/jpeg",
+            "size": 119015
+          },
+          "createdAt": "2025-07-12T20:34:10.891Z"
+        }
+      ],
+      "generatedTypes": "export interface AppRockskyArtist {\n  $type: 'app.rocksky.artist';\n  name?: string;\n  picture?: Record<string, any>;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "app.rocksky.artist"
+      ]
+    },
+    {
+      "name": "app.rocksky.like",
+      "description": "app.rocksky.like records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "app.rocksky.like",
+          "subject": {
+            "cid": "bafyreiejzq3p7bqjuo6sgt4x3rwojnvu4jajrolzread7eqpzo7jryoega",
+            "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.rocksky.song/3lmhvldhhgs2r"
+          },
+          "createdAt": "2025-04-17T14:30:30.388Z"
+        },
+        {
+          "$type": "app.rocksky.like",
+          "subject": {
+            "cid": "bafyreihvboqggljg677rxl6xxr2mqudlefmixhkrvf2gltmpzbhyzduqba",
+            "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.rocksky.song/3lmhqwxjxek2m"
+          },
+          "createdAt": "2025-04-15T19:25:44.473Z"
+        },
+        {
+          "$type": "app.rocksky.like",
+          "subject": {
+            "cid": "bafyreiah4sm2jjrgcnqhmfaeze44th3svwlqbftpqepi67c2i6khzjqwya",
+            "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.rocksky.song/3lloqnprwwk2c"
+          },
+          "createdAt": "2025-03-31T16:38:14.223Z"
+        }
+      ],
+      "generatedTypes": "export interface AppRockskyLike {\n  $type: 'app.rocksky.like';\n  subject?: Record<string, any>;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "app.rocksky.like"
+      ]
+    },
+    {
+      "name": "app.rocksky.scrobble",
+      "description": "app.rocksky.scrobble records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "year": 2025,
+          "$type": "app.rocksky.scrobble",
+          "album": "Heartbreak Hysteria",
+          "title": "One Shot",
+          "artist": "Sawyer Hill",
+          "albumArt": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreibaol5obcwhudbcli2o33nh7ats764hqnkpfxjxqn3ykjeb65ht5q"
+            },
+            "mimeType": "image/jpeg",
+            "size": 38011
+          },
+          "duration": 198380,
+          "createdAt": "2025-07-12T20:41:58.353Z",
+          "discNumber": 1,
+          "albumArtist": "Sawyer Hill",
+          "releaseDate": "2025-04-18T00:00:00.000Z",
+          "spotifyLink": "https://open.spotify.com/track/4yiiRbfHkqhCj0ChW62ASx",
+          "trackNumber": 2
+        },
+        {
+          "year": 2023,
+          "$type": "app.rocksky.scrobble",
+          "album": "I Love You, I’m Trying",
+          "title": "Something To Hide",
+          "artist": "grandson",
+          "albumArt": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreih72c6ye2vd7scwbedjbfoqzue26fnsfs42dc2quqououlvqzdly4"
+            },
+            "mimeType": "image/jpeg",
+            "size": 266870
+          },
+          "duration": 119047,
+          "createdAt": "2025-07-12T20:39:51.055Z",
+          "discNumber": 1,
+          "albumArtist": "grandson",
+          "releaseDate": "2023-05-05T00:00:00.000Z",
+          "spotifyLink": "https://open.spotify.com/track/1rjZicKSpIJ3WYffIK9Fuy",
+          "trackNumber": 3
+        },
+        {
+          "year": 2025,
+          "$type": "app.rocksky.scrobble",
+          "album": "june",
+          "title": "june",
+          "artist": "DE'WAYNE",
+          "albumArt": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreihiydajfy66mbmk4g2cc4ymvcj5jkba2rxrnucxjcxl63rvch37ee"
+            },
+            "mimeType": "image/jpeg",
+            "size": 78882
+          },
+          "duration": 168000,
+          "createdAt": "2025-07-12T20:36:58.633Z",
+          "discNumber": 1,
+          "albumArtist": "DE'WAYNE",
+          "releaseDate": "2025-05-14T00:00:00.000Z",
+          "spotifyLink": "https://open.spotify.com/track/6PBJfoq40a8gsUULbn0oyG",
+          "trackNumber": 1
+        }
+      ],
+      "generatedTypes": "export interface AppRockskyScrobble {\n  $type: 'app.rocksky.scrobble';\n  year?: number;\n  album?: string;\n  title?: string;\n  artist?: string;\n  albumArt?: Record<string, any>;\n  duration?: number;\n  createdAt?: string;\n  discNumber?: number;\n  albumArtist?: string;\n  releaseDate?: string;\n  spotifyLink?: string;\n  trackNumber?: number;\n}\n",
+      "$types": [
+        "app.rocksky.scrobble"
+      ]
+    },
+    {
+      "name": "app.rocksky.song",
+      "description": "app.rocksky.song records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "year": 2023,
+          "$type": "app.rocksky.song",
+          "album": "I Love You, I’m Trying",
+          "title": "Stuck Here With Me",
+          "artist": "grandson",
+          "albumArt": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreih72c6ye2vd7scwbedjbfoqzue26fnsfs42dc2quqououlvqzdly4"
+            },
+            "mimeType": "image/jpeg",
+            "size": 266870
+          },
+          "duration": 235930,
+          "createdAt": "2025-07-12T20:50:45.291Z",
+          "discNumber": 1,
+          "albumArtist": "grandson",
+          "releaseDate": "2023-05-05T00:00:00.000Z",
+          "spotifyLink": "https://open.spotify.com/track/29FvUqoMbmQ50fdHlgs5om",
+          "trackNumber": 12
+        },
+        {
+          "year": 2023,
+          "$type": "app.rocksky.song",
+          "album": "I Love You, I’m Trying",
+          "title": "Heather",
+          "artist": "grandson",
+          "albumArt": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreih72c6ye2vd7scwbedjbfoqzue26fnsfs42dc2quqououlvqzdly4"
+            },
+            "mimeType": "image/jpeg",
+            "size": 266870
+          },
+          "duration": 198468,
+          "createdAt": "2025-07-12T20:49:46.259Z",
+          "discNumber": 1,
+          "albumArtist": "grandson",
+          "releaseDate": "2023-05-05T00:00:00.000Z",
+          "spotifyLink": "https://open.spotify.com/track/05jgkkHC2o5edhP92u9pgU",
+          "trackNumber": 11
+        },
+        {
+          "year": 2023,
+          "$type": "app.rocksky.song",
+          "album": "I Love You, I’m Trying",
+          "title": "I Will Be Here When You’re Ready To Wake Up (feat. Wafia)",
+          "artist": "grandson, Wafia",
+          "albumArt": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreih72c6ye2vd7scwbedjbfoqzue26fnsfs42dc2quqououlvqzdly4"
+            },
+            "mimeType": "image/jpeg",
+            "size": 266870
+          },
+          "duration": 60604,
+          "createdAt": "2025-07-12T20:48:46.161Z",
+          "discNumber": 1,
+          "albumArtist": "grandson",
+          "releaseDate": "2023-05-05T00:00:00.000Z",
+          "spotifyLink": "https://open.spotify.com/track/2fQQZQpze9c44ebtCYx8Jl",
+          "trackNumber": 10
+        }
+      ],
+      "generatedTypes": "export interface AppRockskySong {\n  $type: 'app.rocksky.song';\n  year?: number;\n  album?: string;\n  title?: string;\n  artist?: string;\n  albumArt?: Record<string, any>;\n  duration?: number;\n  createdAt?: string;\n  discNumber?: number;\n  albumArtist?: string;\n  releaseDate?: string;\n  spotifyLink?: string;\n  trackNumber?: number;\n}\n",
+      "$types": [
+        "app.rocksky.song"
+      ]
+    },
+    {
+      "name": "blue.flashes.actor.profile",
+      "description": "blue.flashes.actor.profile records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "blue.flashes.actor.profile",
+          "createdAt": "2025-07-28T18:24:43.072Z",
+          "showFeeds": true,
+          "showLikes": false,
+          "showLists": true,
+          "showMedia": true,
+          "enablePortfolio": false,
+          "portfolioLayout": "grid",
+          "allowRawDownload": false
+        }
+      ],
+      "generatedTypes": "export interface BlueFlashesActorProfile {\n  $type: 'blue.flashes.actor.profile';\n  createdAt?: string;\n  showFeeds?: boolean;\n  showLikes?: boolean;\n  showLists?: boolean;\n  showMedia?: boolean;\n  enablePortfolio?: boolean;\n  portfolioLayout?: string;\n  allowRawDownload?: boolean;\n}\n",
+      "$types": [
+        "blue.flashes.actor.profile"
+      ]
+    },
+    {
+      "name": "blue.linkat.board",
+      "description": "blue.linkat.board records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "blue.linkat.board",
+          "cards": [
+            {
+              "url": "https://tynanpurdy.com",
+              "text": "Portfolio",
+              "emoji": "🔗"
+            },
+            {
+              "url": "https://blog.tynanpurdy.com",
+              "text": "Blog",
+              "emoji": "📰"
+            },
+            {
+              "url": "https://github.com/tynanpurdy",
+              "text": "GitHub",
+              "emoji": ""
+            },
+            {
+              "url": "https://www.linkedin.com/in/tynanpurdy",
+              "text": "LinkedIn",
+              "emoji": "👔"
+            },
+            {
+              "url": "https://mastodon.social/@tynanpurdy.com@bsky.brid.gy",
+              "text": "Mastodon (Bridged)",
+              "emoji": ""
+            }
+          ]
+        }
+      ],
+      "generatedTypes": "export interface BlueLinkatBoard {\n  $type: 'blue.linkat.board';\n  cards?: Record<string, any>[];\n}\n",
+      "$types": [
+        "blue.linkat.board"
+      ]
+    },
+    {
+      "name": "buzz.bookhive.book",
+      "description": "buzz.bookhive.book records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "buzz.bookhive.book",
+          "cover": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreih7cdewtoxyo7fpl4x6bsnf3edjs2jg26jdy23opkzz7eug6zqff4"
+            },
+            "mimeType": "image/jpeg",
+            "size": 52491
+          },
+          "title": "A ​Court of Silver Flames",
+          "hiveId": "bk_J1U6l2ckLEM4sALVBxUp",
+          "status": "buzz.bookhive.defs#finished",
+          "authors": "Sarah J. Maas",
+          "createdAt": "2025-07-15T03:45:29.303Z"
+        },
+        {
+          "$type": "buzz.bookhive.book",
+          "cover": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreigsicpiwolxv7ap2iaaljy356bzjwf6dtuvgzwahz4uokz5kz6k6m"
+            },
+            "mimeType": "image/jpeg",
+            "size": 124025
+          },
+          "title": "When We're in Charge: The Next Generation’s Guide to Leadership",
+          "hiveId": "bk_1D28ImhUcffLrWt8G9UW",
+          "status": "buzz.bookhive.defs#wantToRead",
+          "authors": "Amanda Litman",
+          "createdAt": "2025-05-17T20:03:38.336Z"
+        },
+        {
+          "$type": "buzz.bookhive.book",
+          "cover": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreig5s2k5s42ccbdren2sfdasxyq2e2er7qcb6qs2escdhlt7lsuxtm"
+            },
+            "mimeType": "image/jpeg",
+            "size": 127596
+          },
+          "title": "Dune",
+          "hiveId": "bk_GUShjG8U9l93XqIrGiKV",
+          "status": "buzz.bookhive.defs#finished",
+          "authors": "Frank Herbert",
+          "createdAt": "2025-05-17T19:24:44.640Z"
+        }
+      ],
+      "generatedTypes": "export interface BuzzBookhiveBook {\n  $type: 'buzz.bookhive.book';\n  cover?: Record<string, any>;\n  title?: string;\n  hiveId?: string;\n  status?: string;\n  authors?: string;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "buzz.bookhive.book"
+      ]
+    },
+    {
+      "name": "chat.bsky.actor.declaration",
+      "description": "chat.bsky.actor.declaration records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "chat.bsky.actor.declaration",
+          "allowIncoming": "following"
+        }
+      ],
+      "generatedTypes": "export interface ChatBskyActorDeclaration {\n  $type: 'chat.bsky.actor.declaration';\n  allowIncoming?: string;\n}\n",
+      "$types": [
+        "chat.bsky.actor.declaration"
+      ]
+    },
+    {
+      "name": "chat.roomy.01JPNX7AA9BSM6TY2GWW1TR5V7.catalog",
+      "description": "chat.roomy.01JPNX7AA9BSM6TY2GWW1TR5V7.catalog records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "id": "leaf:ypcj310ntdfmzpg670b5j29xe3034dnh3kcvk76p5amwwy35hqt0",
+          "$type": "chat.roomy.01JPNX7AA9BSM6TY2GWW1TR5V7.catalog"
+        }
+      ],
+      "generatedTypes": "export interface ChatRoomy01JPNX7AA9BSM6TY2GWW1TR5V7Catalog {\n  $type: 'chat.roomy.01JPNX7AA9BSM6TY2GWW1TR5V7.catalog';\n  id?: string;\n}\n",
+      "$types": [
+        "chat.roomy.01JPNX7AA9BSM6TY2GWW1TR5V7.catalog"
+      ]
+    },
+    {
+      "name": "chat.roomy.profile",
+      "description": "chat.roomy.profile records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "chat.roomy.profile",
+          "accountId": "co_zhgWve43YBnn266mcVACjUuVG3d",
+          "profileId": "co_zDFNXMtNLkqorucsoFX89zb9xKq"
+        }
+      ],
+      "generatedTypes": "export interface ChatRoomyProfile {\n  $type: 'chat.roomy.profile';\n  accountId?: string;\n  profileId?: string;\n}\n",
+      "$types": [
+        "chat.roomy.profile"
+      ]
+    },
+    {
+      "name": "com.germnetwork.keypackage",
+      "description": "com.germnetwork.keypackage records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "com.germnetwork.keypackage",
+          "anchorHello": "AHHqxtKPJc9RLZyPZVexLVS3trjVRRE/JYDxDyB71KyTBYB9vQL1yyHSlNytf+5OWb0S1h5WM5F43uJuty8XTAT/AaUAAAOKVay8GnbTuqQtVPA11MVoVY61HW8e5vnxDQmdmVT9+wICAAAB/wE5AAEABQABAAMgVyrTJ4GcogoE02O68mMrGrmhuRXIPxYmzJ4GoUaVPDMgiVabYjh9CTZ/Kiefa/IQT9htiTEzvxAzR+hrw0b4qgUgGALXa4Kf0riu5j1k+gqYxQOvpzihscrm7IIAoaVdo5cAASEDilWsvBp207qkLVTwNdTFaFWOtR1vHub58Q0JnZlU/fsCAAEKAAIABwAFAAEAAwAAAgABAQAAAABokkwRAAAAAGpzf5EAQEDrZKju/Dqxnmcnpfc/tbClFyaA7ojWK9uVH7ZFieHdcEwNSRwtdi3pYJcSselbyUpJXRsc0jlOq428bTAQIx0IAEBAk2n8vRJ32A+09QEbh7gIjAdarFwAXH0JUBf3h2fY7LcTpopvo68IaNPDtf9aZBgJukfWZKzrQzSK8pWFAZUiCQBvVL5Mcq1KiCMH26+O2m/3+6XaKedsXm8BhHxzM9rfzUVJe1YbNMxv+SqRaDUaX7AACEaTw0m4KSjNVj7OPyYC"
+        }
+      ],
+      "generatedTypes": "export interface ComGermnetworkKeypackage {\n  $type: 'com.germnetwork.keypackage';\n  anchorHello?: string;\n}\n",
+      "$types": [
+        "com.germnetwork.keypackage"
+      ]
+    },
+    {
+      "name": "com.whtwnd.blog.entry",
+      "description": "com.whtwnd.blog.entry records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "com.whtwnd.blog.entry",
+          "theme": "github-light",
+          "title": "Historic Atlanta Neighborhood Brand (Project Test)",
+          "content": "![image](https://framerusercontent.com/images/Ap45SgGnBdON8exvIwcXYpsdy8.jpg)\n\n> 📗 The team at Design Bloc worked closely with the residents of the historic Hunter Hills community to design a neighborhood brand that accurately represents their rich history. Design Bloc staff conducted extensive ethnographic research to understand the social, environmental, and material considerations for a representative brand.\n\n![image](https://framerusercontent.com/images/81IRCb1XebTy2hdaYwrgtRPFdLY.jpg)\n\n# Ethnographic Research\n\nOur journey begins with empathy. As one of the first planned black neighborhoods in Atlanta, Hunter Hills carries a long and significant history that must be preserved in its representation.\n\n> _The Hunter Hills brand should_ **reinforce the historic values of a unified community.**\n\n`literature reviews` helped us understand the context.\n\n`neighborhood walks` helped us understand the landscape.\n\n`resident interviews` helped us understand the experience.\n\n![image](https://framerusercontent.com/images/dpMAPMQKiJDIBHeBRo81pwV2Z1A.jpg)\n\n# Designing With the Community\n\nWe met with the Hunter Hills Neighborhood Association after each of several rounds of logo ideation, gathering feedback to lead us to the best final logo.\n\n![image](https://framerusercontent.com/images/gVlBWy07LHsZtPKWVpBlyQVki5o.jpg)\n\nStaff generated dozens of sketch thumbnails.\n\n![image](https://framerusercontent.com/images/9c419zGznQFCIypyYJjmxWWMmg.png)\n\nI iterated on another staff’s sketch to arrive at the final logo on the right.\n\n# Collaborative InDesign\n\nI prepared a template file for our staff to create assigned pages of the final book.\n\n![image](https://framerusercontent.com/images/aKUnGNeWZKE9YMLNYiVHsRPzI0.png)\n\nPage plan with proportional grid fields and measured type\n\n![image](https://framerusercontent.com/images/D6wDwYfhkEXIaJeWdYLmiEss1U.png)\n\nPredefined text styles designed to fit in the grid and integrate with InDesign’s TOC feature\n\n![image](https://framerusercontent.com/images/91Ea2Y2GzSMpdc4NAvOinG3Mr4.png)\n\nStandard page layouts for collaborative consistency\n\n# The Handoff\n\n![image](https://framerusercontent.com/images/wRzUdVzX9cVMmshSso1s8Y74.jpg)\n\n# Acknowledgements\n\nThanks to my team mates: Mars Lovelace, Hannan Abdi, Cole Campbell, Jordan Lym, Hunter Schaufel, Margaret Lu\nThanks to our leads: Shawn Harris, Michael Flanigan, Wayne Li\nThanks to the residents: Char Johnson, Lisa Reyes, Alfred Tucker, everyone from the Hunter Hills Neighborhood Association, and all the neighbors that contributed via interviews and workshops",
+          "createdAt": "2025-07-21T20:00:36.906Z",
+          "visibility": "public"
+        },
+        {
+          "$type": "com.whtwnd.blog.entry",
+          "theme": "github-light",
+          "title": "The experiment continues!",
+          "content": "I do want to see how layouts behave when there are multiple posts to handle. Nothing to see here yet!",
+          "createdAt": "2025-07-12T19:57:03.240Z",
+          "visibility": "public"
+        },
+        {
+          "$type": "com.whtwnd.blog.entry",
+          "theme": "github-light",
+          "title": "An ongoing experiment",
+          "content": "I want to own my website. I want it's content to live on the ATProtocol. Claude is giving me a hand with the implementation. Currently the stack uses Astro. I need demo content on WhiteWind to test it's ability to display my blog posts. This is the aforementioned demo content.",
+          "createdAt": "2025-07-11T21:04:33.022Z",
+          "visibility": "public"
+        }
+      ],
+      "generatedTypes": "export interface ComWhtwndBlogEntry {\n  $type: 'com.whtwnd.blog.entry';\n  theme?: string;\n  title?: string;\n  content?: string;\n  createdAt?: string;\n  visibility?: string;\n}\n",
+      "$types": [
+        "com.whtwnd.blog.entry"
+      ]
+    },
+    {
+      "name": "community.lexicon.calendar.rsvp",
+      "description": "community.lexicon.calendar.rsvp records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "community.lexicon.calendar.rsvp",
+          "status": "community.lexicon.calendar.rsvp#interested",
+          "subject": {
+            "cid": "bafyreic6ev7ulowb7il4egk7kr5vwfgw5nweyj5dhkzlkid5sf3aqsvfji",
+            "uri": "at://did:plc:lehcqqkwzcwvjvw66uthu5oq/community.lexicon.calendar.event/3ltl5aficno2m"
+          },
+          "createdAt": "2025-07-15T17:51:44.366Z"
+        },
+        {
+          "$type": "community.lexicon.calendar.rsvp",
+          "status": "community.lexicon.calendar.rsvp#going",
+          "subject": {
+            "cid": "bafyreiapk47atkjb326wafy4z55ty4hdezmjmr57vf7korqfq7h2bcbhki",
+            "uri": "at://did:plc:stznz7qsokto2345qtdzogjb/community.lexicon.calendar.event/3lu3t4qnkqv2s"
+          },
+          "createdAt": "2025-08-04T16:09:00.435Z"
+        }
+      ],
+      "generatedTypes": "export interface CommunityLexiconCalendarRsvp {\n  $type: 'community.lexicon.calendar.rsvp';\n  status?: string;\n  subject?: Record<string, any>;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "community.lexicon.calendar.rsvp"
+      ]
+    },
+    {
+      "name": "events.smokesignal.app.profile",
+      "description": "events.smokesignal.app.profile records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "tz": "America/New_York",
+          "$type": "events.smokesignal.app.profile"
+        }
+      ],
+      "generatedTypes": "export interface EventsSmokesignalAppProfile {\n  $type: 'events.smokesignal.app.profile';\n  tz?: string;\n}\n",
+      "$types": [
+        "events.smokesignal.app.profile"
+      ]
+    },
+    {
+      "name": "events.smokesignal.calendar.event",
+      "description": "events.smokesignal.calendar.event records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "mode": "events.smokesignal.calendar.event#inperson",
+          "name": "IDSA Boston Open Studio Series - Motiv",
+          "text": "This May we're cohosting a series of open studios across Boston. Join us for a peek into your favorite studios and lots of socializing!\r\n\r\nJoin us for the second studio tour in our May Studio Series! Motiv is generously opening their doors to our community for a special peek into their studio, their work, and their culture.\r\n\r\nAfter the studio tour we'll head down the street to The Broadway (726 E Broadway, Boston) for food and friendship (BYO$).\r\n\r\nThis event is free to the public and open to both IDSA Members and Non-Members.",
+          "$type": "events.smokesignal.calendar.event",
+          "endsAt": "2025-05-16T00:00:00.000Z",
+          "status": "events.smokesignal.calendar.event#scheduled",
+          "location": {
+            "name": "Motiv Design",
+            "$type": "events.smokesignal.calendar.location#place",
+            "region": "MA",
+            "street": "803 Summer Street, #2nd floor",
+            "country": "US",
+            "locality": "Boston",
+            "postalCode": "02127"
+          },
+          "startsAt": "2025-05-15T22:00:00.000Z",
+          "createdAt": "2025-05-13T20:11:16.764Z"
+        }
+      ],
+      "generatedTypes": "export interface EventsSmokesignalCalendarEvent {\n  $type: 'events.smokesignal.calendar.event';\n  mode?: string;\n  name?: string;\n  text?: string;\n  endsAt?: string;\n  status?: string;\n  location?: Record<string, any>;\n  startsAt?: string;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "events.smokesignal.calendar.event"
+      ]
+    },
+    {
+      "name": "farm.smol.games.skyrdle.score",
+      "description": "farm.smol.games.skyrdle.score records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "hash": "8a77a61dcb3a7f8f41314d2ab411bdfccf1643f2ea3ce43315ae07b5d20b9210",
+          "$type": "farm.smol.games.skyrdle.score",
+          "isWin": true,
+          "score": 5,
+          "guesses": [
+            {
+              "letters": [
+                "P",
+                "O",
+                "I",
+                "N",
+                "T"
+              ],
+              "evaluation": [
+                "present",
+                "present",
+                "absent",
+                "absent",
+                "absent"
+              ]
+            },
+            {
+              "letters": [
+                "S",
+                "L",
+                "O",
+                "P",
+                "E"
+              ],
+              "evaluation": [
+                "absent",
+                "absent",
+                "present",
+                "present",
+                "absent"
+              ]
+            },
+            {
+              "letters": [
+                "C",
+                "R",
+                "O",
+                "G",
+                "A"
+              ],
+              "evaluation": [
+                "absent",
+                "present",
+                "present",
+                "absent",
+                "present"
+              ]
+            },
+            {
+              "letters": [
+                "R",
+                "A",
+                "P",
+                "O",
+                "R"
+              ],
+              "evaluation": [
+                "absent",
+                "correct",
+                "correct",
+                "correct",
+                "correct"
+              ]
+            },
+            {
+              "letters": [
+                "V",
+                "A",
+                "P",
+                "O",
+                "R"
+              ],
+              "evaluation": [
+                "correct",
+                "correct",
+                "correct",
+                "correct",
+                "correct"
+              ]
+            }
+          ],
+          "timestamp": "2025-06-21T17:50:53.767Z",
+          "gameNumber": 9
+        },
+        {
+          "hash": "2c3312d4eee2bb032d59b67676588cab5b72035c47f1696ab42845b6c0a36fa2",
+          "$type": "farm.smol.games.skyrdle.score",
+          "isWin": true,
+          "score": 5,
+          "guesses": [
+            {
+              "letters": [
+                "P",
+                "R",
+                "I",
+                "C",
+                "K"
+              ],
+              "evaluation": [
+                "absent",
+                "correct",
+                "absent",
+                "absent",
+                "absent"
+              ]
+            },
+            {
+              "letters": [
+                "D",
+                "R",
+                "O",
+                "N",
+                "E"
+              ],
+              "evaluation": [
+                "absent",
+                "correct",
+                "correct",
+                "absent",
+                "absent"
+              ]
+            },
+            {
+              "letters": [
+                "F",
+                "R",
+                "O",
+                "G",
+                "S"
+              ],
+              "evaluation": [
+                "correct",
+                "correct",
+                "correct",
+                "absent",
+                "present"
+              ]
+            },
+            {
+              "letters": [
+                "F",
+                "F",
+                "O",
+                "S",
+                "T"
+              ],
+              "evaluation": [
+                "correct",
+                "absent",
+                "correct",
+                "correct",
+                "correct"
+              ]
+            },
+            {
+              "letters": [
+                "F",
+                "R",
+                "O",
+                "S",
+                "T"
+              ],
+              "evaluation": [
+                "correct",
+                "correct",
+                "correct",
+                "correct",
+                "correct"
+              ]
+            }
+          ],
+          "timestamp": "2025-06-20T13:33:55.182Z",
+          "gameNumber": 8
+        },
+        {
+          "hash": "6e536c0ae04b57f9afe595541cf41844672d5eae9e59de1d707784748feba5a1",
+          "$type": "farm.smol.games.skyrdle.score",
+          "isWin": true,
+          "score": 3,
+          "guesses": [
+            {
+              "letters": [
+                "P",
+                "R",
+                "I",
+                "M",
+                "E"
+              ],
+              "evaluation": [
+                "absent",
+                "absent",
+                "present",
+                "absent",
+                "absent"
+              ]
+            },
+            {
+              "letters": [
+                "S",
+                "C",
+                "H",
+                "I",
+                "T"
+              ],
+              "evaluation": [
+                "correct",
+                "present",
+                "absent",
+                "correct",
+                "present"
+              ]
+            },
+            {
+              "letters": [
+                "S",
+                "T",
+                "O",
+                "I",
+                "C"
+              ],
+              "evaluation": [
+                "correct",
+                "correct",
+                "correct",
+                "correct",
+                "correct"
+              ]
+            }
+          ],
+          "timestamp": "2025-06-19T14:30:27.746Z",
+          "gameNumber": 7
+        }
+      ],
+      "generatedTypes": "export interface FarmSmolGamesSkyrdleScore {\n  $type: 'farm.smol.games.skyrdle.score';\n  hash?: string;\n  isWin?: boolean;\n  score?: number;\n  guesses?: Record<string, any>[];\n  timestamp?: string;\n  gameNumber?: number;\n}\n",
+      "$types": [
+        "farm.smol.games.skyrdle.score"
+      ]
+    },
+    {
+      "name": "fyi.bluelinks.links",
+      "description": "fyi.bluelinks.links records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "fyi.bluelinks.links",
+          "links": [
+            {
+              "id": "4fc54af2-46ad-4f89-aa94-a14bbfd60afb",
+              "url": "https://tynanpurdy.com",
+              "name": "Portfolio",
+              "$type": "fyi.bluelinks.links#link",
+              "order": 1,
+              "createdAt": "2025-06-16T20:23:31.823Z",
+              "description": "My past work"
+            },
+            {
+              "id": "8d864819-c69c-43da-8d7b-b9635e36f67f",
+              "url": "https://blog.tynanpurdy.com",
+              "name": "Blog",
+              "$type": "fyi.bluelinks.links#link",
+              "order": 2,
+              "createdAt": "2025-06-16T20:24:07.424Z",
+              "description": "My writing"
+            }
+          ]
+        }
+      ],
+      "generatedTypes": "export interface FyiBluelinksLinks {\n  $type: 'fyi.bluelinks.links';\n  links?: Record<string, any>[];\n}\n",
+      "$types": [
+        "fyi.bluelinks.links"
+      ]
+    },
+    {
+      "name": "fyi.unravel.frontpage.comment",
+      "description": "fyi.unravel.frontpage.comment records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "post": {
+            "cid": "bafyreicxjsuwe7thbqcu3qh5biliuxyou26nbmac6hhxv74u2jeuexx334",
+            "uri": "at://did:plc:vro3sykit2gjemuza2pwvxwy/fyi.unravel.frontpage.post/3lvbcvpm3js2c"
+          },
+          "$type": "fyi.unravel.frontpage.comment",
+          "content": "I can confirm my vibecoded app has like 3 approaches to the same thing and its a mess to untangle. Esp for a noob who doesn't really know what is the right way to converge on",
+          "createdAt": "2025-08-02T01:06:19.685Z"
+        },
+        {
+          "post": {
+            "cid": "bafyreibiy36sr55cyjd7d6kn7yuuadxk242cm5yqsyw7strdpdbhesoxga",
+            "uri": "at://did:plc:ofrbh253gwicbkc5nktqepol/fyi.unravel.frontpage.post/3luxczcviqk2h"
+          },
+          "$type": "fyi.unravel.frontpage.comment",
+          "parent": {
+            "cid": "bafyreicoezztd45k677sfqtuevgg3zqi5dhdheevry5qcb2cydrfp72uuq",
+            "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/fyi.unravel.frontpage.comment/3lv2echl6xk2e"
+          },
+          "content": "https://tangled.sh/@tynanpurdy.com/at-home",
+          "createdAt": "2025-07-28T19:48:17.572Z"
+        },
+        {
+          "post": {
+            "cid": "bafyreibiy36sr55cyjd7d6kn7yuuadxk242cm5yqsyw7strdpdbhesoxga",
+            "uri": "at://did:plc:ofrbh253gwicbkc5nktqepol/fyi.unravel.frontpage.post/3luxczcviqk2h"
+          },
+          "$type": "fyi.unravel.frontpage.comment",
+          "content": "My version of this has a slightly different stack but largely the same idea. I'd love to collab on what additional lexicon might be useful for the personal website category. Portfolio projects are still a struggle to me.",
+          "createdAt": "2025-07-28T19:47:46.719Z"
+        }
+      ],
+      "generatedTypes": "export interface FyiUnravelFrontpageComment {\n  $type: 'fyi.unravel.frontpage.comment';\n  post?: Record<string, any>;\n  content?: string;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "fyi.unravel.frontpage.comment"
+      ]
+    },
+    {
+      "name": "fyi.unravel.frontpage.post",
+      "description": "fyi.unravel.frontpage.post records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "url": "https://brittanyellich.com/bluesky-comments-likes/",
+          "$type": "fyi.unravel.frontpage.post",
+          "title": "I finally added Bluesky comments and likes to my blog (and you can too!)",
+          "createdAt": "2025-08-06T13:38:34.417Z"
+        },
+        {
+          "url": "https://www.citationneeded.news/curate-with-rss/",
+          "$type": "fyi.unravel.frontpage.post",
+          "title": "Curate your own newspaper with RSS",
+          "createdAt": "2025-07-31T17:18:08.281Z"
+        },
+        {
+          "url": "https://baileytownsend.dev/articles/host-a-pds-with-a-cloudflare-tunnel",
+          "$type": "fyi.unravel.frontpage.post",
+          "title": "Host a PDS via a Cloudflare Tunnel",
+          "createdAt": "2025-07-29T13:47:49.739Z"
+        }
+      ],
+      "generatedTypes": "export interface FyiUnravelFrontpagePost {\n  $type: 'fyi.unravel.frontpage.post';\n  url?: string;\n  title?: string;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "fyi.unravel.frontpage.post"
+      ]
+    },
+    {
+      "name": "fyi.unravel.frontpage.vote",
+      "description": "fyi.unravel.frontpage.vote records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "fyi.unravel.frontpage.vote",
+          "subject": {
+            "cid": "bafyreicxjsuwe7thbqcu3qh5biliuxyou26nbmac6hhxv74u2jeuexx334",
+            "uri": "at://did:plc:vro3sykit2gjemuza2pwvxwy/fyi.unravel.frontpage.post/3lvbcvpm3js2c"
+          },
+          "createdAt": "2025-08-06T15:01:18.710Z"
+        },
+        {
+          "$type": "fyi.unravel.frontpage.vote",
+          "subject": {
+            "cid": "bafyreihrgrqftgwr6u37p3tkoa23bh6z7vecc44hivvtichrar4rnl55ti",
+            "uri": "at://did:plc:mdjhvva6vlrswsj26cftjttd/fyi.unravel.frontpage.post/3lvbqj5kpm22v"
+          },
+          "createdAt": "2025-08-06T14:29:08.506Z"
+        },
+        {
+          "$type": "fyi.unravel.frontpage.vote",
+          "subject": {
+            "cid": "bafyreicbdf5lbimyqo6d2hgj2z7y3v2ligwqlczjzp2fmgl2s7vci5yqj4",
+            "uri": "at://did:plc:mdjhvva6vlrswsj26cftjttd/fyi.unravel.frontpage.post/3lu6mwifrmk2x"
+          },
+          "createdAt": "2025-08-06T14:06:38.568Z"
+        }
+      ],
+      "generatedTypes": "export interface FyiUnravelFrontpageVote {\n  $type: 'fyi.unravel.frontpage.vote';\n  subject?: Record<string, any>;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "fyi.unravel.frontpage.vote"
+      ]
+    },
+    {
+      "name": "im.flushing.right.now",
+      "description": "im.flushing.right.now records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "text": "is flushing",
+          "$type": "im.flushing.right.now",
+          "emoji": "💩",
+          "createdAt": "2025-06-17T16:53:24-04:00"
+        }
+      ],
+      "generatedTypes": "export interface ImFlushingRightNow {\n  $type: 'im.flushing.right.now';\n  text?: string;\n  emoji?: string;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "im.flushing.right.now"
+      ]
+    },
+    {
+      "name": "link.woosh.linkPage",
+      "description": "link.woosh.linkPage records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "link.woosh.linkPage",
+          "collections": [
+            {
+              "label": "Socials",
+              "links": [
+                {
+                  "uri": "https://bsky.app/profile/tynanpurdy.com",
+                  "title": "Bluesky"
+                },
+                {
+                  "uri": "https://github.com/tynanpurdy",
+                  "title": "GitHub"
+                },
+                {
+                  "uri": "https://www.linkedin.com/in/tynanpurdy",
+                  "title": "LinkedIn"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedTypes": "export interface LinkWooshLinkPage {\n  $type: 'link.woosh.linkPage';\n  collections?: Record<string, any>[];\n}\n",
+      "$types": [
+        "link.woosh.linkPage"
+      ]
+    },
+    {
+      "name": "my.skylights.rel",
+      "description": "my.skylights.rel records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "item": {
+            "ref": "tmdb:m",
+            "value": "861"
+          },
+          "note": {
+            "value": "Great LOL moments. Fantastic special effects, especially in the makeup and prosthetics dept. ",
+            "createdAt": "2025-05-21T21:24:37.174Z",
+            "updatedAt": "2025-05-21T21:24:37.174Z"
+          },
+          "$type": "my.skylights.rel",
+          "rating": {
+            "value": 8,
+            "createdAt": "2025-05-21T21:23:21.661Z"
+          }
+        }
+      ],
+      "generatedTypes": "export interface MySkylightsRel {\n  $type: 'my.skylights.rel';\n  item?: Record<string, any>;\n  note?: Record<string, any>;\n  rating?: Record<string, any>;\n}\n",
+      "$types": [
+        "my.skylights.rel"
+      ]
+    },
+    {
+      "name": "org.owdproject.application.windows",
+      "description": "org.owdproject.application.windows records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "org.owdproject.application.windows",
+          "windows": {}
+        },
+        {
+          "$type": "org.owdproject.application.windows",
+          "windows": {}
+        }
+      ],
+      "generatedTypes": "export interface OrgOwdprojectApplicationWindows {\n  $type: 'org.owdproject.application.windows';\n}\n",
+      "$types": [
+        "org.owdproject.application.windows"
+      ]
+    },
+    {
+      "name": "org.owdproject.desktop",
+      "description": "org.owdproject.desktop records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "org.owdproject.desktop",
+          "state": {
+            "volume": {
+              "master": 100
+            },
+            "window": {
+              "positionZ": 2
+            },
+            "workspace": {
+              "list": [
+                "cNOD12iO",
+                "MjCjyI3o"
+              ],
+              "active": "cNOD12iO",
+              "overview": false
+            }
+          }
+        }
+      ],
+      "generatedTypes": "export interface OrgOwdprojectDesktop {\n  $type: 'org.owdproject.desktop';\n  state?: Record<string, any>;\n}\n",
+      "$types": [
+        "org.owdproject.desktop"
+      ]
+    },
+    {
+      "name": "org.scrapboard.list",
+      "description": "org.scrapboard.list records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "name": "",
+          "$type": "org.scrapboard.list",
+          "createdAt": "2025-08-04T14:48:50.207Z",
+          "description": ""
+        }
+      ],
+      "generatedTypes": "export interface OrgScrapboardList {\n  $type: 'org.scrapboard.list';\n  name?: string;\n  createdAt?: string;\n  description?: string;\n}\n",
+      "$types": [
+        "org.scrapboard.list"
+      ]
+    },
+    {
+      "name": "org.scrapboard.listitem",
+      "description": "org.scrapboard.listitem records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "url": "at://did:plc:gerrk3zpej5oloffu5cqtnly/app.bsky.feed.post/3lvj6fteywk2u?image=0",
+          "list": "at://did:plc:6ayddqghxhciedbaofoxkcbs/org.scrapboard.list/3lvlguetmjw2i",
+          "$type": "org.scrapboard.listitem",
+          "createdAt": "2025-08-04T14:48:58.704Z"
+        }
+      ],
+      "generatedTypes": "export interface OrgScrapboardListitem {\n  $type: 'org.scrapboard.listitem';\n  url?: string;\n  list?: string;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "org.scrapboard.listitem"
+      ]
+    },
+    {
+      "name": "place.stream.chat.message",
+      "description": "place.stream.chat.message records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "text": "thanks yall!",
+          "$type": "place.stream.chat.message",
+          "streamer": "did:plc:stznz7qsokto2345qtdzogjb",
+          "createdAt": "2025-08-04T17:59:34.556Z"
+        },
+        {
+          "text": "thanks yall!",
+          "$type": "place.stream.chat.message",
+          "streamer": "did:plc:stznz7qsokto2345qtdzogjb",
+          "createdAt": "2025-08-04T17:59:34.555Z"
+        },
+        {
+          "text": "spark, skyswipe, et al",
+          "$type": "place.stream.chat.message",
+          "streamer": "did:plc:stznz7qsokto2345qtdzogjb",
+          "createdAt": "2025-08-04T17:52:24.424Z"
+        }
+      ],
+      "generatedTypes": "export interface PlaceStreamChatMessage {\n  $type: 'place.stream.chat.message';\n  text?: string;\n  streamer?: string;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "place.stream.chat.message"
+      ]
+    },
+    {
+      "name": "place.stream.chat.profile",
+      "description": "place.stream.chat.profile records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "place.stream.chat.profile",
+          "color": {
+            "red": 76,
+            "blue": 118,
+            "green": 175
+          }
+        }
+      ],
+      "generatedTypes": "export interface PlaceStreamChatProfile {\n  $type: 'place.stream.chat.profile';\n  color?: Record<string, any>;\n}\n",
+      "$types": [
+        "place.stream.chat.profile"
+      ]
+    },
+    {
+      "name": "pub.leaflet.document",
+      "description": "pub.leaflet.document records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "pub.leaflet.document",
+          "pages": [
+            {
+              "$type": "pub.leaflet.pages.linearDocument",
+              "blocks": [
+                {
+                  "$type": "pub.leaflet.pages.linearDocument#block",
+                  "block": {
+                    "$type": "pub.leaflet.blocks.text",
+                    "facets": [
+                      {
+                        "index": {
+                          "byteEnd": 521,
+                          "byteStart": 508
+                        },
+                        "features": [
+                          {
+                            "$type": "pub.leaflet.richtext.facet#italic"
+                          }
+                        ]
+                      }
+                    ],
+                    "plaintext": "I love all this community-led development of the open social web. Tech infra architecture and business models can break down the oppressive and monopolistic internet giants we have grown up with. This blog post is published over the AT protocol, an open standard for all kinds of social experiences. The data, followers, and interactions are stored on a Personal Data Server. I control the data. I can move to a new PDS if I wish. I can even host my PDS myself. My account hosted on my PDS is my account for any and every ATproto app in the world.  "
+                  }
+                },
+                {
+                  "$type": "pub.leaflet.pages.linearDocument#block",
+                  "block": {
+                    "$type": "pub.leaflet.blocks.text",
+                    "facets": [],
+                    "plaintext": "You can read this post on the leaflet website, which I have connected to the domain I own. You can also read it on Bluesky in a custom feed. You can also use any other client you want that can read an ATproto feed. There are dozens of clients for browsing and interacting with ATproto posts. You don't have to use Bluesky or it's infrastructure if you wish not to."
+                  }
+                },
+                {
+                  "$type": "pub.leaflet.pages.linearDocument#block",
+                  "block": {
+                    "$type": "pub.leaflet.blocks.text",
+                    "facets": [],
+                    "plaintext": "The hype around Bluesky is great to see. It is also somewhat shortsighted to the broader vision of the future of social. It's the protocol that matters. The things it enables. It can be hard to realize how restricted the big platforms are until you see an alternative. The projects any indie dev can spin up in no time with ATproto are incredible. I encourage you to check some of them out. "
+                  }
+                },
+                {
+                  "$type": "pub.leaflet.pages.linearDocument#block",
+                  "block": {
+                    "$type": "pub.leaflet.blocks.text",
+                    "facets": [],
+                    "plaintext": ""
+                  }
+                },
+                {
+                  "$type": "pub.leaflet.pages.linearDocument#block",
+                  "block": {
+                    "$type": "pub.leaflet.blocks.text",
+                    "facets": [
+                      {
+                        "index": {
+                          "byteEnd": 66,
+                          "byteStart": 0
+                        },
+                        "features": [
+                          {
+                            "$type": "pub.leaflet.richtext.facet#italic"
+                          }
+                        ]
+                      }
+                    ],
+                    "plaintext": "I know I did not address the subtitle, saving for a future post ;)"
+                  }
+                }
+              ]
+            }
+          ],
+          "title": "Blogging directly on ATproto",
+          "author": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "postRef": {
+            "cid": "bafyreihwmgzema3jpptki4jod3skf4bmsjjikqgbkgkz7qreggjbiwwkpa",
+            "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/app.bsky.feed.post/3lrquu5rnsk2w",
+            "commit": {
+              "cid": "bafyreib2y34ku7v5gzfrjcgibg3qoitwgwbxtgo2azl2mnw3xz35bzh2lq",
+              "rev": "3lrquu5ured2l"
+            },
+            "validationStatus": "valid"
+          },
+          "description": "Which is somehow different from micro.blog...",
+          "publication": "at://did:plc:6ayddqghxhciedbaofoxkcbs/pub.leaflet.publication/3lptvotm3ms2o",
+          "publishedAt": "2025-06-16T21:01:42.095Z"
+        }
+      ],
+      "generatedTypes": "export interface PubLeafletDocument {\n  $type: 'pub.leaflet.document';\n  pages?: Record<string, any>[];\n  title?: string;\n  author?: string;\n  postRef?: Record<string, any>;\n  description?: string;\n  publication?: string;\n  publishedAt?: string;\n}\n",
+      "$types": [
+        "pub.leaflet.document"
+      ]
+    },
+    {
+      "name": "pub.leaflet.graph.subscription",
+      "description": "pub.leaflet.graph.subscription records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "pub.leaflet.graph.subscription",
+          "publication": "at://did:plc:2cxgdrgtsmrbqnjkwyplmp43/pub.leaflet.publication/3lpqbbzc7x224"
+        },
+        {
+          "$type": "pub.leaflet.graph.subscription",
+          "publication": "at://did:plc:u2grpouz5553mrn4x772pyfa/pub.leaflet.publication/3lve2jmb7c22j"
+        },
+        {
+          "$type": "pub.leaflet.graph.subscription",
+          "publication": "at://did:plc:e3tv2pzlnuppocnc3wirsvl4/pub.leaflet.publication/3lrgwj6ytis2k"
+        }
+      ],
+      "generatedTypes": "export interface PubLeafletGraphSubscription {\n  $type: 'pub.leaflet.graph.subscription';\n  publication?: string;\n}\n",
+      "$types": [
+        "pub.leaflet.graph.subscription"
+      ]
+    },
+    {
+      "name": "pub.leaflet.publication",
+      "description": "pub.leaflet.publication records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "icon": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreihz6y3xxbl5xasgrsfykyh6zizc63uv276lzengbvslikkqgndabe"
+            },
+            "mimeType": "image/png",
+            "size": 75542
+          },
+          "name": "Tynan's Leaflets",
+          "$type": "pub.leaflet.publication",
+          "base_path": "leaflets.tynanpurdy.com",
+          "description": "I'll play around with any ATproto gizmo"
+        }
+      ],
+      "generatedTypes": "export interface PubLeafletPublication {\n  $type: 'pub.leaflet.publication';\n  icon?: Record<string, any>;\n  name?: string;\n  base_path?: string;\n  description?: string;\n}\n",
+      "$types": [
+        "pub.leaflet.publication"
+      ]
+    },
+    {
+      "name": "sh.tangled.actor.profile",
+      "description": "sh.tangled.actor.profile records",
+      "service": "sh.tangled",
+      "sampleRecords": [
+        {
+          "$type": "sh.tangled.actor.profile",
+          "links": [
+            "https://tynanpurdy.com",
+            "https://blog.tynanpurdy.com",
+            "",
+            "",
+            ""
+          ],
+          "stats": [
+            "",
+            ""
+          ],
+          "bluesky": true,
+          "location": "",
+          "description": "",
+          "pinnedRepositories": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      ],
+      "generatedTypes": "export interface ShTangledActorProfile {\n  $type: 'sh.tangled.actor.profile';\n  links?: string[];\n  stats?: string[];\n  bluesky?: boolean;\n  location?: string;\n  description?: string;\n  pinnedRepositories?: string[];\n}\n",
+      "$types": [
+        "sh.tangled.actor.profile"
+      ]
+    },
+    {
+      "name": "sh.tangled.feed.star",
+      "description": "sh.tangled.feed.star records",
+      "service": "sh.tangled",
+      "sampleRecords": [
+        {
+          "$type": "sh.tangled.feed.star",
+          "subject": "at://did:plc:tgudj2fjm77pzkuawquqhsxm/sh.tangled.repo/3lnkvfhpcz422",
+          "createdAt": "2025-07-31T01:08:31Z"
+        }
+      ],
+      "generatedTypes": "export interface ShTangledFeedStar {\n  $type: 'sh.tangled.feed.star';\n  subject?: string;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "sh.tangled.feed.star"
+      ]
+    },
+    {
+      "name": "sh.tangled.publicKey",
+      "description": "sh.tangled.publicKey records",
+      "service": "sh.tangled",
+      "sampleRecords": [
+        {
+          "key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN0U2oHBrZAOYUO0klCU7HpwgGEAJprdrI3Nk8H0YzOo",
+          "name": "ray",
+          "$type": "sh.tangled.publicKey",
+          "createdAt": "2025-07-07T23:52:11Z"
+        }
+      ],
+      "generatedTypes": "export interface ShTangledPublicKey {\n  $type: 'sh.tangled.publicKey';\n  key?: string;\n  name?: string;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "sh.tangled.publicKey"
+      ]
+    },
+    {
+      "name": "sh.tangled.repo",
+      "description": "sh.tangled.repo records",
+      "service": "sh.tangled",
+      "sampleRecords": [
+        {
+          "knot": "knot1.tangled.sh",
+          "name": "at-home",
+          "$type": "sh.tangled.repo",
+          "owner": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "createdAt": "2025-07-11T22:07:14Z"
+        },
+        {
+          "knot": "knot1.tangled.sh",
+          "name": "atprofile",
+          "$type": "sh.tangled.repo",
+          "owner": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "createdAt": "2025-07-07T23:27:33Z"
+        }
+      ],
+      "generatedTypes": "export interface ShTangledRepo {\n  $type: 'sh.tangled.repo';\n  knot?: string;\n  name?: string;\n  owner?: string;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "sh.tangled.repo"
+      ]
+    },
+    {
+      "name": "so.sprk.actor.profile",
+      "description": "so.sprk.actor.profile records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "so.sprk.actor.profile",
+          "avatar": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreig6momh2fkdfhhqwkcjsw4vycubptufe6aeolsddtgg6felh4bvoe"
+            },
+            "mimeType": "image/jpeg",
+            "size": 915425
+          },
+          "description": "he/him\nExperience Designer | Tech nerd | Curious Creative\n📍 Boston 🇺🇸\n📖 acotar, a different kind of power\n\nmy work: tynanpurdy.com\nmy writing: blog.tynanpurdy.com",
+          "displayName": "Tynan Purdy"
+        }
+      ],
+      "generatedTypes": "export interface SoSprkActorProfile {\n  $type: 'so.sprk.actor.profile';\n  avatar?: Record<string, any>;\n  description?: string;\n  displayName?: string;\n}\n",
+      "$types": [
+        "so.sprk.actor.profile"
+      ]
+    },
+    {
+      "name": "so.sprk.feed.like",
+      "description": "so.sprk.feed.like records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "$type": "so.sprk.feed.like",
+          "subject": {
+            "cid": "bafyreibezk3pahyxmgt32xf6bdox6ycpx4uxeetzj2ol5xtat6nyf3uw5i",
+            "uri": "at://did:plc:owhabhwzxfp2zxh6nxszkzmg/app.bsky.feed.post/3lv7kobh6js2w"
+          },
+          "createdAt": "2025-07-30T21:26:26.637994Z"
+        }
+      ],
+      "generatedTypes": "export interface SoSprkFeedLike {\n  $type: 'so.sprk.feed.like';\n  subject?: Record<string, any>;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "so.sprk.feed.like"
+      ]
+    },
+    {
+      "name": "so.sprk.feed.story",
+      "description": "so.sprk.feed.story records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "tags": [],
+          "$type": "so.sprk.feed.story",
+          "media": {
+            "$type": "so.sprk.embed.images",
+            "images": [
+              {
+                "alt": "Schnauzer dog on couch. Fresh hair cut and wearing a green bowtie.",
+                "image": {
+                  "$type": "blob",
+                  "ref": {
+                    "$link": "bafkreifdfejeiitg46ec2wijg7mjmna4hyne2c5m45435jm4yiiw3nids4"
+                  },
+                  "mimeType": "image/jpeg",
+                  "size": 2651327
+                }
+              }
+            ]
+          },
+          "createdAt": "2025-07-08T17:35:01.830824",
+          "selfLabels": []
+        }
+      ],
+      "generatedTypes": "export interface SoSprkFeedStory {\n  $type: 'so.sprk.feed.story';\n  tags?: any[];\n  media?: Record<string, any>;\n  createdAt?: string;\n  selfLabels?: any[];\n}\n",
+      "$types": [
+        "so.sprk.feed.story"
+      ]
+    },
+    {
+      "name": "social.grain.actor.profile",
+      "description": "social.grain.actor.profile records",
+      "service": "grain.social",
+      "sampleRecords": [
+        {
+          "$type": "social.grain.actor.profile",
+          "avatar": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreias2logev3efvxo6kvplme2s6j2whvmhxpwpnsaq4mo52kqy7ktay"
+            },
+            "mimeType": "image/jpeg",
+            "size": 992154
+          },
+          "description": "he/him\r\nExperience Designer | Tech nerd | Curious Creative\r\n📍 Boston 🇺🇸\r\n\r\nmy work: tynanpurdy.com\r\nmy writing: blog.tynanpurdy.com",
+          "displayName": "Tynan Purdy"
+        }
+      ],
+      "generatedTypes": "export interface SocialGrainActorProfile {\n  $type: 'social.grain.actor.profile';\n  avatar?: Record<string, any>;\n  description?: string;\n  displayName?: string;\n}\n",
+      "$types": [
+        "social.grain.actor.profile"
+      ]
+    },
+    {
+      "name": "social.grain.favorite",
+      "description": "social.grain.favorite records",
+      "service": "grain.social",
+      "sampleRecords": [
+        {
+          "$type": "social.grain.favorite",
+          "subject": "at://did:plc:njgakmquzxdmz6t32j27hgee/social.grain.gallery/3lrpq72tqo22d",
+          "createdAt": "2025-06-17T21:19:47.133Z"
+        }
+      ],
+      "generatedTypes": "export interface SocialGrainFavorite {\n  $type: 'social.grain.favorite';\n  subject?: string;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "social.grain.favorite"
+      ]
+    },
+    {
+      "name": "social.grain.gallery",
+      "description": "Grain.social image galleries",
+      "service": "grain.social",
+      "sampleRecords": [
+        {
+          "$type": "social.grain.gallery",
+          "title": "Zuko the dog",
+          "createdAt": "2025-07-28T14:43:35.815Z",
+          "updatedAt": "2025-07-28T14:43:35.815Z",
+          "description": ""
+        },
+        {
+          "$type": "social.grain.gallery",
+          "title": "Opensauce 2025",
+          "createdAt": "2025-07-23T22:18:41.069Z",
+          "updatedAt": "2025-07-23T22:18:41.069Z",
+          "description": "I truly do not understand Bay Area summer. Why is it cold!?"
+        },
+        {
+          "$type": "social.grain.gallery",
+          "title": "Engagement shoot",
+          "createdAt": "2025-06-17T21:45:24.826Z",
+          "description": "The date is set! Stay tuned. \n📍 Harvard Arboretum\n📷 Karina Bhattacharya"
+        }
+      ],
+      "generatedTypes": "export interface SocialGrainGallery {\n  $type: 'social.grain.gallery';\n  title?: string;\n  createdAt?: string;\n  updatedAt?: string;\n  description?: string;\n}\n",
+      "$types": [
+        "social.grain.gallery"
+      ]
+    },
+    {
+      "name": "social.grain.gallery.item",
+      "description": "social.grain.gallery.item records",
+      "service": "grain.social",
+      "sampleRecords": [
+        {
+          "item": "at://did:plc:6ayddqghxhciedbaofoxkcbs/social.grain.photo/3luztcsssrs2h",
+          "$type": "social.grain.gallery.item",
+          "gallery": "at://did:plc:6ayddqghxhciedbaofoxkcbs/social.grain.gallery/3luztckj2us2h",
+          "position": 0,
+          "createdAt": "2025-07-28T14:43:45.462Z"
+        },
+        {
+          "item": "at://did:plc:6ayddqghxhciedbaofoxkcbs/social.grain.photo/3luo2mrz2v22s",
+          "$type": "social.grain.gallery.item",
+          "gallery": "at://did:plc:6ayddqghxhciedbaofoxkcbs/social.grain.gallery/3luo2fpjjyc2s",
+          "position": 13,
+          "createdAt": "2025-07-23T22:22:39.555Z"
+        },
+        {
+          "item": "at://did:plc:6ayddqghxhciedbaofoxkcbs/social.grain.photo/3luo2miqkm22s",
+          "$type": "social.grain.gallery.item",
+          "gallery": "at://did:plc:6ayddqghxhciedbaofoxkcbs/social.grain.gallery/3luo2fpjjyc2s",
+          "position": 12,
+          "createdAt": "2025-07-23T22:22:29.750Z"
+        }
+      ],
+      "generatedTypes": "export interface SocialGrainGalleryItem {\n  $type: 'social.grain.gallery.item';\n  item?: string;\n  gallery?: string;\n  position?: number;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "social.grain.gallery.item"
+      ]
+    },
+    {
+      "name": "social.grain.graph.follow",
+      "description": "social.grain.graph.follow records",
+      "service": "grain.social",
+      "sampleRecords": [
+        {
+          "$type": "social.grain.graph.follow",
+          "subject": "did:plc:qttsv4e7pu2jl3ilanfgc3zn",
+          "createdAt": "2025-07-25T20:28:17.255Z"
+        },
+        {
+          "$type": "social.grain.graph.follow",
+          "subject": "did:plc:qttsv4e7pu2jl3ilanfgc3zn",
+          "createdAt": "2025-07-25T20:28:16.699Z"
+        }
+      ],
+      "generatedTypes": "export interface SocialGrainGraphFollow {\n  $type: 'social.grain.graph.follow';\n  subject?: string;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "social.grain.graph.follow"
+      ]
+    },
+    {
+      "name": "social.grain.photo",
+      "description": "social.grain.photo records",
+      "service": "grain.social",
+      "sampleRecords": [
+        {
+          "alt": "Grey miniature schnauzer plopped on a wood fenced porch overlooking trees and a morning sky",
+          "cid": "bafyreibigenfwakuv3rohdzoi4rsypqtjuvuguyxbzepvpltbc6srvumeu",
+          "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+          "uri": "at://did:plc:6ayddqghxhciedbaofoxkcbs/social.grain.photo/3luztcsssrs2h",
+          "$type": "social.grain.photo",
+          "photo": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreibnepqn6itqpukdr776mm4qi2afbmzw7gwbs6i56pogvlnzr7tt5q"
+            },
+            "mimeType": "image/jpeg",
+            "size": 965086
+          },
+          "createdAt": "2025-07-28T14:43:44.523Z",
+          "indexedAt": "2025-07-28T14:43:45.223Z",
+          "aspectRatio": {
+            "width": 2000,
+            "height": 2667
+          }
+        },
+        {
+          "alt": "",
+          "$type": "social.grain.photo",
+          "photo": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreiangeamxp4rlmc66fheiosnk2odfpw4h5dzynfv7nhj6sy2jcyxzu"
+            },
+            "mimeType": "image/jpeg",
+            "size": 981537
+          },
+          "createdAt": "2025-07-23T22:22:38.556Z",
+          "aspectRatio": {
+            "width": 2000,
+            "height": 2667
+          }
+        },
+        {
+          "alt": "",
+          "$type": "social.grain.photo",
+          "photo": {
+            "$type": "blob",
+            "ref": {
+              "$link": "bafkreiarwsd5ksvgzt5ydexepqfdq54sthj2mzone3d5hgou66qv333yi4"
+            },
+            "mimeType": "image/jpeg",
+            "size": 963879
+          },
+          "createdAt": "2025-07-23T22:22:28.840Z",
+          "aspectRatio": {
+            "width": 2000,
+            "height": 2667
+          }
+        }
+      ],
+      "generatedTypes": "export interface SocialGrainPhoto {\n  $type: 'social.grain.photo';\n  alt?: string;\n  cid?: string;\n  did?: string;\n  uri?: string;\n  photo?: Record<string, any>;\n  createdAt?: string;\n  indexedAt?: string;\n  aspectRatio?: Record<string, any>;\n}\n",
+      "$types": [
+        "social.grain.photo"
+      ]
+    },
+    {
+      "name": "social.grain.photo.exif",
+      "description": "social.grain.photo.exif records",
+      "service": "grain.social",
+      "sampleRecords": [
+        {
+          "iSO": 25000000,
+          "make": "Apple",
+          "$type": "social.grain.photo.exif",
+          "flash": "Flash did not fire, compulsory flash mode",
+          "model": "iPhone 14 Pro",
+          "photo": "at://did:plc:6ayddqghxhciedbaofoxkcbs/social.grain.photo/3luztcsssrs2h",
+          "fNumber": 2800000,
+          "lensMake": "Apple",
+          "createdAt": "2025-07-28T14:43:45.239Z",
+          "lensModel": "iPhone 14 Pro back camera 9mm f/2.8",
+          "exposureTime": 3378,
+          "dateTimeOriginal": "2025-07-28T09:50:08",
+          "focalLengthIn35mmFormat": 77000000
+        },
+        {
+          "iSO": 80000000,
+          "make": "Apple",
+          "$type": "social.grain.photo.exif",
+          "flash": "Flash did not fire, compulsory flash mode",
+          "model": "iPhone 14 Pro",
+          "photo": "at://did:plc:6ayddqghxhciedbaofoxkcbs/social.grain.photo/3luo2mrz2v22s",
+          "fNumber": 1780000,
+          "lensMake": "Apple",
+          "createdAt": "2025-07-23T22:22:39.342Z",
+          "lensModel": "iPhone 14 Pro back triple camera 6.86mm f/1.78",
+          "exposureTime": 347,
+          "dateTimeOriginal": "2025-07-19T16:11:52",
+          "focalLengthIn35mmFormat": 24000000
+        },
+        {
+          "iSO": 800000000,
+          "make": "Apple",
+          "$type": "social.grain.photo.exif",
+          "flash": "Flash did not fire, compulsory flash mode",
+          "model": "iPhone 14 Pro",
+          "photo": "at://did:plc:6ayddqghxhciedbaofoxkcbs/social.grain.photo/3luo2miqkm22s",
+          "fNumber": 1780000,
+          "lensMake": "Apple",
+          "createdAt": "2025-07-23T22:22:29.512Z",
+          "lensModel": "iPhone 14 Pro back triple camera 6.86mm f/1.78",
+          "exposureTime": 16667,
+          "dateTimeOriginal": "2025-07-17T20:15:51",
+          "focalLengthIn35mmFormat": 24000000
+        }
+      ],
+      "generatedTypes": "export interface SocialGrainPhotoExif {\n  $type: 'social.grain.photo.exif';\n  iSO?: number;\n  make?: string;\n  flash?: string;\n  model?: string;\n  photo?: string;\n  fNumber?: number;\n  lensMake?: string;\n  createdAt?: string;\n  lensModel?: string;\n  exposureTime?: number;\n  dateTimeOriginal?: string;\n  focalLengthIn35mmFormat?: number;\n}\n",
+      "$types": [
+        "social.grain.photo.exif"
+      ]
+    },
+    {
+      "name": "social.pinksky.app.preference",
+      "description": "social.pinksky.app.preference records",
+      "service": "unknown",
+      "sampleRecords": [
+        {
+          "slug": "onboarding",
+          "$type": "social.pinksky.app.preference",
+          "value": "completed",
+          "createdAt": "2025-05-21T21:27:01.789Z"
+        }
+      ],
+      "generatedTypes": "export interface SocialPinkskyAppPreference {\n  $type: 'social.pinksky.app.preference';\n  slug?: string;\n  value?: string;\n  createdAt?: string;\n}\n",
+      "$types": [
+        "social.pinksky.app.preference"
+      ]
+    }
+  ],
+  "totalCollections": 64,
+  "totalRecords": 124,
+  "generatedAt": "2025-08-06T17:33:43.119Z",
+  "repository": {
+    "handle": "tynanpurdy.com",
+    "did": "did:plc:6ayddqghxhciedbaofoxkcbs",
+    "recordCount": 0
+  }
+}
