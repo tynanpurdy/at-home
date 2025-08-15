@@ -41,7 +41,7 @@ const { Content } = await render(document);
       <div class="text-sm text-gray-500 dark:text-gray-400 mb-6">
         {document.data.publishedAt && (
           <span>
-            Published: {new Date(document.data.publishedAt).toLocaleDateString('en-US', {
+            {new Date(document.data.publishedAt).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',
               day: 'numeric',

@@ -43,15 +43,15 @@ try {
 </div>
 
 <script>
-  import { startSharedStream, subscribeToStatusUpdates } from '../../lib/atproto/shared-jetstream';
+  import { startSharedStream, subscribeToStatusUpdates } from '../../lib/atproto/jetstream-client';
   
   // Start the shared stream
   startSharedStream();
   
   // Subscribe to status updates
-  const unsubscribe = subscribeToStatusUpdates((record) => {
-    if (record.operation === 'create') {
-      updateStatusDisplay(record.value);
+  const unsubscribe = subscribeToStatusUpdates((event) => {
+    if (event.commit.operation === 'create') {
+      updateStatusDisplay(event.commit.record);
     }
   });
   

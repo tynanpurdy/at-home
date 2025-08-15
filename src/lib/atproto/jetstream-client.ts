@@ -1,18 +1,6 @@
-// Jetstream-based repository streaming with DID filtering (based on atptools)
+// Complete Jetstream implementation using documented @atcute/jetstream approach
+import { JetstreamSubscription, type CommitEvent } from '@atcute/jetstream';
 import { loadConfig } from '../config/site';
-
-export interface JetstreamRecord {
-  uri: string;
-  cid: string;
-  value: any;
-  indexedAt: string;
-  collection: string;
-  $type: string;
-  service: string;
-  did: string;
-  time_us: number;
-  operation: 'create' | 'update' | 'delete';
-}
 
 export interface JetstreamConfig {
   handle: string;
@@ -24,12 +12,11 @@ export interface JetstreamConfig {
 }
 
 export class JetstreamClient {
-  private ws: WebSocket | null = null;
+  private subscription: JetstreamSubscription | null = null;
   private config: JetstreamConfig;
-  private targetDid: string | null = null;
   private isStreaming = false;
   private listeners: {
-    onRecord?: (record: JetstreamRecord) => void;
+    onRecord?: (event: CommitEvent) => void;
     onError?: (error: Error) => void;
     onConnect?: () => void;
     onDisconnect?: () => void;
@@ -40,45 +27,53 @@ export class JetstreamClient {
     this.config = {
       handle: config?.handle || siteConfig.atproto.handle,
       did: config?.did || siteConfig.atproto.did,
-      endpoint: config?.endpoint || 'wss://jetstream1.us-east.bsky.network/subscribe',
+      endpoint: config?.endpoint || 'wss://jetstream2.us-east.bsky.network',
       wantedCollections: config?.wantedCollections || [],
       wantedDids: config?.wantedDids || [],
       cursor: config?.cursor,
     };
-    this.targetDid = this.config.did || null;
     
-    console.log('🔧 JetstreamClient initialized with handle:', this.config.handle);
-    console.log('🎯 Target DID for filtering:', this.targetDid);
-    console.log('🌐 Endpoint:', this.config.endpoint);
+    console.log('🔧 JetstreamClient initialized');
   }
 
-  // Start streaming all repository activity
   async startStreaming(): Promise<void> {
     if (this.isStreaming) {
-      console.log('⚠️ Already streaming repository');
+      console.log('⚠️ Already streaming');
       return;
     }
 
-    console.log('🚀 Starting jetstream repository streaming...');
+    console.log('🚀 Starting jetstream streaming...');
     this.isStreaming = true;
 
     try {
-      // Resolve handle to DID if needed
-      if (!this.targetDid) {
-        this.targetDid = await this.resolveHandle(this.config.handle);
-        if (!this.targetDid) {
-          throw new Error(`Could not resolve handle: ${this.config.handle}`);
-        }
-        console.log('✅ Resolved DID:', this.targetDid);
+      // Add our DID to wanted DIDs if specified
+      const wantedDids = [...(this.config.wantedDids || [])];
+      if (this.config.did && !wantedDids.includes(this.config.did)) {
+        wantedDids.push(this.config.did);
       }
 
-      // Add target DID to wanted DIDs
-      if (this.targetDid && !this.config.wantedDids!.includes(this.targetDid)) {
-        this.config.wantedDids!.push(this.targetDid);
-      }
+      this.subscription = new JetstreamSubscription({
+        url: this.config.endpoint!,
+        wantedCollections: this.config.wantedCollections,
+        wantedDids: wantedDids as any,
+        cursor: this.config.cursor,
+        onConnectionOpen: () => {
+          console.log('✅ Connected to jetstream');
+          this.listeners.onConnect?.();
+        },
+        onConnectionClose: () => {
+          console.log('🔌 Disconnected from jetstream');
+          this.isStreaming = false;
+          this.listeners.onDisconnect?.();
+        },
+        onConnectionError: (error) => {
+          console.error('❌ Jetstream connection error:', error);
+          this.listeners.onError?.(new Error('Connection error'));
+        },
+      });
 
-      // Start WebSocket connection
-      this.connect();
+      // Process events using async iteration as documented
+      this.processEvents();
       
     } catch (error) {
       this.isStreaming = false;
@@ -86,146 +81,40 @@ export class JetstreamClient {
     }
   }
 
-  // Stop streaming
-  stopStreaming(): void {
-    if (this.ws) {
-      this.ws.close();
-      this.ws = null;
+  private async processEvents(): Promise<void> {
+    if (!this.subscription) return;
+
+    try {
+      // Use the documented async iteration approach
+      for await (const event of this.subscription) {
+        if (event.kind === 'commit') {
+          console.log('📝 New commit:', {
+            collection: event.commit.collection,
+            operation: event.commit.operation,
+            did: event.did,
+          });
+          
+          this.listeners.onRecord?.(event);
+        }
+      }
+    } catch (error) {
+      console.error('Error processing jetstream events:', error);
+      this.listeners.onError?.(error as Error);
+    } finally {
+      this.isStreaming = false;
+      this.listeners.onDisconnect?.();
     }
+  }
+
+  stopStreaming(): void {
+    this.subscription = null;
     this.isStreaming = false;
     console.log('🛑 Stopped jetstream streaming');
     this.listeners.onDisconnect?.();
   }
 
-  // Connect to jetstream WebSocket
-  private connect(): void {
-    try {
-      const url = new URL(this.config.endpoint!);
-      
-      // Add query parameters for filtering (using atptools' parameter names)
-      this.config.wantedCollections!.forEach((collection) => {
-        url.searchParams.append('wantedCollections', collection);
-      });
-      this.config.wantedDids!.forEach((did) => {
-        url.searchParams.append('wantedDids', did);
-      });
-      if (this.config.cursor) {
-        url.searchParams.set('cursor', this.config.cursor.toString());
-      }
-
-      console.log('🔌 Connecting to jetstream:', url.toString());
-      
-      this.ws = new WebSocket(url.toString());
-      
-      this.ws.onopen = () => {
-        console.log('✅ Connected to jetstream');
-        this.listeners.onConnect?.();
-      };
-
-      this.ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          this.handleMessage(data);
-        } catch (error) {
-          console.error('Error parsing jetstream message:', error);
-        }
-      };
-
-      this.ws.onerror = (error) => {
-        console.error('❌ Jetstream WebSocket error:', error);
-        this.listeners.onError?.(new Error('WebSocket error'));
-      };
-
-      this.ws.onclose = () => {
-        console.log('🔌 Disconnected from jetstream');
-        this.isStreaming = false;
-        this.listeners.onDisconnect?.();
-      };
-
-    } catch (error) {
-      console.error('Error connecting to jetstream:', error);
-      this.listeners.onError?.(error as Error);
-    }
-  }
-
-  // Handle incoming jetstream messages
-  private handleMessage(data: any): void {
-    try {
-      // Handle different message types based on atptools' format
-      if (data.kind === 'commit') {
-        this.handleCommit(data);
-      } else if (data.kind === 'account') {
-        console.log('Account event:', data);
-      } else if (data.kind === 'identity') {
-        console.log('Identity event:', data);
-      } else {
-        console.log('Unknown message type:', data);
-      }
-    } catch (error) {
-      console.error('Error handling jetstream message:', error);
-    }
-  }
-
-  // Handle commit events (record changes)
-  private handleCommit(data: any): void {
-    try {
-      const commit = data.commit;
-      const event = data;
-
-      // Filter by DID if specified
-      if (this.targetDid && event.did !== this.targetDid) {
-        return;
-      }
-
-      const jetstreamRecord: JetstreamRecord = {
-        uri: `at://${event.did}/${commit.collection}/${commit.rkey}`,
-        cid: commit.cid || '',
-        value: commit.record || {},
-        indexedAt: new Date(event.time_us / 1000).toISOString(),
-        collection: commit.collection,
-        $type: (commit.record?.$type as string) || 'unknown',
-        service: this.inferService((commit.record?.$type as string) || '', commit.collection),
-        did: event.did,
-        time_us: event.time_us,
-        operation: commit.operation,
-      };
-
-      console.log('📝 New record from jetstream:', {
-        collection: jetstreamRecord.collection,
-        $type: jetstreamRecord.$type,
-        operation: jetstreamRecord.operation,
-        uri: jetstreamRecord.uri,
-        service: jetstreamRecord.service
-      });
-      
-      this.listeners.onRecord?.(jetstreamRecord);
-    } catch (error) {
-      console.error('Error handling commit:', error);
-    }
-  }
-
-  // Infer service from record type and collection
-  private inferService($type: string, collection: string): string {
-    if (collection.startsWith('grain.social')) return 'grain.social';
-    if (collection.startsWith('app.bsky')) return 'bsky.app';
-    if ($type.includes('grain')) return 'grain.social';
-    return 'unknown';
-  }
-
-  // Resolve handle to DID
-  private async resolveHandle(handle: string): Promise<string | null> {
-    try {
-      // For now, use the configured DID
-      // In a real implementation, you'd call the ATProto API
-      return this.config.did || null;
-    } catch (error) {
-      console.error('Error resolving handle:', error);
-      return null;
-    }
-  }
-
   // Event listeners
-  onRecord(callback: (record: JetstreamRecord) => void): void {
+  onRecord(callback: (event: CommitEvent) => void): void {
     this.listeners.onRecord = callback;
   }
 
@@ -241,8 +130,138 @@ export class JetstreamClient {
     this.listeners.onDisconnect = callback;
   }
 
-  // Get streaming status
   getStatus(): 'streaming' | 'stopped' {
     return this.isStreaming ? 'streaming' : 'stopped';
   }
+}
+
+// Shared Jetstream functionality
+let sharedJetstream: JetstreamClient | null = null;
+let connectionCount = 0;
+const listeners: Map<string, Set<(event: CommitEvent) => void>> = new Map();
+
+export function getSharedJetstream(): JetstreamClient {
+  if (!sharedJetstream) {
+    // Create a shared client with common collections
+    sharedJetstream = new JetstreamClient({
+      wantedCollections: [
+        'app.bsky.feed.post',
+        'a.status.update',
+        'social.grain.gallery',
+        'social.grain.gallery.item',
+        'social.grain.photo',
+        'com.whtwnd.blog.entry'
+      ]
+    });
+    
+    // Set up the main record handler that distributes to filtered listeners
+    sharedJetstream.onRecord((event) => {
+      // Distribute to all listeners that match the filter
+      listeners.forEach((listenerSet, filterKey) => {
+        if (matchesFilter(event, filterKey)) {
+          listenerSet.forEach(callback => callback(event));
+        }
+      });
+    });
+  }
+  return sharedJetstream;
+}
+
+// Start the shared stream (call once when first component needs it)
+export async function startSharedStream(): Promise<void> {
+  const jetstream = getSharedJetstream();
+  if (connectionCount === 0) {
+    await jetstream.startStreaming();
+  }
+  connectionCount++;
+}
+
+// Stop the shared stream (call when last component is done)
+export function stopSharedStream(): void {
+  connectionCount--;
+  if (connectionCount <= 0 && sharedJetstream) {
+    sharedJetstream.stopStreaming();
+    connectionCount = 0;
+  }
+}
+
+// Subscribe to filtered records
+export function subscribeToRecords(
+  filter: string | ((event: CommitEvent) => boolean),
+  callback: (event: CommitEvent) => void
+): () => void {
+  const filterKey = typeof filter === 'string' ? filter : filter.toString();
+  
+  if (!listeners.has(filterKey)) {
+    listeners.set(filterKey, new Set());
+  }
+  
+  const listenerSet = listeners.get(filterKey)!;
+  listenerSet.add(callback);
+  
+  // Return unsubscribe function
+  return () => {
+    const set = listeners.get(filterKey);
+    if (set) {
+      set.delete(callback);
+      if (set.size === 0) {
+        listeners.delete(filterKey);
+      }
+    }
+  };
+}
+
+// Helper to check if a record matches a filter
+function matchesFilter(event: CommitEvent, filterKey: string): boolean {
+  // Handle delete operations (no record property)
+  if (event.commit.operation === 'delete') {
+    // For delete operations, only support collection and operation matching
+    if (filterKey.startsWith('collection:')) {
+      const expectedCollection = filterKey.substring(11);
+      return event.commit.collection === expectedCollection;
+    }
+    if (filterKey.startsWith('operation:')) {
+      const expectedOperation = filterKey.substring(10);
+      return event.commit.operation === expectedOperation;
+    }
+    return false;
+  }
+  
+  // For create/update operations, we have record data
+  const record = event.commit.record;
+  const $type = record?.$type as string;
+  
+  // Support simple $type matching
+  if (filterKey.startsWith('$type:')) {
+    const expectedType = filterKey.substring(6);
+    return $type === expectedType;
+  }
+  
+  // Support collection matching
+  if (filterKey.startsWith('collection:')) {
+    const expectedCollection = filterKey.substring(11);
+    return event.commit.collection === expectedCollection;
+  }
+  
+  // Support operation matching
+  if (filterKey.startsWith('operation:')) {
+    const expectedOperation = filterKey.substring(10);
+    return event.commit.operation === expectedOperation;
+  }
+  
+  // Default to exact match
+  return $type === filterKey;
+}
+
+// Convenience functions for common filters
+export function subscribeToStatusUpdates(callback: (event: CommitEvent) => void): () => void {
+  return subscribeToRecords('$type:a.status.update', callback);
+}
+
+export function subscribeToPosts(callback: (event: CommitEvent) => void): () => void {
+  return subscribeToRecords('$type:app.bsky.feed.post', callback);
+}
+
+export function subscribeToGalleryUpdates(callback: (event: CommitEvent) => void): () => void {
+  return subscribeToRecords('collection:social.grain.gallery', callback);
 } 

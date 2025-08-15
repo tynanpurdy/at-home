@@ -212,15 +212,15 @@ try {
 
       try {
         // Use shared jetstream instead of creating a new connection
-        const { startSharedStream, subscribeToPosts } = await import('../../lib/atproto/shared-jetstream');
+        const { startSharedStream, subscribeToPosts } = await import('../../lib/atproto/jetstream-client');
         
         // Start the shared stream
         await startSharedStream();
         
         // Subscribe to new posts
-        const unsubscribe = subscribeToPosts((record) => {
-          if (record.operation === 'create') {
-            const el = buildPostEl(record.value, record.did);
+        const unsubscribe = subscribeToPosts((event) => {
+          if (event.commit.operation === 'create') {
+            const el = buildPostEl(event.commit.record, event.did);
             // @ts-ignore
             container.insertBefore(el, container.firstChild);
             const posts = container.children;
