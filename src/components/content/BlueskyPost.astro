@@ -5,15 +5,10 @@ import { loadConfig } from '../../lib/config/site';
 
 interface Props {
   post: AppBskyFeedPost.Record;
-  author?: {
-    displayName?: string;
-    handle?: string;
-  };
-  showAuthor?: boolean;
   showTimestamp?: boolean;
 }
 
-const { post, author, showAuthor = false, showTimestamp = true } = Astro.props;
+const { post, showTimestamp = true } = Astro.props;
 
 // Validate post data
 if (!post || !post.text) {
@@ -61,21 +56,7 @@ const renderImages = (images: any[]) => {
 ---
 
 <article class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-4">
-  {showAuthor && author && (
-    <div class="flex items-center mb-3">
-      <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-        {author.displayName?.[0] || 'U'}
-      </div>
-      <div class="ml-3">
-        <div class="text-sm font-medium text-gray-900 dark:text-white">
-          {author.displayName || 'Unknown'}
-        </div>
-        <div class="text-xs text-gray-500 dark:text-gray-400">
-          @{author.handle || 'unknown'}
-        </div>
-      </div>
-    </div>
-  )}
+
   
   <div class="text-gray-900 dark:text-white mb-3">
     {post.text}

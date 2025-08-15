@@ -46,16 +46,13 @@ const sortedDocuments = documents.sort((a, b) => {
                   
                   <div class="text-sm text-gray-500 dark:text-gray-400">
                     {document.data.publishedAt && (
-                      <span class="mr-4">
+                      <span>
                         Published: {new Date(document.data.publishedAt).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric',
                         })}
                       </span>
-                    )}
-                    {document.data.author && (
-                      <span>Author: {document.data.author}</span>
                     )}
                   </div>
                 </header>

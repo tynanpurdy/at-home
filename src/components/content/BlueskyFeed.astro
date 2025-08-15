@@ -6,11 +6,10 @@ import BlueskyPost from './BlueskyPost.astro';
 interface Props {
   feedUri: string;
   limit?: number;
-  showAuthor?: boolean;
   showTimestamp?: boolean;
 }
 
-const { feedUri, limit = 10, showAuthor = true, showTimestamp = true } = Astro.props;
+const { feedUri, limit = 10, showTimestamp = true } = Astro.props;
 
 const config = loadConfig();
 const browser = new AtprotoBrowser();
@@ -34,8 +33,6 @@ try {
     blueskyPosts.map((record) => (
       <BlueskyPost 
         post={record.value} 
-        author={record.author}
-        showAuthor={showAuthor}
         showTimestamp={showTimestamp}
       />
     ))

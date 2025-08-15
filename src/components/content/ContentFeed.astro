@@ -9,7 +9,6 @@ interface Props {
   collection?: string;
   limit?: number;
   feedUri?: string;
-  showAuthor?: boolean;
   showTimestamp?: boolean;
   live?: boolean;
 }
@@ -18,7 +17,6 @@ const {
   collection = 'app.bsky.feed.post', 
   limit = 10, 
   feedUri,
-  showAuthor = true,
   showTimestamp = true,
   live = false,
 } = Astro.props;
