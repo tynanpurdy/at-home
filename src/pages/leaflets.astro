@@ -1,0 +1,101 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from "astro:content";
+import { loadConfig } from '../lib/config/site';
+
+const config = loadConfig();
+const documents = await getCollection("documents");
+
+// Sort documents by published date (newest first)
+const sortedDocuments = documents.sort((a, b) => {
+  const dateA = a.data.publishedAt ? new Date(a.data.publishedAt).getTime() : 0;
+  const dateB = b.data.publishedAt ? new Date(b.data.publishedAt).getTime() : 0;
+  return dateB - dateA;
+});
+---
+
+<Layout title="Leaflet Documents">
+  <div class="container mx-auto px-4 py-8">
+    <header class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        Leaflet Documents
+      </h1>
+      <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        A collection of my leaflet.pub documents
+      </p>
+    </header>
+
+    <main class="max-w-4xl mx-auto">
+      {config.atproto.handle && config.atproto.handle !== 'your-handle-here' ? (
+        sortedDocuments.length > 0 ? (
+          <div class="space-y-6">
+            {sortedDocuments.map((document) => (
+              <article class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                <header class="mb-4">
+                  <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    <a href={`/leaflets/${document.id}`} class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                      {document.data.title}
+                    </a>
+                  </h2>
+                  
+                  {document.data.description && (
+                    <p class="text-gray-600 dark:text-gray-400 mb-3">
+                      {document.data.description}
+                    </p>
+                  )}
+                  
+                  <div class="text-sm text-gray-500 dark:text-gray-400">
+                    {document.data.publishedAt && (
+                      <span class="mr-4">
+                        Published: {new Date(document.data.publishedAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
+                      </span>
+                    )}
+                    {document.data.author && (
+                      <span>Author: {document.data.author}</span>
+                    )}
+                  </div>
+                </header>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div class="text-center py-12">
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-8">
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                No Leaflet Documents Found
+              </h3>
+              <p class="text-gray-600 dark:text-gray-400 mb-4">
+                No leaflet.pub documents were found for your account.
+              </p>
+              <p class="text-sm text-gray-500 dark:text-gray-500">
+                Make sure you have created documents using leaflet.pub and they are properly indexed.
+              </p>
+            </div>
+          </div>
+        )
+      ) : (
+        <div class="text-center py-12">
+          <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-8">
+            <h3 class="text-xl font-semibold text-yellow-800 dark:text-yellow-200 mb-4">
+              Configuration Required
+            </h3>
+            <p class="text-yellow-700 dark:text-yellow-300 mb-4">
+              To display your Leaflet documents, please configure your Bluesky handle in the environment variables.
+            </p>
+            <div class="text-sm text-yellow-600 dark:text-yellow-400">
+              <p class="mb-2">Create a <code class="bg-yellow-100 dark:bg-yellow-800 px-1 rounded">.env</code> file with:</p>
+              <pre class="bg-yellow-100 dark:bg-yellow-800 p-3 rounded text-xs overflow-x-auto">
+ATPROTO_HANDLE=your-handle.bsky.social
+SITE_TITLE=Your Site Title
+SITE_AUTHOR=Your Name</pre>
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
+  </div>
+</Layout>
