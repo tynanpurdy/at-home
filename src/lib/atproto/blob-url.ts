@@ -23,7 +23,7 @@ export function extractCidFromBlobRef(ref: unknown): string | null {
 
 export function didFromConfig(): string {
   const cfg = loadConfig()
-  return cfg.atproto.did
+  return cfg.atproto.did || ''
 }
 
 
