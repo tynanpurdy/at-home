@@ -1,15 +1,19 @@
 ---
-import type { BlueskyPost } from '../../lib/types/atproto';
+import type { AppBskyFeedPost } from '@atproto/api';
 import { extractCidFromBlobRef, blobCdnUrl } from '../../lib/atproto/blob-url';
 import { loadConfig } from '../../lib/config/site';
 
 interface Props {
-  post: BlueskyPost;
+  post: AppBskyFeedPost.Record;
+  author?: {
+    displayName?: string;
+    handle?: string;
+  };
   showAuthor?: boolean;
   showTimestamp?: boolean;
 }
 
-const { post, showAuthor = false, showTimestamp = true } = Astro.props;
+const { post, author, showAuthor = false, showTimestamp = true } = Astro.props;
 
 // Validate post data
 if (!post || !post.text) {
@@ -57,17 +61,17 @@ const renderImages = (images: any[]) => {
 ---
 
 <article class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-4">
-  {showAuthor && post.author && (
+  {showAuthor && author && (
     <div class="flex items-center mb-3">
       <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-        {post.author.displayName?.[0] || 'U'}
+        {author.displayName?.[0] || 'U'}
       </div>
       <div class="ml-3">
         <div class="text-sm font-medium text-gray-900 dark:text-white">
-          {post.author.displayName || 'Unknown'}
+          {author.displayName || 'Unknown'}
         </div>
         <div class="text-xs text-gray-500 dark:text-gray-400">
-          @{post.author.handle || 'unknown'}
+          @{author.handle || 'unknown'}
         </div>
       </div>
     </div>
@@ -80,12 +84,12 @@ const renderImages = (images: any[]) => {
   {post.embed && (
     <div class="mb-3">
       {/* Handle image embeds */}
-      {post.embed.$type === 'app.bsky.embed.images' && post.embed.images && (
+      {post.embed.$type === 'app.bsky.embed.images' && 'images' in post.embed && post.embed.images && (
         renderImages(post.embed.images)
       )}
       
       {/* Handle external link embeds */}
-      {post.embed.$type === 'app.bsky.embed.external' && post.embed.external && (
+      {post.embed.$type === 'app.bsky.embed.external' && 'external' in post.embed && post.embed.external && (
         <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
           <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">
             {post.embed.external.uri}
@@ -102,7 +106,7 @@ const renderImages = (images: any[]) => {
       )}
       
       {/* Handle record embeds (quotes/reposts) */}
-      {post.embed.$type === 'app.bsky.embed.record' && post.embed.record && (
+      {post.embed.$type === 'app.bsky.embed.record' && 'record' in post.embed && post.embed.record && (
         <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-700">
           <div class="text-sm text-gray-600 dark:text-gray-400">
             Quoted post

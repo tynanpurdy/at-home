@@ -140,7 +140,7 @@ Your component will now be automatically used when displaying records of your ty
 ```astro
 ---
 import ContentDisplay from '../../components/content/ContentDisplay.astro';
-import type { AtprotoRecord } from '../../lib/types/atproto';
+import type { AtprotoRecord } from '../../lib/atproto/atproto-browser';
 
 const records: AtprotoRecord[] = await fetchRecords();
 ---

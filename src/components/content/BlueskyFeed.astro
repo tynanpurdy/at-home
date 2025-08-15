@@ -34,6 +34,7 @@ try {
     blueskyPosts.map((record) => (
       <BlueskyPost 
         post={record.value} 
+        author={record.author}
         showAuthor={showAuthor}
         showTimestamp={showTimestamp}
       />

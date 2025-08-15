@@ -1,6 +1,6 @@
 import { AtprotoBrowser } from '../atproto/atproto-browser';
 import { loadConfig } from '../config/site';
-import type { AtprotoRecord } from '../types/atproto';
+import type { AtprotoRecord } from '../atproto/atproto-browser';
 
 export interface ContentRendererOptions {
   showAuthor?: boolean;
@@ -39,7 +39,7 @@ export class ContentRenderer {
       'app.bsky.feed.post': 'BlueskyPost',
       'app.bsky.actor.profile#whitewindBlogPost': 'WhitewindBlogPost',
       'app.bsky.actor.profile#leafletPublication': 'LeafletPublication',
-      'app.bsky.actor.profile#grainImageGallery': 'GrainImageGallery',
+
       'gallery.display': 'GalleryDisplay',
     };
 

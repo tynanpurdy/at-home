@@ -2,7 +2,7 @@ import { AtprotoBrowser } from '../atproto/atproto-browser';
 import { JetstreamClient } from '../atproto/jetstream-client';
 import { GrainGalleryService } from './grain-gallery-service';
 import { loadConfig } from '../config/site';
-import type { AtprotoRecord } from '../types/atproto';
+import type { AtprotoRecord } from '../atproto/atproto-browser';
 
 export interface ContentItem {
   uri: string;

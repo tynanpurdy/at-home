@@ -9,6 +9,10 @@ export interface AtprotoRecord {
   indexedAt: string;
   collection: string;
   $type: string;
+  author?: {
+    displayName?: string;
+    handle?: string;
+  };
 }
 
 export interface RepoInfo {
@@ -254,6 +258,10 @@ export class AtprotoBrowser {
         indexedAt: item.post.indexedAt,
         collection: item.post.uri.split('/')[2] || 'unknown',
         $type: (item.post.record?.$type as string) || 'unknown',
+        author: item.post.author ? {
+          displayName: item.post.author.displayName,
+          handle: item.post.author.handle,
+        } : undefined,
       }));
 
       return records;

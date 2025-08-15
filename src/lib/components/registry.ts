@@ -22,11 +22,12 @@ export const registry: ComponentRegistry = {
     component: 'StatusUpdate',
     props: {}
   },
-  // Add more mappings as you create components
-  // 'ComExampleRecord': {
-  //   component: 'ExampleComponent',
-  //   props: {}
-  // }
+  // Bluesky posts (not in generated types, but used by components)
+  'app.bsky.feed.post': {
+    component: 'BlueskyPost',
+    props: {}
+  },
+
 };
 
 // Type-safe component lookup
