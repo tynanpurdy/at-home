@@ -1,10 +1,6 @@
 // Base ATproto record types
-export interface AtprotoRecord {
-  uri: string;
-  cid: string;
-  value: any;
-  indexedAt: string;
-}
+import type { AtprotoRecord } from '../atproto/atproto-browser';
+export type { AtprotoRecord };
 
 // Bluesky post types with proper embed handling
 export interface BlueskyPost {
