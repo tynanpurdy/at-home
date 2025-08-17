@@ -6,7 +6,7 @@ const config = loadConfig();
 
 const documents = defineCollection({
   loader: leafletStaticLoader({ 
-    repo: config.atproto.did || config.atproto.handle || "did:plc:example" 
+    repo: config.atproto.did! 
   }),
 });
 
